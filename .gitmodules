@@ -1,0 +1,9 @@
+[submodule "mass_flask_core"]
+	path = mass_flask_core
+	url = ssh://git@atlassian-net.cs.uni-bonn.de:7999/mal/mass_flask_core.git
+[submodule "mass_flask_config"]
+	path = mass_flask_config
+	url = ssh://git@atlassian-net.cs.uni-bonn.de:7999/mal/mass_flask_config.git
+[submodule "mass_flask_api"]
+	path = mass_flask_api
+	url = ssh://git@atlassian-net.cs.uni-bonn.de:7999/mal/mass_flask_api.git
