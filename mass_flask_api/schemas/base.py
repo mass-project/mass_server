@@ -1,0 +1,88 @@
+from flask import url_for, _request_ctx_stack
+from marshmallow import ValidationError
+from marshmallow_mongoengine import ModelSchema
+from marshmallow_mongoengine.convert import default_converter
+import marshmallow.fields as mm_fields
+import marshmallow_mongoengine.fields as mmme_fields
+from werkzeug.exceptions import NotFound
+from werkzeug.urls import url_parse
+
+
+# Make these importable by other modules
+mm_fields = mm_fields
+mmme_fields = mmme_fields
+
+
+class SelfReferenceField(mm_fields.Field):
+    def __init__(self, *args, **kwargs):
+        endpoint = kwargs.pop('endpoint')
+        super(SelfReferenceField, self).__init__(*args, **kwargs)
+        self.dump_only = True
+        self._endpoint = endpoint
+
+    def serialize(self, attr, obj, accessor=None):
+        return url_for(self._endpoint, id=obj.id, _external=True)
+
+
+class ForeignReferenceField(mm_fields.Field):
+    def __init__(self, endpoint, queryset, query_parameter='id', *args, **kwargs):
+        super(ForeignReferenceField, self).__init__(*args, **kwargs)
+        self._endpoint = endpoint
+        self._queryset = queryset
+        self._query_parameter = query_parameter
+
+    # def serialize(self, attr, obj, accessor=None):
+    #     kwargs = {
+    #         'endpoint': self._endpoint,
+    #         '_external': True,
+    #         self._query_parameter: obj[attr][self._query_parameter],
+    #     }
+    #     return url_for(**kwargs)
+
+    def _serialize(self, value, attr, obj):
+        kwargs = {
+            'endpoint': self._endpoint,
+            '_external': True,
+            self._query_parameter: value[self._query_parameter],
+        }
+        return url_for(**kwargs)
+
+    def deserialize(self, value, attr=None, data=None):
+        ctx = _request_ctx_stack.top
+        adapter = ctx.url_adapter
+        if adapter is None:
+            raise RuntimeError('Could not find a URL adapter in the current request context.')
+        url = url_parse(value)
+        if url.netloc is not "" and url.netloc != adapter.server_name:
+            raise ValidationError('Reference URL for field {} incorrectly specified.'.format(attr))
+
+        try:
+            endpoint, params = adapter.match(url.path, 'GET')
+        except NotFound:
+            raise ValidationError('Reference URL for field {} incorrectly specified.'.format(attr))
+
+        if endpoint != self._endpoint:
+            raise ValidationError('Reference URL for field {} incorrectly specified.'.format(attr))
+
+        query_result = self._queryset.filter(**params)
+
+        if not query_result:
+            raise ValidationError('Reference URL for field {} incorrectly specified.'.format(attr))
+
+        return query_result.first()
+
+
+class BaseSchema(ModelSchema):
+    pass
+
+
+class DynamicBaseSchema(BaseSchema):
+    def dump(self, obj, many=None, update_fields=True, **kwargs):
+        result = super(DynamicBaseSchema, self).dump(obj, many=many, update_fields=update_fields, **kwargs)
+        if self.many:
+            print('Fix me!')
+        else:
+            if obj._dynamic:
+                for name, field in obj._dynamic_fields.items():
+                    result.data[name] = default_converter.convert_field(field).serialize(name, obj)
+        return result
