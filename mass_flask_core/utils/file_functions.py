@@ -1,7 +1,3 @@
-from os.path import basename
-from django.core.files import File
-from django.core.files.uploadedfile import TemporaryUploadedFile
-from django.http import HttpResponse
 import magic
 import re
 from werkzeug.datastructures import FileStorage
@@ -113,10 +109,10 @@ class FileFunctions:
         else:
             raise TypeError('Unsupported file type.')
 
-    @staticmethod
-    def get_download_response_for_mongoengine_file_object(file):
-        content = file.read()
-        content_type = file.content_type
-        response = HttpResponse(content, content_type=content_type)
-        response['Content-Disposition'] = 'attachment; filename="{}"'.format(file.filename)
-        return response
+    # @staticmethod
+    # def get_download_response_for_mongoengine_file_object(file):
+    #     content = file.read()
+    #     content_type = file.content_type
+    #     response = HttpResponse(content, content_type=content_type)
+    #     response['Content-Disposition'] = 'attachment; filename="{}"'.format(file.filename)
+    #     return response
