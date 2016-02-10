@@ -1,8 +1,8 @@
 from flask import jsonify, request
 
 from mass_flask_api.config import api_blueprint
-from mass_flask_api.schemas import SampleSchema, FileSampleSchema, ExecutableBinarySampleSchema
-from mass_flask_core.models import Sample, FileSample
+from mass_flask_api.schemas import SampleSchema, FileSampleSchema, ExecutableBinarySampleSchema, ReportSchema
+from mass_flask_core.models import Sample, FileSample, Report
 
 from .base import BaseResource
 from mass_flask_api.utils import get_pagination_compatible_schema, register_api_endpoint
@@ -25,12 +25,31 @@ class SampleResource(BaseResource):
     pagination_schema = get_pagination_compatible_schema(SampleSchema)
     model = Sample
     query_key_field = 'id'
+    filter_parameters = [
+        'md5sum',
+        'sha1sum',
+        'sha256sum',
+        'sha512sum'
+    ]
 
     def get_list(self):
         """
         ---
         get:
             description: Get a list of all samples.
+            parameters:
+                - in: query
+                  name: md5sum
+                  type: string
+                - in: query
+                  name: sha1sum
+                  type: string
+                - in: query
+                  name: sha256sum
+                  type: string
+                - in: query
+                  name: sha512sum
+                  type: string
             responses:
                 200:
                     description: A list of samples is returned.
@@ -149,6 +168,32 @@ class SampleResource(BaseResource):
             schema = _get_schema_for_model_class(sample.__class__.__name__)
             return jsonify(schema().dump(sample).data), 201
 
+    def reports(self, **kwargs):
+        """
+        ---
+        get:
+            description: Get the reports associated to the given sample
+            parameters:
+                - in: path
+                  name: id
+                  type: string
+            responses:
+                200:
+                    description: The list of reports is returned.
+                    schema: ReportSchema
+                404:
+                    description: No sample with the specified id has been found.
+        """
+        sample = self.model.objects(id=kwargs['id']).first()
+        if not sample:
+            return jsonify({'error': 'No object with key \'{}\' found'.format(kwargs['id'])}), 404
+        else:
+            reports = Report.objects(sample=sample)
+            serialized_result = ReportSchema(many=True).dump(reports)
+            return jsonify({
+                'results': serialized_result.data,
+            })
+
 
 register_api_endpoint('sample', SampleResource)
 
@@ -157,3 +202,6 @@ api_blueprint.apispec.add_path(path=api_blueprint.config['API_PREFIX'] + '/sampl
 
 api_blueprint.add_url_rule('/sample/submit_file/', view_func=SampleResource().submit_file, methods=['POST'])
 api_blueprint.apispec.add_path(path=api_blueprint.config['API_PREFIX'] + '/sample/submit_file/', view=SampleResource.submit_file)
+
+api_blueprint.add_url_rule('/sample/<id>/reports/', view_func=SampleResource().reports, methods=['GET'], endpoint='sample_reports')
+api_blueprint.apispec.add_path(path=api_blueprint.config['API_PREFIX'] + '/sample/{id}/reports/', view=SampleResource.reports)

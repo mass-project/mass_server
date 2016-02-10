@@ -17,6 +17,7 @@ class BaseResource(MethodView):
     pagination_schema = None
     model = None
     query_key_field = None
+    filter_parameters = []
 
     @property
     def schema(self):
@@ -34,9 +35,18 @@ class BaseResource(MethodView):
     def query_key_field(self):
         return Ref('query_key_field').resolve(self)
 
+    @property
+    def filter_parameters(self):
+        return Ref('filter_parameters').resolve(self)
+
     @paginate
     def _get_list(self):
-        return self.model.objects
+        filter_condition = {}
+        for parameter in self.filter_parameters:
+            if parameter in request.args:
+                filter_condition[parameter] = request.args[parameter]
+
+        return self.model.objects(**filter_condition)
 
     def get_list(self):
         paginated_objects = self._get_list()

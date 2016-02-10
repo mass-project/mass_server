@@ -7,7 +7,7 @@ from mass_flask_core.models import AnalysisSystem
 class AnalysisSystemSchema(BaseSchema):
     url = URLFor('.analysis_system', identifier_name='<identifier_name>', _external=True)
 
-    class Meta:
+    class Meta(BaseSchema.Meta):
         model = AnalysisSystem
         dump_only = [
             'id',

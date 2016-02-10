@@ -12,6 +12,7 @@ class DispatchRequestResource(BaseResource):
     pagination_schema = get_pagination_compatible_schema(DispatchRequestSchema)
     model = DispatchRequest
     query_key_field = 'id'
+    filter_parameters = []
 
     def get_list(self):
         """

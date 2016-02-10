@@ -12,6 +12,7 @@ class AnalysisSystemInstanceResource(BaseResource):
     pagination_schema = get_pagination_compatible_schema(AnalysisSystemInstanceSchema)
     model = AnalysisSystemInstance
     query_key_field = 'uuid'
+    filter_parameters = []
 
     def get_list(self):
         """

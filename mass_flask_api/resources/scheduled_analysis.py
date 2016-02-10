@@ -12,6 +12,7 @@ class ScheduledAnalysisResource(BaseResource):
     pagination_schema = get_pagination_compatible_schema(ScheduledAnalysisSchema)
     model = ScheduledAnalysis
     query_key_field = 'id'
+    filter_parameters = []
 
     def get_list(self):
         """

@@ -9,7 +9,7 @@ class AnalysisRequestSchema(BaseSchema):
     sample = ForeignReferenceField(endpoint='mass_flask_api.sample', queryset=Sample.objects(), query_parameter='id')
     analysis_system = ForeignReferenceField(endpoint='mass_flask_api.analysis_system', queryset=AnalysisSystem.objects(), query_parameter='identifier_name')
 
-    class Meta:
+    class Meta(BaseSchema.Meta):
         model = AnalysisRequest
         dump_only = [
             'id',

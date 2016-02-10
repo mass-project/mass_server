@@ -9,6 +9,7 @@ class ReportResource(BaseResource):
     pagination_schema = get_pagination_compatible_schema(ReportSchema)
     model = Report
     query_key_field = 'id'
+    filter_parameters = []
 
     def get_list(self):
         """

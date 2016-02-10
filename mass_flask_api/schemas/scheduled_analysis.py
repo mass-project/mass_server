@@ -9,7 +9,7 @@ class ScheduledAnalysisSchema(BaseSchema):
     sample = ForeignReferenceField(endpoint='mass_flask_api.sample', queryset=Sample.objects(), query_parameter='id')
     analysis_system_instance = ForeignReferenceField(endpoint='mass_flask_api.analysis_system_instance', queryset=AnalysisSystemInstance.objects(), query_parameter='uuid')
 
-    class Meta:
+    class Meta(BaseSchema.Meta):
         model = ScheduledAnalysis
         dump_only = [
             'id',

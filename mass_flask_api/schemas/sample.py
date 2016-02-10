@@ -10,7 +10,7 @@ class SampleSchema(BaseSchema):
     url = URLFor('.sample', id='<id>', _external=True)
     dispatched_to = List(ForeignReferenceField(endpoint='mass_flask_api.analysis_system', queryset=AnalysisSystem.objects(), query_parameter='identifier_name'))
 
-    class Meta:
+    class Meta(BaseSchema.Meta):
         model = Sample
         dump_only = [
             'id',
@@ -27,7 +27,7 @@ class FileSampleSchema(SampleSchema):
     dispatched_to = List(ForeignReferenceField(endpoint='mass_flask_api.analysis_system', queryset=AnalysisSystem.objects(), query_parameter='identifier_name'))
     file = URLFor('.sample_download', id='<id>', _external=True)
 
-    class Meta:
+    class Meta(BaseSchema.Meta):
         model = FileSample
         dump_only = SampleSchema.Meta.dump_only + [
             'file_size',
@@ -49,7 +49,7 @@ class ExecutableBinarySampleSchema(FileSampleSchema):
     dispatched_to = List(ForeignReferenceField(endpoint='mass_flask_api.analysis_system', queryset=AnalysisSystem.objects(), query_parameter='identifier_name'))
     # dispatched_to = List(String)
 
-    class Meta:
+    class Meta(BaseSchema.Meta):
         model = ExecutableBinarySample
         dump_only = FileSampleSchema.Meta.dump_only + [
             'filesystem_events',

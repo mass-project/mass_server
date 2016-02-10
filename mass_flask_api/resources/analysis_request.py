@@ -9,6 +9,7 @@ class AnalysisRequestResource(BaseResource):
     pagination_schema = get_pagination_compatible_schema(AnalysisRequestSchema)
     model = AnalysisRequest
     query_key_field = 'id'
+    filter_parameters = []
 
     def get_list(self):
         """

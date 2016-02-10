@@ -12,7 +12,7 @@ class AnalysisSystemInstanceSchema(BaseSchema):
     is_online = Boolean()
     scheduled_analyses_count = Method("get_scheduled_analyses_count")
 
-    class Meta:
+    class Meta(BaseSchema.Meta):
         model = AnalysisSystemInstance
         dump_only = [
             'id',

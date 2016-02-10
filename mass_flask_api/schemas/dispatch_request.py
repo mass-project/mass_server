@@ -11,7 +11,7 @@ class DispatchRequestSchema(BaseSchema):
     # sample = ForeignReferenceField(endpoint='mass_flask_api.sample', queryset=Sample.objects(), query_parameter='id')
     sample = Nested(SampleSchema)
 
-    class Meta:
+    class Meta(BaseSchema.Meta):
         model = DispatchRequest
         dump_only = [
             'id',

@@ -1,5 +1,5 @@
 from flask import url_for, _request_ctx_stack
-from marshmallow import ValidationError
+from marshmallow import ValidationError, post_dump, MarshalResult
 from marshmallow_mongoengine import ModelSchema
 from marshmallow_mongoengine.convert import default_converter
 import marshmallow.fields as mm_fields
@@ -73,16 +73,40 @@ class ForeignReferenceField(mm_fields.Field):
 
 
 class BaseSchema(ModelSchema):
-    pass
+    class Meta:
+        model_skip_values = []
 
 
 class DynamicBaseSchema(BaseSchema):
+    @staticmethod
+    def _serialize_dynamic_fields(obj, serialized_data):
+        if obj._dynamic:
+            for name, field in obj._dynamic_fields.items():
+                serialized_data[name] = default_converter.convert_field(field).serialize(name, obj)
+
     def dump(self, obj, many=None, update_fields=True, **kwargs):
-        result = super(DynamicBaseSchema, self).dump(obj, many=many, update_fields=update_fields, **kwargs)
+        if self.many:
+            data = []
+            errors = []
+            for item in obj:
+                result = super(DynamicBaseSchema, self).dump(item, many=False, update_fields=update_fields, **kwargs)
+                self._serialize_dynamic_fields(item, result.data)
+                data.append(result.data)
+                if result.errors:
+                    errors.append(result.errors)
+            return MarshalResult(data, errors)
+        else:
+            result = super(DynamicBaseSchema, self).dump(obj, many=False, update_fields=update_fields, **kwargs)
+            self._serialize_dynamic_fields(obj, result.data)
+            return result
+
+    def load(self, data, many=None, partial=None, **kwargs):
+        result = super(DynamicBaseSchema, self).load(data, many=many, partial=partial, **kwargs)
         if self.many:
             print('Fix me!')
         else:
-            if obj._dynamic:
-                for name, field in obj._dynamic_fields.items():
-                    result.data[name] = default_converter.convert_field(field).serialize(name, obj)
+            for key, value in data.items():
+                if key not in result.data._fields:
+                    setattr(result.data, key, value)
         return result
+
