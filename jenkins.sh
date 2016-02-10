@@ -12,6 +12,9 @@ cd ${SCRIPTPATH}
 # Create/update virtualenv when starting the server
 ./make_venv.sh
 
+# Update the submodules
+./update_submodules.sh
+
 source venv_mass/bin/activate
 
 export CONFIG_PATH=mass_flask_config.config_testing.TestingConfig
