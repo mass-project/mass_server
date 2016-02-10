@@ -1,9 +1,9 @@
 from mongoengine import StringField
-from mass_flask_config import db
+from mass_flask_config.app import db
 
 
 class AnalysisSystem(db.Document):
-    identifier_name = StringField(max_length=50, unique=True, required=True)
+    identifier_name = StringField(min_length=3, max_length=50, unique=True, required=True)
     verbose_name = StringField(max_length=200, required=True)
     information_text = StringField()
     tag_filter_expression = StringField(max_length=400, required=True, default='')

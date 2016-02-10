@@ -1,4 +1,4 @@
-from mass_flask_config import db
+from mass_flask_config.app import db
 from .analysis_system import AnalysisSystem
 from .sample_relation import SampleRelation
 from mongoengine import StringField, DateTimeField, ListField, ReferenceField, EmbeddedDocumentField, FileField, IntField, FloatField, EmbeddedDocument, LongField, ValidationError, \

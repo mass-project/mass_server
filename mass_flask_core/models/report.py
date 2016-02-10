@@ -1,4 +1,4 @@
-from mass_flask_config import db
+from mass_flask_config.app import db
 from mongoengine import StringField, DateTimeField, ReferenceField, IntField, ListField
 from .analysis_system import AnalysisSystem
 from .sample import Sample
