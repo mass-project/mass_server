@@ -1,5 +1,5 @@
-from mass_flask_config import app
 from mass_flask_config.bootstrap import bootstrap_mass_flask
+from mass_flask_config.app import app
 
 bootstrap_mass_flask()
 

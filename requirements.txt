@@ -10,3 +10,7 @@ python-magic>=0.4.6
 pyparsing>=2.0.7
 blinker>=1.4
 git+https://github.com/BlackXeronic/pefile_py3.git
+mixer>=5.4.1
+nose>=1.3.7
+nose-exclude>=0.4.1
+coverage>=4.0.3
