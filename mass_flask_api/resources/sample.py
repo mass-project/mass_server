@@ -1,8 +1,8 @@
 from flask import jsonify, request
 
 from mass_flask_api.config import api_blueprint
-from mass_flask_api.schemas import SampleSchema, FileSampleSchema, ExecutableBinarySampleSchema, ReportSchema
-from mass_flask_core.models import Sample, FileSample, Report
+from mass_flask_api.schemas import SampleSchema, FileSampleSchema, ExecutableBinarySampleSchema, ReportSchema, IPSampleSchema, DomainSampleSchema, URISampleSchema
+from mass_flask_core.models import Sample, FileSample, Report, IPSample, DomainSample, URISample
 
 from .base import BaseResource
 from mass_flask_api.utils import get_pagination_compatible_schema, register_api_endpoint
@@ -12,7 +12,10 @@ def _get_schema_for_model_class(model_class_name):
     model_conversion = {
         'Sample': SampleSchema,
         'FileSample': FileSampleSchema,
-        'ExecutableBinarySample': ExecutableBinarySampleSchema
+        'ExecutableBinarySample': ExecutableBinarySampleSchema,
+        'IPSample': IPSampleSchema,
+        'DomainSample': DomainSampleSchema,
+        'URISample': URISampleSchema
     }
     if model_class_name in model_conversion:
         return model_conversion[model_class_name]
@@ -168,6 +171,81 @@ class SampleResource(BaseResource):
             schema = _get_schema_for_model_class(sample.__class__.__name__)
             return jsonify(schema().dump(sample).data), 201
 
+    def submit_ip(self):
+        """
+        ---
+        post:
+            description: Submit an IP address to the MASS server
+            parameters:
+                - in: body
+                  name: body
+                  type: string
+            responses:
+                201:
+                    description: The IP address sample has been created on the MASS server. The metadata of the sample is returned.
+                    schema: IPSampleSchema
+                400:
+                    description: No IP address has been given or the request is malformed.
+        """
+        json_data = request.get_json()
+        if not json_data:
+            return jsonify({'error': 'No JSON data provided. Make sure to set the content type of your request to: application/json'}), 400
+        else:
+            sample = IPSample.create_or_update(**json_data)
+            sample.save()
+            schema = _get_schema_for_model_class(sample.__class__.__name__)
+            return jsonify(schema().dump(sample).data), 201
+
+    def submit_domain(self):
+        """
+        ---
+        post:
+            description: Submit a domain name to the MASS server
+            parameters:
+                - in: body
+                  name: body
+                  type: string
+            responses:
+                201:
+                    description: The domain name sample has been created on the MASS server. The metadata of the sample is returned.
+                    schema: DomainSampleSchema
+                400:
+                    description: No domain name has been given or the request is malformed.
+        """
+        json_data = request.get_json()
+        if not json_data:
+            return jsonify({'error': 'No JSON data provided. Make sure to set the content type of your request to: application/json'}), 400
+        else:
+            sample = DomainSample.create_or_update(**json_data)
+            sample.save()
+            schema = _get_schema_for_model_class(sample.__class__.__name__)
+            return jsonify(schema().dump(sample).data), 201
+
+    def submit_uri(self):
+        """
+        ---
+        post:
+            description: Submit a URI to the MASS server
+            parameters:
+                - in: body
+                  name: body
+                  type: string
+            responses:
+                201:
+                    description: The URI sample has been created on the MASS server. The metadata of the sample is returned.
+                    schema: URISampleSchema
+                400:
+                    description: No URI has been given or the request is malformed.
+        """
+        json_data = request.get_json()
+        if not json_data:
+            return jsonify({'error': 'No JSON data provided. Make sure to set the content type of your request to: application/json'}), 400
+        else:
+            sample = URISample.create_or_update(**json_data)
+            sample.save()
+            schema = _get_schema_for_model_class(sample.__class__.__name__)
+            return jsonify(schema().dump(sample).data), 201
+
     def reports(self, **kwargs):
         """
         ---
@@ -202,6 +280,15 @@ api_blueprint.apispec.add_path(path=api_blueprint.config['API_PREFIX'] + '/sampl
 
 api_blueprint.add_url_rule('/sample/submit_file/', view_func=SampleResource().submit_file, methods=['POST'])
 api_blueprint.apispec.add_path(path=api_blueprint.config['API_PREFIX'] + '/sample/submit_file/', view=SampleResource.submit_file)
+
+api_blueprint.add_url_rule('/sample/submit_ip/', view_func=SampleResource().submit_ip, methods=['POST'])
+api_blueprint.apispec.add_path(path=api_blueprint.config['API_PREFIX'] + '/sample/submit_ip/', view=SampleResource.submit_ip)
+
+api_blueprint.add_url_rule('/sample/submit_domain/', view_func=SampleResource().submit_domain, methods=['POST'])
+api_blueprint.apispec.add_path(path=api_blueprint.config['API_PREFIX'] + '/sample/submit_domain/', view=SampleResource.submit_domain)
+
+api_blueprint.add_url_rule('/sample/submit_uri/', view_func=SampleResource().submit_uri, methods=['POST'])
+api_blueprint.apispec.add_path(path=api_blueprint.config['API_PREFIX'] + '/sample/submit_uri/', view=SampleResource.submit_uri)
 
 api_blueprint.add_url_rule('/sample/<id>/reports/', view_func=SampleResource().reports, methods=['GET'], endpoint='sample_reports')
 api_blueprint.apispec.add_path(path=api_blueprint.config['API_PREFIX'] + '/sample/{id}/reports/', view=SampleResource.reports)
