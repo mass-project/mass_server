@@ -8,7 +8,7 @@ from werkzeug.datastructures import FileStorage
 class FileFunctions:
     @staticmethod
     def get_magic_string_from_file(file):
-        if isinstance(file, BufferedReader):
+        if isinstance(file, BufferedReader) or isinstance(file, FileStorage):
             magic_string = magic.from_buffer(file.read()).decode('utf-8')
             file.seek(0)
             return magic_string
@@ -17,7 +17,7 @@ class FileFunctions:
 
     @staticmethod
     def get_mime_type_from_file(file):
-        if isinstance(file, BufferedReader):
+        if isinstance(file, BufferedReader) or isinstance(file, FileStorage):
             mime_string = magic.from_buffer(file.read(), mime=True).decode('utf-8')
             file.seek(0)
             return mime_string
@@ -40,6 +40,10 @@ class FileFunctions:
     def get_file_size(file):
         if isinstance(file, BufferedReader):
             return os.path.getsize(file.name)
+        elif isinstance(file, FileStorage):
+            length = len(file.read())
+            file.seek(0)
+            return length
         else:
             raise TypeError('Unsupported file type: {}'.format(type(file)))
 
@@ -108,6 +112,8 @@ class FileFunctions:
     def get_file_name(file):
         if isinstance(file, BufferedReader):
             return os.path.basename(file.name)
+        elif isinstance(file, FileStorage):
+            return os.path.basename(file.filename)
         else:
             raise TypeError('Unsupported file type: {}'.format(type(file)))
 
