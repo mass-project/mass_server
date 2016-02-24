@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
+set -e
 
 # get script location
-
 pushd `dirname $0` > /dev/null
 SCRIPTPATH=`pwd`
 popd > /dev/null
@@ -10,6 +10,10 @@ cd ${SCRIPTPATH}
 
 # Create/update virtualenv when starting the server
 ./make_venv.sh
+source venv_mass/bin/activate
+
+# Update the submodules
+./update_submodules.sh
 
 # Launch uwsgi
 uwsgi --module mass_server_flask \
