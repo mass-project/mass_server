@@ -16,7 +16,7 @@ class AnalysisSystemInstance(db.Document):
     }
 
     def __repr__(self):
-        return '[AnalysisSystemInstance] {} {}'.format(self.analysis_system, self.uuid)
+        return '[AnalysisSystemInstance] {} {}'.format(self.analysis_system.identifier_name, self.uuid)
 
     def __str__(self):
         return self.__repr__()

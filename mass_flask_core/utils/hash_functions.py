@@ -12,7 +12,7 @@ class HashFunctions:
     @staticmethod
     def _calculate_hash_value(hash_fn, file):
         hash_fn.update(file.read())
-        file.stream.seek(0)
+        file.seek(0)
         return hash_fn.hexdigest().lower()
 
     @staticmethod
@@ -39,14 +39,14 @@ class HashFunctions:
     def ssdeep_hash(file):
         hash_fn = ssdeep.Hash()
         hash_fn.update(file.read())
-        file.stream.seek(0)
+        file.seek(0)
         ret_val = hash_fn.digest()
         return ret_val
 
     @staticmethod
     def shannon_entropy(file):
         data = file.read()
-        file.stream.seek(0)
+        file.seek(0)
         byte_count = len(data)
         if HashFunctions._is_python3_or_greater():
             probabilities = (count / byte_count for count in Counter(data).values())

@@ -1,6 +1,6 @@
 from mass_flask_core.models import AnalysisSystem
 from mongoengine.errors import ValidationError, NotUniqueError
-from mass_flask_core.tests.flask_test_case import FlaskTestCase
+from mass_flask_core.tests import FlaskTestCase
 from mixer.backend.mongoengine import mixer
 
 

@@ -1,26 +1,28 @@
 import magic
 import re
+import os
+from io import BufferedReader
 from werkzeug.datastructures import FileStorage
 
 
 class FileFunctions:
     @staticmethod
     def get_magic_string_from_file(file):
-        if isinstance(file, FileStorage):
+        if isinstance(file, BufferedReader):
             magic_string = magic.from_buffer(file.read()).decode('utf-8')
-            file.stream.seek(0)
+            file.seek(0)
             return magic_string
         else:
-            raise TypeError('Unsupported file type.')
+            raise TypeError('Unsupported file type: {}'.format(type(file)))
 
     @staticmethod
     def get_mime_type_from_file(file):
-        if isinstance(file, FileStorage):
+        if isinstance(file, BufferedReader):
             mime_string = magic.from_buffer(file.read(), mime=True).decode('utf-8')
-            file.stream.seek(0)
+            file.seek(0)
             return mime_string
         else:
-            raise TypeError('Unsupported file type.')
+            raise TypeError('Unsupported file type: {}'.format(type(file)))
 
     @staticmethod
     def get_file_extension(file_name):
@@ -36,10 +38,10 @@ class FileFunctions:
 
     @staticmethod
     def get_file_size(file):
-        if isinstance(file, FileStorage):
-            return len(file.read())
+        if isinstance(file, BufferedReader):
+            return os.path.getsize(file.name)
         else:
-            raise TypeError('Unsupported file type.')
+            raise TypeError('Unsupported file type: {}'.format(type(file)))
 
     @staticmethod
     def get_extra_tags_from_magic_string(magic_string):
@@ -104,10 +106,10 @@ class FileFunctions:
 
     @staticmethod
     def get_file_name(file):
-        if isinstance(file, FileStorage):
-            return file.filename
+        if isinstance(file, BufferedReader):
+            return os.path.basename(file.name)
         else:
-            raise TypeError('Unsupported file type.')
+            raise TypeError('Unsupported file type: {}'.format(type(file)))
 
     # @staticmethod
     # def get_download_response_for_mongoengine_file_object(file):
