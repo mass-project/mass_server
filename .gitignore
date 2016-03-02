@@ -9,3 +9,4 @@ venv*
 uwsgi.log
 coverage.xml
 nosetests.xml
+secret.txt
