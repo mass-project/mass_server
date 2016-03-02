@@ -9,4 +9,3 @@ class ProductionConfig(BaseConfig):
         'port': 27017,
         'tz_aware': True
     }
-    APPLICATION_ROOT = '/mass-dev'

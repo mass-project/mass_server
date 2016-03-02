@@ -2,9 +2,11 @@ import os
 import subprocess
 from flask import Flask
 from flask.ext.mongoengine import MongoEngine
+from .reverse_proxy import ReverseProxied
 
 # Initialize app
 app = Flask(__name__)
+app.wsgi_app = ReverseProxied(app.wsgi_app)
 
 # Generate or load secret key
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
