@@ -15,6 +15,9 @@ source venv_mass/bin/activate
 # Update the submodules
 ./update_submodules.sh
 
+# Configuration
+export CONFIG_PATH=mass_flask_config.config_production.ProductionConfig
+
 # Launch uwsgi
 uwsgi --module mass_server_flask \
     --callable app \
