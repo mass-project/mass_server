@@ -7,5 +7,7 @@ class ProductionConfig(BaseConfig):
         'db': 'mass-flask-production',
         'host': 'localhost',
         'port': 27017,
+        'username': 'mass',
+        'password': 'massdevdeploymentsecurepassword',
         'tz_aware': True
     }
