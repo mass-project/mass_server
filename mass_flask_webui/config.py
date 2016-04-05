@@ -3,7 +3,7 @@ from markupsafe import Markup
 
 from mass_flask_config.app import app
 from mass_flask_core.models import Sample, FileSample, IPSample, DomainSample, URISample, ExecutableBinarySample, Report
-from mass_flask_core.utils.pagination_functions import paginate
+from mass_flask_core.utils import PaginationFunctions
 
 webui_blueprint = Blueprint('mass_flask_webui', __name__, template_folder='templates', static_folder='static')
 
@@ -27,7 +27,7 @@ def index():
     return render_template('index.html', **index_context)
 
 
-@paginate(per_page=100)
+@PaginationFunctions.paginate(per_page=100)
 def get_samples_paginated():
     return Sample.objects()
 
