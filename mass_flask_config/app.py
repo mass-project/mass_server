@@ -32,4 +32,4 @@ app.config.from_object(config_path)
 db = MongoEngine(app)
 
 # Load app version from git
-app.version = subprocess.check_output(['git', 'describe'], cwd=os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
+app.version = subprocess.check_output(['git', 'describe'], cwd=os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')).decode().strip()
