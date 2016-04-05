@@ -1,6 +1,7 @@
 import os
 import subprocess
 from flask import Flask
+from flask.ext.bootstrap import Bootstrap
 from flask.ext.mongoengine import MongoEngine
 from .reverse_proxy import ReverseProxied
 
@@ -30,6 +31,9 @@ app.config.from_object(config_path)
 
 # Init db
 db = MongoEngine(app)
+
+# Init flask-bootstrap
+Bootstrap(app)
 
 # Load app version from git
 app.version = subprocess.check_output(['git', 'describe'], cwd=os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')).decode().strip()
