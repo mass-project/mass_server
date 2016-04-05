@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block page_title %}
+Sample list
+{% endblock %}
+
+{% block content %}
+
+    <div class="page-header">
+        <h1>Sample list</h1>
+    </div>
+
+    {{ pagination(samples) }}
+
+    <table class="table table-striped table-hover">
+        <tr><th>#ID</th><th>Delivery date</th></tr>
+        {% for sample in samples.results %}
+            <tr><td>{{ sample_icon(sample) }} <a href="{{ url_for('mass_flask_webui.sample_detail', sample_id=sample.id) }}">{{ sample.title }}</a></td><td>{{ sample.delivery_date }}</td></tr>
+        {% endfor %}
+    </table>
+
+    {{ pagination(samples) }}
+
+{% endblock %}

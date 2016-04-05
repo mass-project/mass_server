@@ -1,0 +1,9 @@
+<div class="page-header">
+    <h1><i class="fa fa-paper-plane"></i> Sample submission</h1>
+</div>
+<ul class="nav nav-tabs submit-tabs">
+    <li class="{% if file_submit_active %}active{% endif %}"><a href="{% url 'mass-gui-submit-file' %}"><i class="fa fa-file"></i> File</a></li>
+    <li class="{% if ip_submit_active %}active{% endif %}"><a href="{% url 'mass-gui-submit-ip' %}"><i class="fa fa-desktop"></i> IP address</a></li>
+    <li class="{% if domain_submit_active %}active{% endif %}"><a href="{% url 'mass-gui-submit-domain' %}"><i class="fa fa-globe"></i> Domain</a></li>
+    <li class="{% if uri_submit_active %}active{% endif %}"><a href="{% url 'mass-gui-submit-uri' %}"><i class="fa fa-at"></i> URI</a></li>
+</ul>

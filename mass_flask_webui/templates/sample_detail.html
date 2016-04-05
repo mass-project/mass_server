@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+
+{% block page_title %}
+Detail page for sample #{{ sample.id }}
+{% endblock %}
+
+{% block content %}
+
+    <div class="page-header">
+        <h1>Sample #{{ sample.id }}
+            <small>{{ sample_icon(sample) }} {{ sample._cls }}</small>
+        </h1>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <h2>Common sample metadata</h2>
+            <dl class="dl-horizontal">
+                <dt>API Link</dt>
+                <dd><a href="{{ url_for('mass_flask_api.sample', id=sample.id) }}"><i class="fa fa-share"></i> Sample metadata in JSON API</a></dd>
+                <dt>Sample ID</dt>
+                <dd>{{ sample.id }}</dd>
+                <dt>Sample type</dt>
+                <dd>{{ sample._cls }}</dd>
+                <dt>Comment</dt>
+                <dd>{{ sample.comment }}</dd>
+                <dt>Long comment</dt>
+                <dd>{{ sample.long_comment }}</dd>
+                <dt>Delivery date</dt>
+                <dd>{{ sample.delivery_date }}</dd>
+                <dt>First seen date</dt>
+                <dd>{{ sample.first_seen }}</dd>
+                <dt>Tags</dt>
+                <dd>
+                    <ul>
+                        {% for tag in sample.tags %}
+                        <li>{{ tag }}</li>
+                        {% else %}
+                            <li><em>No tags found.</em>
+                        {% endfor %}
+                    </ul>
+                </dd>
+            </dl>
+
+            {% if is_file_sample(sample) %}
+            <div>
+                <h2>File sample metadata</h2>
+                <dl class="dl-horizontal">
+                    <dt>Sample download</dt>
+                    <dd><a href="{{ url_for('mass_flask_api.sample_download', id=sample.id) }}"><i class="fa fa-share"></i> Download sample file</a></dd>
+                    <dt>File size</dt>
+                    <dd>{{ sample.file_size }} bytes</dd>
+                    <dt>MIME type</dt>
+                    <dd>{{ sample.mime_type }}</dd>
+                    <dt>Magic string</dt>
+                    <dd>{{ sample.magic_string }}</dd>
+                    <dt>MD5</dt>
+                    <dd>{{ sample.md5sum }}</dd>
+                    <dt>SHA1</dt>
+                    <dd>{{ sample.sha1sum }}</dd>
+                    <dt>SHA256</dt>
+                    <dd>{{ sample.sha256sum }}</dd>
+                    <dt>SHA512</dt>
+                    <dd>{{ sample.sha512sum }}</dd>
+                    <dt>File entropy</dt>
+                    <dd>{{ sample.shannon_entropy }}</dd>
+                    <dt>ssdeep hash</dt>
+                    <dd>{{ sample.ssdeep_hash }}</dd>
+                    <dt>File names</dt>
+                    <dd>
+                        <ul>
+                            {% for name in sample.file_names %}
+                            <li>{{ name }}</li>
+                            {% else %}
+                                <li><em>No file names found.</em>
+                            {% endfor %}
+                        </ul>
+                    </dd>
+                </dl>
+            </div>
+            {% endif %}
+
+            {% if is_executable_binary_sample(sample) %}
+            <div>
+                <h2>Windows executable sample metadata</h2>
+                <dl class="dl-horizontal">
+                    <dt>Stub</dt>
+                    <dd>Implement me!</dd>
+                </dl>
+            </div>
+            {% endif %}
+
+        </div>
+
+        <div class="col-md-6 panel-group" id="accordion-reports">
+            <h2>Reports</h2>
+            {% for report in reports %}
+            <div class="panel panel-default">
+                <div class="panel-heading" id="heading-{{ report.id }}">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse-{{ report.id }}">
+                            Report {{ report.id }}
+                        </a>
+                    </h4>
+                </div>
+                <div id="collapse-{{ report.id }}" class="panel-collapse collapse">
+                    <div class="panel-body">
+                        <dl class="dl-horizontal">
+                            <dt>Analysis system</dt>
+                            <dd>{{ report.analysis_system }}</dd>
+                            <dt>Report date</dt>
+                            <dd>{{ report.report_date }}</dd>
+                            <dt>Tags</dt>
+                            <dd>
+                                {% for tag in report.tags %}
+                                <li>{{ tag }}</li>
+                                {% else %}
+                                    <li><em>No tags found.</em>
+                                {% endfor %}
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+{% endblock %}

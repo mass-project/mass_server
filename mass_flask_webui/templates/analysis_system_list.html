@@ -1,0 +1,20 @@
+{% extends "mass_core/base.html" %}
+
+{% block page_title %}
+Analysis system list
+{% endblock %}
+
+{% block content %}
+
+<table class="table table-striped table-hover">
+    <tr><th>System name</th></tr>
+    {% for system in analysis_systems %}
+        <tr><td>{{ system.identifier_name }}</td></tr>
+    {% endfor %}
+</table>
+
+{% load pagination %}
+
+{% pagination analysis_systems %}
+
+{% endblock %}

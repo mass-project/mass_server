@@ -1,0 +1,17 @@
+{% extends "mass_core/base.html" %}
+
+{% block page_title %}
+    {{ pagetitle }}
+{% endblock %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+    {% include "mass_web_gui/submit_header.html" %}
+
+    <form class="mass-submission-form" action="" enctype="multipart/form-data" method="post">
+        {% csrf_token %}
+        {% crispy submit_form %}
+    </form>
+{% endblock %}
