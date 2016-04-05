@@ -8,5 +8,8 @@
 	path = mass_flask_api
 	url = ssh://git@atlassian-net.cs.uni-bonn.de:7999/mal/mass_flask_api.git
 [submodule "mass_angular_webui"]
+	path = mass_flask_webui
+	url = ssh://git@atlassian-net.cs.uni-bonn.de:7999/mal/mass_flask_webui.git
+[submodule "mass_angular_webui"]
 	path = mass_angular_webui
 	url = ssh://git@atlassian-net.cs.uni-bonn.de:7999/mal/mass_angular_webui.git
