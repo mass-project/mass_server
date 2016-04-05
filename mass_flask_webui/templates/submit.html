@@ -1,17 +1,22 @@
-{% extends "mass_core/base.html" %}
+{% extends "base.html" %}
+
+{% import "bootstrap/wtf.html" as wtf %}
 
 {% block page_title %}
-    {{ pagetitle }}
+    Sample submission
 {% endblock %}
-
-{% load crispy_forms_tags %}
 
 {% block content %}
 
-    {% include "mass_web_gui/submit_header.html" %}
+    <div class="page-header">
+        <h1><i class="fa fa-paper-plane"></i> Sample submission</h1>
+    </div>
+    <ul class="nav nav-tabs submit-tabs">
+        <li class="{% if file_submit_active %}active{% endif %}"><a href="{{ url_for('mass_flask_webui.submit_file') }}"><i class="fa fa-file"></i> File</a></li>
+        <li class="{% if ip_submit_active %}active{% endif %}"><a href="{{ url_for('mass_flask_webui.submit_ip') }}"><i class="fa fa-desktop"></i> IP address</a></li>
+        <li class="{% if domain_submit_active %}active{% endif %}"><a href="{{ url_for('mass_flask_webui.submit_domain') }}"><i class="fa fa-globe"></i> Domain</a></li>
+        <li class="{% if uri_submit_active %}active{% endif %}"><a href="{{ url_for('mass_flask_webui.submit_uri') }}"><i class="fa fa-at"></i> URI</a></li>
+    </ul>
 
-    <form class="mass-submission-form" action="" enctype="multipart/form-data" method="post">
-        {% csrf_token %}
-        {% crispy submit_form %}
-    </form>
+    {{ wtf.quick_form(form) }}
 {% endblock %}
