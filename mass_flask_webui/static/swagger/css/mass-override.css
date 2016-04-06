@@ -1,0 +1,7 @@
+.swagger-section .swagger-ui-wrap {
+    max-width: none;
+}
+
+#resources_container {
+    width: 100%;
+}

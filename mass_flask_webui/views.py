@@ -22,6 +22,11 @@ def index():
     return render_template('index.html', **index_context)
 
 
+@webui_blueprint.route('/apidocs/')
+def apidocs():
+    return render_template('apidocs.html')
+
+
 @PaginationFunctions.paginate(per_page=100)
 def _get_samples_paginated():
     return Sample.objects()
