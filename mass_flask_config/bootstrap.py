@@ -1,5 +1,5 @@
 import os
-from flask import send_from_directory
+from flask import redirect, url_for
 from mass_flask_api.config import api_blueprint
 from mass_flask_webui.config import webui_blueprint
 from mass_flask_config.app import app
@@ -24,6 +24,11 @@ ui_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'mass_a
 @app.route('/version/', methods=['GET'])
 def get_version():
     return app.version
+
+
+@app.route('/', methods=['GET'])
+def index():
+    return redirect(url_for('mass_flask_webui.index'))
 
 
 def bootstrap_mass_flask():
