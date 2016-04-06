@@ -145,4 +145,4 @@ class DispatchRequestResource(BaseResource):
 register_api_endpoint('dispatch_request', DispatchRequestResource)
 
 api_blueprint.add_url_rule('/dispatch_request/<id>/dispatch_to_systems/', view_func=DispatchRequestResource().dispatch_to_systems, methods=['POST'])
-api_blueprint.apispec.add_path(path=api_blueprint.config['API_PREFIX'] + '/dispatch_request/{id}/dispatch_to_systems/', view=DispatchRequestResource.dispatch_to_systems)
+api_blueprint.apispec.add_path('/dispatch_request/{id}/dispatch_to_systems/', view=DispatchRequestResource.dispatch_to_systems)

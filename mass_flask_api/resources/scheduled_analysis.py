@@ -145,4 +145,4 @@ class ScheduledAnalysisResource(BaseResource):
 register_api_endpoint('scheduled_analysis', ScheduledAnalysisResource)
 
 api_blueprint.add_url_rule('/scheduled_analysis/<id>/submit_report/', view_func=ScheduledAnalysisResource().submit_report, methods=['POST'])
-api_blueprint.apispec.add_path(path=api_blueprint.config['API_PREFIX'] + '/scheduled_analysis/{id}/submit_report/', view=ScheduledAnalysisResource.submit_report)
+api_blueprint.apispec.add_path(path='/scheduled_analysis/{id}/submit_report/', view=ScheduledAnalysisResource.submit_report)

@@ -276,19 +276,19 @@ class SampleResource(BaseResource):
 register_api_endpoint('sample', SampleResource)
 
 api_blueprint.add_url_rule('/sample/<id>/download/', view_func=SampleResource().download_file, methods=['GET'], endpoint='sample_download')
-api_blueprint.apispec.add_path(path=api_blueprint.config['API_PREFIX'] + '/sample/{id}/download/', view=SampleResource.download_file)
+api_blueprint.apispec.add_path(path='/sample/{id}/download/', view=SampleResource.download_file)
 
 api_blueprint.add_url_rule('/sample/submit_file/', view_func=SampleResource().submit_file, methods=['POST'])
-api_blueprint.apispec.add_path(path=api_blueprint.config['API_PREFIX'] + '/sample/submit_file/', view=SampleResource.submit_file)
+api_blueprint.apispec.add_path(path='/sample/submit_file/', view=SampleResource.submit_file)
 
 api_blueprint.add_url_rule('/sample/submit_ip/', view_func=SampleResource().submit_ip, methods=['POST'])
-api_blueprint.apispec.add_path(path=api_blueprint.config['API_PREFIX'] + '/sample/submit_ip/', view=SampleResource.submit_ip)
+api_blueprint.apispec.add_path(path='/sample/submit_ip/', view=SampleResource.submit_ip)
 
 api_blueprint.add_url_rule('/sample/submit_domain/', view_func=SampleResource().submit_domain, methods=['POST'])
-api_blueprint.apispec.add_path(path=api_blueprint.config['API_PREFIX'] + '/sample/submit_domain/', view=SampleResource.submit_domain)
+api_blueprint.apispec.add_path(path='/sample/submit_domain/', view=SampleResource.submit_domain)
 
 api_blueprint.add_url_rule('/sample/submit_uri/', view_func=SampleResource().submit_uri, methods=['POST'])
-api_blueprint.apispec.add_path(path=api_blueprint.config['API_PREFIX'] + '/sample/submit_uri/', view=SampleResource.submit_uri)
+api_blueprint.apispec.add_path(path='/sample/submit_uri/', view=SampleResource.submit_uri)
 
 api_blueprint.add_url_rule('/sample/<id>/reports/', view_func=SampleResource().reports, methods=['GET'], endpoint='sample_reports')
-api_blueprint.apispec.add_path(path=api_blueprint.config['API_PREFIX'] + '/sample/{id}/reports/', view=SampleResource.reports)
+api_blueprint.apispec.add_path(path='/sample/{id}/reports/', view=SampleResource.reports)

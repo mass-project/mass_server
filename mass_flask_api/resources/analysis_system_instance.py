@@ -137,4 +137,4 @@ class AnalysisSystemInstanceResource(BaseResource):
 register_api_endpoint('analysis_system_instance', AnalysisSystemInstanceResource)
 
 api_blueprint.add_url_rule('/analysis_system_instance/<uuid>/scheduled_analyses/', view_func=AnalysisSystemInstanceResource().scheduled_analyses, methods=['GET'])
-api_blueprint.apispec.add_path(path=api_blueprint.config['API_PREFIX'] + '/analysis_system_instance/{uuid}/scheduled_analyses/', view=AnalysisSystemInstanceResource.scheduled_analyses)
+api_blueprint.apispec.add_path('/analysis_system_instance/{uuid}/scheduled_analyses/', view=AnalysisSystemInstanceResource.scheduled_analyses)
