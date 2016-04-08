@@ -4,5 +4,6 @@ from .time_functions import TimeFunctions
 from .file_functions import FileFunctions
 from .list_functions import ListFunctions
 from .string_functions import StringFunctions
+from .pagination_functions import PaginationFunctions
 
-__all__ = ['HashFunctions', 'MenuRegistry', 'TimeFunctions', 'FileFunctions', 'ListFunctions', 'StringFunctions']
+__all__ = ['HashFunctions', 'MenuRegistry', 'TimeFunctions', 'FileFunctions', 'ListFunctions', 'StringFunctions', 'PaginationFunctions']
