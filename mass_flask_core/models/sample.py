@@ -45,7 +45,11 @@ class Sample(db.Document):
                 if relation not in self.sample_relations:
                     self.sample_relations.append(relation)
         if 'tags' in kwargs:
-            self.tags = ListFunctions.merge_lists_without_duplicates(self.tags, kwargs['tags'])
+            tags = kwargs['tags']
+        else:
+            tags = []
+        tags.append('sample-type:' + self.__class__.__name__.lower())
+        self.tags = ListFunctions.merge_lists_without_duplicates(self.tags, tags)
 
     @classmethod
     def create_or_update(cls, **kwargs):

@@ -79,6 +79,10 @@ class SampleTestCase(FlaskTestCase):
         with self.assertRaises(ValidationError):
             FileSample.create_or_update(**kwargs)
 
+    def test_is_sample_type_tag_present(self):
+        file_sample = self._create_file_sample()
+        self.assertIn('sample-type:filesample', file_sample.tags)
+
     # def test_ip_sample_can_not_be_created_without_ip(self):
     #     kwargs = {}
     #     with self.assertRaises(ValidationError):
