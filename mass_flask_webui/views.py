@@ -27,6 +27,11 @@ def apidocs():
     return render_template('apidocs.html')
 
 
+@webui_blueprint.route('/cli_scripts/')
+def cli_scripts():
+    return render_template('cli_scripts.html')
+
+
 @PaginationFunctions.paginate(per_page=100)
 def _get_samples_paginated():
     return Sample.objects()
@@ -51,7 +56,7 @@ def submit_file():
     if form.validate_on_submit():
         sample = FileSample.create_or_update(file=form.data['file'], **form.data['optional'])
         return redirect(url_for('mass_flask_webui.sample_detail', sample_id=sample.id))
-    return render_template('submit.html', form=form)
+    return render_template('submit.html', form=form, submit_mode="file")
 
 
 @webui_blueprint.route('/submit/ip/', methods=['GET', 'POST'])
@@ -60,7 +65,7 @@ def submit_ip():
     if form.validate_on_submit():
         sample = IPSample.create_or_update(ip_address=form.data['ip_address'], **form.data['optional'])
         return redirect(url_for('mass_flask_webui.sample_detail', sample_id=sample.id))
-    return render_template('submit.html', form=form)
+    return render_template('submit.html', form=form, submit_mode="ip")
 
 
 @webui_blueprint.route('/submit/domain/', methods=['GET', 'POST'])
@@ -69,7 +74,7 @@ def submit_domain():
     if form.validate_on_submit():
         sample = DomainSample.create_or_update(domain=form.data['domain'], **form.data['optional'])
         return redirect(url_for('mass_flask_webui.sample_detail', sample_id=sample.id))
-    return render_template('submit.html', form=form)
+    return render_template('submit.html', form=form, submit_mode="domain")
 
 
 @webui_blueprint.route('/submit/uri/', methods=['GET', 'POST'])
@@ -78,4 +83,4 @@ def submit_uri():
     if form.validate_on_submit():
         sample = URISample.create_or_update(uri=form.data['uri'], **form.data['optional'])
         return redirect(url_for('mass_flask_webui.sample_detail', sample_id=sample.id))
-    return render_template('submit.html', form=form)
+    return render_template('submit.html', form=form, submit_mode="uri")
