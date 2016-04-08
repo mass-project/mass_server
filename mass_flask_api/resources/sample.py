@@ -171,7 +171,8 @@ class SampleResource(BaseResource):
             data = {
                 'file': request.files['file']
             }
-            sample = FileSample.create_or_update(**data, **metadata)
+            data.update(metadata)
+            sample = FileSample.create_or_update(**data)
             print(sample)
             sample.save()
             schema = _get_schema_for_model_class(sample.__class__.__name__)
