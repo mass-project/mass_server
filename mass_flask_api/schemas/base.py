@@ -1,11 +1,10 @@
-from flask import url_for, _request_ctx_stack
+from flask import url_for, _request_ctx_stack, request
 from marshmallow import ValidationError, post_dump, MarshalResult
 from marshmallow_mongoengine import ModelSchema
 from marshmallow_mongoengine.convert import default_converter
 import marshmallow.fields as mm_fields
 import marshmallow_mongoengine.fields as mmme_fields
 from werkzeug.exceptions import NotFound
-from werkzeug.urls import url_parse
 
 
 # Make these importable by other modules
@@ -52,12 +51,14 @@ class ForeignReferenceField(mm_fields.Field):
         adapter = ctx.url_adapter
         if adapter is None:
             raise RuntimeError('Could not find a URL adapter in the current request context.')
-        url = url_parse(value)
-        if url.netloc is not "" and url.netloc != adapter.server_name:
+
+        local_url = value.replace(request.url_root, '/', 1)
+
+        if local_url == value:
             raise ValidationError('Reference URL for field {} incorrectly specified: Network location of the URL does not match the servers network location.'.format(attr))
 
         try:
-            endpoint, params = adapter.match(url.path, 'GET')
+            endpoint, params = adapter.match(local_url, 'GET')
         except NotFound:
             raise ValidationError('Reference URL for field {} incorrectly specified: The path of the URL points to a nonexistent API endpoint.'.format(attr))
 
