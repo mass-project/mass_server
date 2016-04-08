@@ -1,3 +1,5 @@
+import json
+
 from flask import jsonify, request
 
 from mass_flask_api.config import api_blueprint
@@ -162,10 +164,14 @@ class SampleResource(BaseResource):
         if 'file' not in request.files:
             return jsonify({'error': 'File payload missing in POST request.'}), 400
         else:
+            if 'metadata' in request.form:
+                metadata = json.loads(request.form['metadata'])
+            else:
+                metadata = {}
             data = {
                 'file': request.files['file']
             }
-            sample = FileSample.create_or_update(**data)
+            sample = FileSample.create_or_update(**data, **metadata)
             print(sample)
             sample.save()
             schema = _get_schema_for_model_class(sample.__class__.__name__)
