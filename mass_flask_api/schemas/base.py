@@ -54,20 +54,20 @@ class ForeignReferenceField(mm_fields.Field):
             raise RuntimeError('Could not find a URL adapter in the current request context.')
         url = url_parse(value)
         if url.netloc is not "" and url.netloc != adapter.server_name:
-            raise ValidationError('Reference URL for field {} incorrectly specified.'.format(attr))
+            raise ValidationError('Reference URL for field {} incorrectly specified: Network location of the URL does not match the servers network location.'.format(attr))
 
         try:
             endpoint, params = adapter.match(url.path, 'GET')
         except NotFound:
-            raise ValidationError('Reference URL for field {} incorrectly specified.'.format(attr))
+            raise ValidationError('Reference URL for field {} incorrectly specified: The path of the URL points to a nonexistent API endpoint.'.format(attr))
 
         if endpoint != self._endpoint:
-            raise ValidationError('Reference URL for field {} incorrectly specified.'.format(attr))
+            raise ValidationError('Reference URL for field {} incorrectly specified. The path of the URL points to an endpoint that differs from the correct endpoint for this field.'.format(attr))
 
         query_result = self._queryset.filter(**params)
 
         if not query_result:
-            raise ValidationError('Reference URL for field {} incorrectly specified.'.format(attr))
+            raise ValidationError('Reference URL for field {} incorrectly specified. The format of the URL is correct but the referenced object could not be found.'.format(attr))
 
         return query_result.first()
 
