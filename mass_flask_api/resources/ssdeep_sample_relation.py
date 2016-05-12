@@ -66,7 +66,6 @@ class SsdeepSampleRelationResource(BaseResource):
             return jsonify({'error': 'No JSON data provided. Make sure to set the content type of your request to: application/json'}), 400
         else:
             parsed_data = self.schema.load(json_data, partial=True)
-            print(dir(parsed_data.data))
             if parsed_data.errors:
                 return jsonify(parsed_data.errors), 400
             obj = SsdeepSampleRelation()
