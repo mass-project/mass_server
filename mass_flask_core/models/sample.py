@@ -4,7 +4,6 @@ from mongoengine import StringField, DateTimeField, ListField, ReferenceField, E
     DoesNotExist
 from mass_flask_core.utils import TimeFunctions, HashFunctions, FileFunctions, ListFunctions, StringFunctions
 import pefile
-import ssdeep
 
 
 class Sample(db.Document):
