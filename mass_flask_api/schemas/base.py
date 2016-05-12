@@ -73,6 +73,31 @@ class ForeignReferenceField(mm_fields.Field):
         return query_result.first()
 
 
+class FileMapField(mm_fields.Field):
+    def __init__(self, *args, **kwargs):
+        endpoint = kwargs.pop('endpoint')
+        file_url_key = kwargs.pop('file_url_key')
+        super(FileMapField, self).__init__(*args, **kwargs)
+        self.dump_only = True
+        self._endpoint = endpoint
+        self._file_url_key = file_url_key
+
+    def _serialize(self, value, attr, obj):
+        # return url_for(self._endpoint, id=obj.id, _external=True)
+        result = {}
+        for key in value.keys():
+            kwargs = {
+                'id': obj.id,
+                self._file_url_key: key,
+                '_external': True
+            }
+            result[key] = url_for(self._endpoint, **kwargs)
+        return result
+
+    def _deserialize(self, value, attr, data):
+        raise ValidationError("Deserialization is not supported for this field.")
+
+
 class BaseSchema(ModelSchema):
     class Meta:
         model_skip_values = []

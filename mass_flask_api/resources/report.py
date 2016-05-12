@@ -1,3 +1,6 @@
+from flask import jsonify
+
+from mass_flask_api.config import api_blueprint
 from .base import BaseResource
 from mass_flask_api.utils import get_pagination_compatible_schema, register_api_endpoint
 from mass_flask_api.schemas import ReportSchema
@@ -101,5 +104,72 @@ class ReportResource(BaseResource):
         """
         return super(ReportResource, self).delete(**kwargs)
 
+    def get_json_report_object(self, **kwargs):
+        """
+        ---
+        get:
+            description: Get the contents of a JSON report object
+            parameters:
+                - in: path
+                  name: id
+                  type: string
+                - in: path
+                  name: object_name
+                  type: string
+            responses:
+                200:
+                    description: The JSON report object is returned.
+                400:
+                    description: Invalid request.
+                404:
+                    description: No report with the specified id has been found.
+        """
+        report = self.model.objects(id=kwargs['id']).first()
+        if not report:
+            return jsonify({'error': 'No object with key \'{}\' found'.format(kwargs['id'])}), 404
+        else:
+            obj = report.json_report_objects[kwargs['object_name']]
+            if not obj:
+                return jsonify({'error': 'No object with key \'{}\' found'.format(kwargs['object_name'])}), 404
+            else:
+                file = obj.read()
+                return file, 200, {'Content-Type': 'application/json'}
+
+    def get_raw_report_object(self, **kwargs):
+        """
+        ---
+        get:
+            description: Get the contents of a raw binary report object
+            parameters:
+                - in: path
+                  name: id
+                  type: string
+                - in: path
+                  name: object_name
+                  type: string
+            responses:
+                200:
+                    description: The raw binary report object is returned.
+                400:
+                    description: Invalid request.
+                404:
+                    description: No report with the specified id has been found.
+        """
+        report = self.model.objects(id=kwargs['id']).first()
+        if not report:
+            return jsonify({'error': 'No object with key \'{}\' found'.format(kwargs['id'])}), 404
+        else:
+            obj = report.raw_report_objects[kwargs['object_name']]
+            if not obj:
+                return jsonify({'error': 'No object with key \'{}\' found'.format(kwargs['object_name'])}), 404
+            else:
+                file = obj.read()
+                return file, 200, {'Content-Type': 'binary/octet-stream'}
+
 
 register_api_endpoint('report', ReportResource)
+
+api_blueprint.add_url_rule('/report/<id>/json_report_object/<object_name>/', view_func=ReportResource().get_json_report_object, methods=['GET'], endpoint='json_report_object')
+api_blueprint.apispec.add_path(path='/report/{id}/json_report_object/{object_name}/', view=ReportResource.get_json_report_object)
+api_blueprint.add_url_rule('/report/<id>/raw_report_object/<object_name>/', view_func=ReportResource().get_raw_report_object, methods=['GET'], endpoint='raw_report_object')
+api_blueprint.apispec.add_path(path='/report/{id}/raw_report_object/{object_name}/', view=ReportResource.get_raw_report_object)
