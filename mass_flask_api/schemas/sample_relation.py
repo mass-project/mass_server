@@ -8,7 +8,7 @@ from .base import ForeignReferenceField
 
 
 class SampleRelationSchema(BaseSchema):
-    url = URLFor('._sample_relation', id='<id>', _external=True)
+    url = URLFor('.sample_relation', id='<id>', _external=True)
     sample = ForeignReferenceField(endpoint='mass_flask_api.sample', queryset=Sample.objects(), query_parameter='id')
     other = ForeignReferenceField(endpoint='mass_flask_api.sample', queryset=Sample.objects(), query_parameter='id')
     relation_type = String()

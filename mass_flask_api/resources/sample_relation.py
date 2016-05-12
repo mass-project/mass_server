@@ -74,7 +74,7 @@ class SampleRelationResource(BaseResource):
             obj.relation_type = json_data['relation_type']
             obj.save()
             result = self.schema.dump(obj)
-            return jsonify(result.data), 201
+        return jsonify(result.data), 201
 
     def put(self, **kwargs):
         """
