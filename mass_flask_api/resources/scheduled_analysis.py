@@ -1,4 +1,5 @@
-from flask import request, jsonify
+from flask import request, jsonify, json
+from mongoengine import GridFSProxy
 
 from mass_flask_api.config import api_blueprint
 from .base import BaseResource
@@ -125,18 +126,30 @@ class ScheduledAnalysisResource(BaseResource):
                     description: No scheduled analysis with the specified id has been found.
         """
         scheduled_analysis = self.model.objects(id=kwargs['id']).first()
-        json_data = request.get_json()
-        if not json_data:
-            return jsonify({'error': 'No JSON data provided. Make sure to set the content type of your request to: application/json'}), 400
-        elif not scheduled_analysis:
-            return jsonify({'error': 'No object with key \'{}\' found'.format(kwargs[self.query_key_field])}), 404
+
+        if 'metadata' not in request.files:
+            return jsonify({'error': 'JSON metadata missing in POST request.'}), 400
         else:
-            parsed_report = ReportSchema().load(json_data, partial=True)
+            data = json.loads(request.files['metadata'].read())
+            data['json_report_objects'] = {}
+            data['raw_report_objects'] = {}
+
+            parsed_report = ReportSchema().load(data, partial=True)
             if parsed_report.errors:
                 return jsonify(parsed_report.errors), 400
             report = parsed_report.data
+
             report.sample = scheduled_analysis.sample
             report.analysis_system = scheduled_analysis.analysis_system_instance.analysis_system
+
+            for key, f in request.files.items():
+                if key == 'metadata':
+                    continue
+                if f.mimetype == "application/json":
+                    report.add_json_report_object(f)
+                else:
+                    report.add_raw_report_object(f)
+
             report.save()
             scheduled_analysis.delete()
             return '', 204
