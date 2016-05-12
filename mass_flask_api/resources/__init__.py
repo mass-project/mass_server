@@ -5,15 +5,17 @@ from .dispatch_request import DispatchRequestResource
 from .report import ReportResource
 from .sample import SampleResource
 from .scheduled_analysis import ScheduledAnalysisResource
+from .sample_relation import SampleRelationResource
 from .ssdeep_sample_relation import SsdeepSampleRelationResource
 
 __all__ = [
-    'AnalysisRequestResource'
+    'AnalysisRequestResource',
     'AnalysisSystemResource',
     'AnalysisSystemInstanceResource',
     'DispatchRequestResource',
     'ReportResource',
     'SampleResource',
     'ScheduledAnalysisResource',
+    'SampleRelationResource',
     'SsdeepSampleRelationResource',
 ]

@@ -5,6 +5,7 @@ from .dispatch_request import DispatchRequestSchema
 from .report import ReportSchema
 from .sample import SampleSchema, FileSampleSchema, ExecutableBinarySampleSchema, IPSampleSchema, DomainSampleSchema, URISampleSchema
 from .scheduled_analysis import ScheduledAnalysisSchema
+from .sample_relation import SampleRelationSchema
 from .ssdeep_sample_relation import SsdeepSampleRelationSchema
 
 __all__ = [
@@ -14,6 +15,7 @@ __all__ = [
     'DispatchRequestSchema',
     'ReportSchema',
     'SampleSchema',
+    'SampleRelationSchema',
     'SsdeepSampleRelationSchema',
     'FileSampleSchema',
     'ExecutableBinarySampleSchema',
