@@ -48,7 +48,6 @@ class Sample(db.Document):
             tags = kwargs['tags']
         else:
             tags = []
-        tags.append('sample-type:' + self.__class__.__name__.lower())
         self.tags = ListFunctions.merge_lists_without_duplicates(self.tags, tags)
 
     @classmethod
@@ -96,6 +95,7 @@ class FileSample(Sample):
             self.magic_string = FileFunctions.get_magic_string_from_file(file)
             file_extension = FileFunctions.get_file_extension(file_name)
             self.tags = FileFunctions.assemble_tag_list(self.magic_string, self.mime_type, file_extension)
+            self.tags.append('sample-type:filesample')
 
             self.file.put(file, filename=file_name, content_type=self.mime_type)
             self.add_file_name_to_list(file_name)
@@ -199,6 +199,7 @@ class ExecutableBinarySample(FileSample):
 
     def _initialize(self, **kwargs):
         super(ExecutableBinarySample, self)._initialize(**kwargs)
+        self.tags.append('sample-type:executablebinarysample')
         file = kwargs['file']
         # file_path = FileFunctions.get_file_path(file)
         # pe = pefile.PE(data=file.stream)
@@ -227,6 +228,7 @@ class IPSample(Sample):
 
     def _initialize(self, **kwargs):
         self.ip_address = kwargs['ip_address']
+        self.tags.append('sample-type:ipsample')
 
     @classmethod
     def create_or_update(cls, **kwargs):
@@ -253,6 +255,7 @@ class DomainSample(Sample):
 
     def _initialize(self, **kwargs):
         self.domain = kwargs['domain']
+        self.tags.append('sample-type:domainsample')
 
     @classmethod
     def create_or_update(cls, **kwargs):
@@ -279,6 +282,7 @@ class URISample(Sample):
 
     def _initialize(self, **kwargs):
         self.uri = kwargs['uri']
+        self.tags.append('sample-type:urisample')
 
     @classmethod
     def create_or_update(cls, **kwargs):
