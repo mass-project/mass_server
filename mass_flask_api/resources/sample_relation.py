@@ -61,20 +61,7 @@ class SampleRelationResource(BaseResource):
                 400:
                     description: The server was not able to create an object based on the request data.
         """
-        json_data = request.get_json()
-        if not json_data:
-            return jsonify({'error': 'No JSON data provided. Make sure to set the content type of your request to: application/json'}), 400
-        else:
-            parsed_data = self.schema.load(json_data, partial=True)
-            if parsed_data.errors:
-                return jsonify(parsed_data.errors), 400
-            obj = SampleRelation()
-            obj.sample = Sample.objects(id=json_data['sample']).first()
-            obj.other = Sample.objects(id=json_data['other']).first()
-            obj.relation_type = json_data['relation_type']
-            obj.save()
-            result = self.schema.dump(obj)
-        return jsonify(result.data), 201
+        return super(SampleRelationResource, self).post()
 
     def put(self, **kwargs):
         """
