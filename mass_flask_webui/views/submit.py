@@ -3,7 +3,7 @@ from werkzeug.utils import redirect
 
 from mass_flask_core.models import FileSample, IPSample, DomainSample, URISample
 from mass_flask_webui.config import webui_blueprint
-from mass_flask_webui.forms import FileSampleSubmitForm, IPSampleSubmitForm, DomainSampleSubmitForm, URISampleSubmitForm
+from mass_flask_webui.forms.submit import FileSampleSubmitForm, IPSampleSubmitForm, DomainSampleSubmitForm, URISampleSubmitForm
 
 
 @webui_blueprint.route('/submit/file/', methods=['GET', 'POST'])

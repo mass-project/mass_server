@@ -16,11 +16,12 @@
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="mass_navbar">
        <ul class="nav navbar-nav">
-           <li><a href="{{ url_for('mass_flask_webui.index') }}">Home</a></li>
-           <li><a href="{{ url_for('mass_flask_webui.submit_file') }}">Submit a sample</a></li>
-           <li><a href="{{ url_for('mass_flask_webui.sample_list') }}">Samples list</a></li>
-           <li><a href="{{ url_for('mass_flask_webui.apidocs') }}">API Documentation</a></li>
-           <li><a href="{{ url_for('mass_flask_webui.cli_scripts') }}">CLI Scripts</a></li>
+           <li><a href="{{ url_for('mass_flask_webui.index') }}"><i class="fa fa-server"></i> Home</a></li>
+           <li><a href="{{ url_for('mass_flask_webui.submit_file') }}"><i class="fa fa-paper-plane"></i> Submit a sample</a></li>
+           <li><a href="{{ url_for('mass_flask_webui.sample_list') }}"><i class="fa fa-list"></i> Sample list</a></li>
+           <li><a href="{{ url_for('mass_flask_webui.sample_search') }}"><i class="fa fa-search"></i> Sample search</a></li>
+           <li><a href="{{ url_for('mass_flask_webui.apidocs') }}"><i class="fa fa-question-circle"></i> API Documentation</a></li>
+           <li><a href="{{ url_for('mass_flask_webui.cli_scripts') }}"><i class="fa fa-keyboard-o"></i> CLI Scripts</a></li>
        </ul>
     </div><!-- /.navbar-collapse -->
   </div><!-- /.container-fluid -->
