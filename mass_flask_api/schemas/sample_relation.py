@@ -19,9 +19,7 @@ class SampleRelationSchema(BaseSchema):
         model = SampleRelation
         dump_only = [
                 'id',
-                '_cls',
-                'sample',
-                'other',
+                '_cls'
                 ]
 
 api_blueprint.apispec.definition('SampleRelation', schema=SampleRelationSchema)

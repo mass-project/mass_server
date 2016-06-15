@@ -46,7 +46,7 @@ class ForeignReferenceField(mm_fields.Field):
         }
         return url_for(**kwargs)
 
-    def deserialize(self, value, attr=None, data=None):
+    def _deserialize(self, value, attr=None, data=None):
         ctx = _request_ctx_stack.top
         adapter = ctx.url_adapter
         if adapter is None:

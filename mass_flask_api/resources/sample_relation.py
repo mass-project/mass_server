@@ -128,10 +128,8 @@ class SampleRelationResource(BaseResource):
                     description: The request is malformed.
         """
         data = request.get_json()
-        logger.error('Got data {}'.format(data))
-        sample_relation = self.schema.load(data)
-        logger.error('Got schema {}'.format(self.schema))
-        sample_relation.data.save()
+        sample_relation = self.schema.load(data).data
+        sample_relation.save()
         schema = _get_schema_for_model_class(sample_relation.__class__.__name__)
         return jsonify(schema().dump(sample_relation).data), 201
 

@@ -1,14 +1,11 @@
 from flask.ext.marshmallow.fields import URLFor
-from marshmallow.fields import List, String
-
 from mass_flask_api.config import api_blueprint
-from .base import BaseSchema, ForeignReferenceField
-from mass_flask_core.models import Sample, FileSample, ExecutableBinarySample, AnalysisSystem, IPSample, DomainSample, URISample
+from .base import BaseSchema
+from mass_flask_core.models import Sample, FileSample, ExecutableBinarySample, IPSample, DomainSample, URISample
 
 
 class SampleSchema(BaseSchema):
     url = URLFor('.sample', id='<id>', _external=True)
-    dispatched_to = List(ForeignReferenceField(endpoint='mass_flask_api.analysis_system', queryset=AnalysisSystem.objects(), query_parameter='identifier_name'))
 
     class Meta(BaseSchema.Meta):
         model = Sample
@@ -24,7 +21,6 @@ api_blueprint.apispec.definition('Sample', schema=SampleSchema)
 
 class FileSampleSchema(SampleSchema):
     url = URLFor('.sample', id='<id>', _external=True)
-    dispatched_to = List(ForeignReferenceField(endpoint='mass_flask_api.analysis_system', queryset=AnalysisSystem.objects(), query_parameter='identifier_name'))
     file = URLFor('.sample_download', id='<id>', _external=True)
 
     class Meta(BaseSchema.Meta):
@@ -46,8 +42,6 @@ api_blueprint.apispec.definition('FileSample', schema=FileSampleSchema)
 
 class ExecutableBinarySampleSchema(FileSampleSchema):
     url = URLFor('.sample', id='<id>', _external=True)
-    dispatched_to = List(ForeignReferenceField(endpoint='mass_flask_api.analysis_system', queryset=AnalysisSystem.objects(), query_parameter='identifier_name'))
-    # dispatched_to = List(String)
 
     class Meta(BaseSchema.Meta):
         model = ExecutableBinarySample
@@ -65,7 +59,6 @@ api_blueprint.apispec.definition('ExecutableBinarySample', schema=ExecutableBina
 
 class IPSampleSchema(SampleSchema):
     url = URLFor('.sample', id='<id>', _external=True)
-    dispatched_to = List(ForeignReferenceField(endpoint='mass_flask_api.analysis_system', queryset=AnalysisSystem.objects(), query_parameter='identifier_name'))
 
     class Meta(BaseSchema.Meta):
         model = IPSample
@@ -76,7 +69,6 @@ api_blueprint.apispec.definition('IPSample', schema=IPSampleSchema)
 
 class DomainSampleSchema(SampleSchema):
     url = URLFor('.sample', id='<id>', _external=True)
-    dispatched_to = List(ForeignReferenceField(endpoint='mass_flask_api.analysis_system', queryset=AnalysisSystem.objects(), query_parameter='identifier_name'))
 
     class Meta(BaseSchema.Meta):
         model = DomainSample
@@ -87,7 +79,6 @@ api_blueprint.apispec.definition('DomainSample', schema=DomainSampleSchema)
 
 class URISampleSchema(SampleSchema):
     url = URLFor('.sample', id='<id>', _external=True)
-    dispatched_to = List(ForeignReferenceField(endpoint='mass_flask_api.analysis_system', queryset=AnalysisSystem.objects(), query_parameter='identifier_name'))
 
     class Meta(BaseSchema.Meta):
         model = URISample
