@@ -1,7 +1,13 @@
 from mongoengine import FloatField
 from mongoengine import ReferenceField
+from mongoengine import ValidationError
 from mass_flask_config.app import db
 from .sample import Sample
+
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger()
 
 
 class SampleRelation(db.Document):
@@ -18,9 +24,24 @@ class SampleRelation(db.Document):
     def __str__(self):
         return self.__repr__()
 
+    def _initialize(self, **kwargs):
+        self.sample = Sample.objects(id=kwargs['sample']).first()
+        self.other = Sample.objects(id=kwargs['other']).first()
+
     @property
     def title(self):
         return self.id
+
+    @classmethod
+    def create(cls, **kwargs):
+        if 'sample' not in kwargs or 'other' not in kwargs:
+            raise ValidationError('Parameter "sample" or "other" missing')
+        else:
+            sample_relation = cls()
+            sample_relation._initialize(**kwargs)
+            sample_relation.save()
+            return sample_relation
+
 
 class DroppedBySampleRelation(SampleRelation):
     '''
