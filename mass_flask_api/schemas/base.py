@@ -1,3 +1,4 @@
+from bson import DBRef
 from flask import url_for, _request_ctx_stack, request
 from marshmallow import ValidationError, post_dump, MarshalResult
 from marshmallow_mongoengine import ModelSchema
@@ -39,10 +40,17 @@ class ForeignReferenceField(mm_fields.Field):
     #     return url_for(**kwargs)
 
     def _serialize(self, value, attr, obj):
+        if isinstance(value, DBRef):
+            if self._query_parameter == 'id':
+                query_parameter_value = value.id
+            else:
+                raise ValueError('Passed value is a DBRef and the query parameter is not the ObjectID!')
+        else:
+            query_parameter_value = value[self._query_parameter]
         kwargs = {
             'endpoint': self._endpoint,
             '_external': True,
-            self._query_parameter: value[self._query_parameter],
+            self._query_parameter: query_parameter_value,
         }
         return url_for(**kwargs)
 

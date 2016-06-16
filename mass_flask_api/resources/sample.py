@@ -3,26 +3,12 @@ import json
 from flask import jsonify, request
 
 from mass_flask_api.config import api_blueprint
-from mass_flask_api.schemas import SampleSchema, FileSampleSchema, ExecutableBinarySampleSchema, ReportSchema, IPSampleSchema, DomainSampleSchema, URISampleSchema
+from mass_flask_api.schemas import SampleSchema, ReportSchema, SampleRelationSchema, SchemaMapping
 from mass_flask_core.models import Sample, FileSample, Report, IPSample, DomainSample, URISample
+from mass_flask_core.utils import GraphFunctions
 
 from .base import BaseResource
 from mass_flask_api.utils import get_pagination_compatible_schema, register_api_endpoint
-
-
-def _get_schema_for_model_class(model_class_name):
-    model_conversion = {
-        'Sample': SampleSchema,
-        'FileSample': FileSampleSchema,
-        'ExecutableBinarySample': ExecutableBinarySampleSchema,
-        'IPSample': IPSampleSchema,
-        'DomainSample': DomainSampleSchema,
-        'URISample': URISampleSchema
-    }
-    if model_class_name in model_conversion:
-        return model_conversion[model_class_name]
-    else:
-        raise ValueError('Unsupported model type: {}'.format(model_class_name))
 
 
 class SampleResource(BaseResource):
@@ -63,7 +49,7 @@ class SampleResource(BaseResource):
         serialized_samples = []
         paginated_samples = self._get_list()
         for sample in paginated_samples['results']:
-            schema = _get_schema_for_model_class(sample.__class__.__name__)
+            schema = SchemaMapping.get_schema_for_model_class(sample.__class__.__name__)
             serialized_samples.append(schema().dump(sample).data)
         return jsonify({
             'results': serialized_samples,
@@ -91,7 +77,7 @@ class SampleResource(BaseResource):
         if not sample:
             return jsonify({'error': 'No object with key \'{}\' found'.format(kwargs['id'])}), 404
         else:
-            schema = _get_schema_for_model_class(sample.__class__.__name__)
+            schema = SchemaMapping.get_schema_for_model_class(sample.__class__.__name__)
             return jsonify(schema().dump(sample).data)
 
     def post(self):
@@ -175,7 +161,7 @@ class SampleResource(BaseResource):
             sample = FileSample.create_or_update(**data)
             print(sample)
             sample.save()
-            schema = _get_schema_for_model_class(sample.__class__.__name__)
+            schema = SchemaMapping.get_schema_for_model_class(sample.__class__.__name__)
             return jsonify(schema().dump(sample).data), 201
 
     def submit_ip(self):
@@ -200,7 +186,7 @@ class SampleResource(BaseResource):
         else:
             sample = IPSample.create_or_update(**json_data)
             sample.save()
-            schema = _get_schema_for_model_class(sample.__class__.__name__)
+            schema = SchemaMapping.get_schema_for_model_class(sample.__class__.__name__)
             return jsonify(schema().dump(sample).data), 201
 
     def submit_domain(self):
@@ -225,7 +211,7 @@ class SampleResource(BaseResource):
         else:
             sample = DomainSample.create_or_update(**json_data)
             sample.save()
-            schema = _get_schema_for_model_class(sample.__class__.__name__)
+            schema = SchemaMapping.get_schema_for_model_class(sample.__class__.__name__)
             return jsonify(schema().dump(sample).data), 201
 
     def submit_uri(self):
@@ -250,7 +236,7 @@ class SampleResource(BaseResource):
         else:
             sample = URISample.create_or_update(**json_data)
             sample.save()
-            schema = _get_schema_for_model_class(sample.__class__.__name__)
+            schema = SchemaMapping.get_schema_for_model_class(sample.__class__.__name__)
             return jsonify(schema().dump(sample).data), 201
 
     def reports(self, **kwargs):
@@ -279,6 +265,40 @@ class SampleResource(BaseResource):
                 'results': serialized_result.data,
             })
 
+    def relation_graph(self, **kwargs):
+        """
+        ---
+        get:
+            description: Get a graph representation of the sample relations of the given sample
+            parameters:
+                - in: path
+                  name: id
+                  type: string
+                - in: query
+                  name: depth
+                  type: integer
+            responses:
+                200:
+                    description: The relation graph is returned.
+                404:
+                    description: No sample with the specified id has been found.
+        """
+        sample = self.model.objects(id=kwargs['id']).first()
+        if not sample:
+            return jsonify({'error': 'No object with key \'{}\' found'.format(kwargs['id'])}), 404
+        else:
+            if 'depth' in request.args:
+                sample_relations = GraphFunctions.get_relation_graph(sample, request.args['depth'])
+            else:
+                sample_relations = GraphFunctions.get_relation_graph(sample)
+            serialized_sample_relations = []
+            for sample_relation in sample_relations:
+                schema = SchemaMapping.get_schema_for_model_class(sample_relation.__class__.__name__)
+                serialized_sample_relations.append(schema().dump(sample_relation).data)
+            return jsonify({
+                'results': serialized_sample_relations
+            })
+
 
 register_api_endpoint('sample', SampleResource)
 
@@ -299,3 +319,6 @@ api_blueprint.apispec.add_path(path='/sample/submit_uri/', view=SampleResource.s
 
 api_blueprint.add_url_rule('/sample/<id>/reports/', view_func=SampleResource().reports, methods=['GET'], endpoint='sample_reports')
 api_blueprint.apispec.add_path(path='/sample/{id}/reports/', view=SampleResource.reports)
+
+api_blueprint.add_url_rule('/sample/<id>/relation_graph/', view_func=SampleResource().relation_graph, methods=['GET'], endpoint='sample_relation_graph')
+api_blueprint.apispec.add_path(path='/sample/{id}/relation_graph/', view=SampleResource.relation_graph)

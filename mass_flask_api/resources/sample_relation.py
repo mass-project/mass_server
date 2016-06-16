@@ -1,34 +1,18 @@
-from .base import BaseResource
-from flask import request
+import logging
+
 from flask import jsonify
+from flask import request
+
 from mass_flask_api.config import api_blueprint
-from mass_flask_core.models import SampleRelation
 from mass_flask_api.schemas import SampleRelationSchema
-from mass_flask_api.schemas import DroppedBySampleRelationSchema
-from mass_flask_api.schemas import ResolvedBySampleRelationSchema
-from mass_flask_api.schemas import ContactedBySampleRelationSchema
-from mass_flask_api.schemas import RetrievedBySampleRelationSchema
+from mass_flask_api.schemas import SchemaMapping
 from mass_flask_api.utils import get_pagination_compatible_schema
 from mass_flask_api.utils import register_api_endpoint
-from mass_flask_core.models import DroppedBySampleRelation
-import logging
+from mass_flask_core.models import SampleRelation
+from .base import BaseResource
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-
-
-def _get_schema_for_model_class(model_class_name):
-    model_conversion = {
-            'SampleRelation': SampleRelationSchema,
-            'DroppedBySampleRelation': DroppedBySampleRelationSchema,
-            'ResolvedBySampleRelation': ResolvedBySampleRelationSchema,
-            'ContactedBySampleRelation': ContactedBySampleRelationSchema,
-            'RetrievedBySampleRelation': RetrievedBySampleRelationSchema,
-            }
-    if model_class_name in model_conversion:
-        return model_conversion[model_class_name]
-    else:
-        raise ValueError('Unsupported model type: {}'.format(model_class_name))
 
 
 class SampleRelationResource(BaseResource):
@@ -52,7 +36,7 @@ class SampleRelationResource(BaseResource):
         paginated_sample_relations = self._get_list()
         logger.error('Got the paginated list')
         for sample_relation in paginated_sample_relations['results']:
-            schema = _get_schema_for_model_class(sample_relation.__class__.__name__)
+            schema = SchemaMapping.get_schema_for_model_class(sample_relation.__class__.__name__)
             logger.error('Got next sample_relation {}'.format(sample_relation))
             logger.error('{}'.format(schema().dump(sample_relation)))
             serialized_sample_relations.append(schema().dump(sample_relation).data)
@@ -83,7 +67,7 @@ class SampleRelationResource(BaseResource):
         if not sample_relation:
             return jsonify({'error': 'No object with key \'{}\' found'.format(kwargs['id'])}), 404
         else:
-            schema = _get_schema_for_model_class(sample_relation.__class__.__name__)
+            schema = SchemaMapping.get_schema_for_model_class(sample_relation.__class__.__name__)
             return jsonify(schema().dump(sample_relation).data)
 
     def post(self):
@@ -130,7 +114,7 @@ class SampleRelationResource(BaseResource):
         data = request.get_json()
         sample_relation = self.schema.load(data).data
         sample_relation.save()
-        schema = _get_schema_for_model_class(sample_relation.__class__.__name__)
+        schema = SchemaMapping.get_schema_for_model_class(sample_relation.__class__.__name__)
         return jsonify(schema().dump(sample_relation).data), 201
 
 #     def submit_ip(self):

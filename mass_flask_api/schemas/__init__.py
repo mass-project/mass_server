@@ -7,6 +7,7 @@ from .sample import SampleSchema, FileSampleSchema, ExecutableBinarySampleSchema
 from .scheduled_analysis import ScheduledAnalysisSchema
 from .sample_relation import SampleRelationSchema, DroppedBySampleRelationSchema, ResolvedBySampleRelationSchema, ContactedBySampleRelationSchema, RetrievedBySampleRelationSchema
 from .ssdeep_sample_relation import SsdeepSampleRelationSchema
+from .schema_mapping import SchemaMapping
 
 __all__ = [
     'AnalysisRequestSchema',
@@ -26,5 +27,6 @@ __all__ = [
     'IPSampleSchema',
     'DomainSampleSchema',
     'URISampleSchema',
-    'ScheduledAnalysisSchema'
+    'ScheduledAnalysisSchema',
+    'SchemaMapping'
 ]
