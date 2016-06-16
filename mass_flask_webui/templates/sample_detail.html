@@ -125,5 +125,79 @@ Detail page for sample #{{ sample.id }}
             {% endfor %}
         </div>
     </div>
+    <div class="row">
+        <div class="col-md-12">
+            <h2>Sample relation graph</h2>
+            <div id="relationgraph"></div>
+                <style type="text/css">
+                    #relationgraph {
+                        width: 100%;
+                        height: 400px;
+                        border: 1px solid lightgray;
+                    }
+                </style>
+                <script type="text/javascript">
+
+                    var nodes = new vis.DataSet();
+                    var edges = new vis.DataSet();
+                    var gephiImported;
+                    loadJSON("{{ url_for('mass_flask_webui.sample_graph', sample_id=sample.id) }}", redrawAll, function(err) {console.log("Error fetching graph data")});
+
+                    // create a network
+                    var container = document.getElementById("relationgraph");
+
+                    // provide the data in the vis format
+                    var data = {
+                        nodes: nodes,
+                        edges: edges
+                    };
+                    var options = {};
+
+                    // initialize your network!
+                    var network = new vis.Network(container, data, options);
+
+                    /**
+                   * This function fills the DataSets. These DataSets will update the network.
+                   */
+                    function redrawAll(gephiJSON) {
+                        if (gephiJSON.nodes === undefined) {
+                            gephiJSON = gephiImported;
+                        }
+                        else {
+                            gephiImported = gephiJSON;
+                        }
+
+                        nodes.clear();
+                        edges.clear();
+
+                        var parsed = vis.network.gephiParser.parseGephi(gephiJSON, {
+                            fixed: true,
+                            parseColor: false
+                        });
+
+                        // add the parsed data to the DataSets.
+                        nodes.add(parsed.nodes);
+                        edges.add(parsed.edges);
+                        network.fit(); // zoom to fit
+                    }
+
+                    function loadJSON(path, success, error) {
+                        var xhr = new XMLHttpRequest();
+                        xhr.onreadystatechange = function () {
+                            if (xhr.readyState === 4) {
+                                if (xhr.status === 200) {
+                                    success(JSON.parse(xhr.responseText));
+                                }
+                                else {
+                                    error(xhr);
+                                }
+                            }
+                        };
+                        xhr.open('GET', path, true);
+                        xhr.send();
+                    }
+                </script>
+        </div>
+    </div>
 
 {% endblock %}
