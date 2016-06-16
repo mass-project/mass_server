@@ -1,0 +1,17 @@
+{% extends "sample_list.html" %}
+
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block page_title %}
+    Sample search
+{% endblock %}
+
+{% block list_header %}
+    <div class="page-header">
+        <h1><i class="fa fa-search"></i> Sample search</h1>
+    </div>
+{% endblock %}
+
+{% block list_footer %}
+    {{ wtf.quick_form(form, method='GET', form_type='horizontal') }}
+{% endblock %}
