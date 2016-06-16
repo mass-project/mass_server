@@ -1,6 +1,5 @@
 from mass_flask_config.app import db
 from .analysis_system import AnalysisSystem
-from .sample_relation import SampleRelation
 from mongoengine import StringField, DateTimeField, ListField, ReferenceField, EmbeddedDocumentField, FileField, IntField, FloatField, EmbeddedDocument, LongField, ValidationError, \
     DoesNotExist
 from mass_flask_core.utils import TimeFunctions, HashFunctions, FileFunctions, ListFunctions, StringFunctions
@@ -14,7 +13,6 @@ class Sample(db.Document):
     first_seen = DateTimeField(default=TimeFunctions.get_timestamp, required=True)
     tags = ListField(StringField(regex=r'^[\w:\-\_\/]+$'))
     dispatched_to = ListField(ReferenceField(AnalysisSystem))
-    sample_relations = ListField(EmbeddedDocumentField(SampleRelation))
 
     meta = {
         'allow_inheritance': True,
@@ -43,11 +41,6 @@ class Sample(db.Document):
             self.long_comment = kwargs['long_comment']
         if 'first_seen' in kwargs and kwargs['first_seen'] < self.first_seen:
             self.first_seen = kwargs['first_seen']
-        if 'sample_relations' in kwargs:
-            for item in kwargs['sample_relations']:
-                relation = SampleRelation(**item)
-                if relation not in self.sample_relations:
-                    self.sample_relations.append(relation)
         if 'tags' in kwargs:
             tags = kwargs['tags']
         else:
