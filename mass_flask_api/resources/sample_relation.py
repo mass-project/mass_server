@@ -1,6 +1,8 @@
-from .base import BaseResource
-from flask import request
+import logging
+
 from flask import jsonify
+from flask import request
+
 from mass_flask_api.config import api_blueprint
 from mass_flask_api.schemas import SampleRelationSchema, DroppedBySampleRelationSchema, ResolvedBySampleRelationSchema, ContactedBySampleRelationSchema, RetrievedBySampleRelationSchema, SsdeepSampleRelationSchema
 from mass_flask_api.schemas import SchemaMapping
@@ -12,7 +14,6 @@ from .base import BaseResource
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-
 
 
 class SampleRelationResource(BaseResource):
@@ -36,7 +37,7 @@ class SampleRelationResource(BaseResource):
         paginated_sample_relations = self._get_list()
         logger.error('Got the paginated list')
         for sample_relation in paginated_sample_relations['results']:
-            schema = _get_schema_for_model_class(sample_relation.__class__.__name__)
+            schema = SchemaMapping.get_schema_for_model_class(sample_relation.__class__.__name__)
             logger.error('Got next sample_relation {}'.format(sample_relation))
             logger.error('{}'.format(schema().dump(sample_relation)))
             serialized_sample_relations.append(schema().dump(sample_relation).data)
@@ -67,7 +68,7 @@ class SampleRelationResource(BaseResource):
         if not sample_relation:
             return jsonify({'error': 'No object with key \'{}\' found'.format(kwargs['id'])}), 404
         else:
-            schema = _get_schema_for_model_class(sample_relation.__class__.__name__)
+            schema = SchemaMapping.get_schema_for_model_class(sample_relation.__class__.__name__)
             return jsonify(schema().dump(sample_relation).data)
 
     def post(self):

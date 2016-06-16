@@ -26,5 +26,6 @@ __all__ = [
     'IPSampleSchema',
     'DomainSampleSchema',
     'URISampleSchema',
-    'ScheduledAnalysisSchema'
+    'ScheduledAnalysisSchema',
+    'SchemaMapping'
 ]
