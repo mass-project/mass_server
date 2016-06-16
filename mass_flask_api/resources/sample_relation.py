@@ -1,5 +1,3 @@
-import logging
-
 from flask import jsonify
 from flask import request
 
@@ -12,8 +10,6 @@ from mass_flask_core.models import SampleRelation
 from mass_flask_core.models import SsdeepSampleRelation
 from .base import BaseResource
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
 
 
 class SampleRelationResource(BaseResource):
@@ -35,11 +31,8 @@ class SampleRelationResource(BaseResource):
         """
         serialized_sample_relations = []
         paginated_sample_relations = self._get_list()
-        logger.error('Got the paginated list')
         for sample_relation in paginated_sample_relations['results']:
             schema = SchemaMapping.get_schema_for_model_class(sample_relation.__class__.__name__)
-            logger.error('Got next sample_relation {}'.format(sample_relation))
-            logger.error('{}'.format(schema().dump(sample_relation)))
             serialized_sample_relations.append(schema().dump(sample_relation).data)
         return jsonify({
             'results': serialized_sample_relations,
@@ -63,7 +56,6 @@ class SampleRelationResource(BaseResource):
                 404:
                     description: No sample relation with the specified id has been found.
         """
-        logger.warn('Got to get_detail')
         sample_relation = self.model.objects(id=kwargs['id']).first()
         if not sample_relation:
             return jsonify({'error': 'No object with key \'{}\' found'.format(kwargs['id'])}), 404
@@ -185,13 +177,6 @@ class SampleRelationResource(BaseResource):
         return jsonify(schema.dump(sample_relation).data), 201
 
 
-class SsdeepSampleRelationResource(SampleRelationResource):
-    schema = SsdeepSampleRelationSchema()
-    pagination_schema = get_pagination_compatible_schema(SsdeepSampleRelationSchema)
-    model = SsdeepSampleRelation
-    query_key_field = 'id'
-    filter_parameters = []
-
     def submit_ssdeep_sample_relation(self):
         """
         ---
@@ -209,11 +194,8 @@ class SsdeepSampleRelationResource(SampleRelationResource):
                     description: The request is malformed.
         """
         data = request.get_json()
-        logger.error('Got data {}'.format(data))
-        logger.error('Schema {}'.format(self.schema))
         sample_relation = self.schema.load(data).data
         sample_relation.save()
-        logger.error('Created new {}'.format(sample_relation))
         return jsonify(self.schema.dump(sample_relation).data), 201
 
 
@@ -232,5 +214,5 @@ api_blueprint.apispec.add_path(path='/sample_relation/submit_contacted_by/', vie
 api_blueprint.add_url_rule('/sample_relation/submit_retrieved_by/', view_func=SampleRelationResource().submit_retrieved_by_sample_relation, methods=['POST'])
 api_blueprint.apispec.add_path(path='/sample_relation/submit_retrieved_by/', view=SampleRelationResource.submit_retrieved_by_sample_relation)
 
-api_blueprint.add_url_rule('/sample_relation/submit_ssdeep/', view_func=SsdeepSampleRelationResource().submit_ssdeep_sample_relation, methods=['POST'])
-api_blueprint.apispec.add_path(path='/sample_relation/submit_ssdeep/', view=SsdeepSampleRelationResource.submit_ssdeep_sample_relation)
+api_blueprint.add_url_rule('/sample_relation/submit_ssdeep/', view_func=SampleRelationResource().submit_ssdeep_sample_relation, methods=['POST'])
+api_blueprint.apispec.add_path(path='/sample_relation/submit_ssdeep/', view=SampleRelationResource.submit_ssdeep_sample_relation)
