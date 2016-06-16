@@ -288,7 +288,7 @@ class SampleResource(BaseResource):
             return jsonify({'error': 'No object with key \'{}\' found'.format(kwargs['id'])}), 404
         else:
             if 'depth' in request.args:
-                sample_relations = GraphFunctions.get_relation_graph(sample, request.args['depth'])
+                sample_relations = GraphFunctions.get_relation_graph(sample, int(request.args['depth']))
             else:
                 sample_relations = GraphFunctions.get_relation_graph(sample)
             serialized_sample_relations = []

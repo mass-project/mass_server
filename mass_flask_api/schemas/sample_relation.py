@@ -26,7 +26,6 @@ api_blueprint.apispec.definition('SampleRelation', schema=SampleRelationSchema)
 
 
 class DroppedBySampleRelationSchema(SampleRelationSchema):
-    url = URLFor('.dropped_by_sample_relation', id='<id>', _external=True)
     sample = ForeignReferenceField(endpoint='mass_flask_api.sample', queryset=Sample.objects(), query_parameter='id')
     other = ForeignReferenceField(endpoint='mass_flask_api.sample', queryset=Sample.objects(), query_parameter='id')
 
@@ -38,7 +37,6 @@ api_blueprint.apispec.definition('DroppedBySampleRelation', schema=DroppedBySamp
 
 
 class ResolvedBySampleRelationSchema(SampleRelationSchema):
-    url = URLFor('.resolved_by_sample_relation', id='<id>', _external=True)
     sample = ForeignReferenceField(endpoint='mass_flask_api.sample', queryset=Sample.objects(), query_parameter='id')
     other = ForeignReferenceField(endpoint='mass_flask_api.sample', queryset=Sample.objects(), query_parameter='id')
 
@@ -50,7 +48,6 @@ api_blueprint.apispec.definition('ResolvedBySampleRelation', schema=ResolvedBySa
 
 
 class ContactedBySampleRelationSchema(SampleRelationSchema):
-    url = URLFor('.contacted_by_sample_relation', id='<id>', _external=True)
     sample = ForeignReferenceField(endpoint='mass_flask_api.sample', queryset=Sample.objects(), query_parameter='id')
     other = ForeignReferenceField(endpoint='mass_flask_api.sample', queryset=Sample.objects(), query_parameter='id')
 
@@ -62,7 +59,6 @@ api_blueprint.apispec.definition('ContactedBySampleRelation', schema=ContactedBy
 
 
 class RetrievedBySampleRelationSchema(SampleRelationSchema):
-    url = URLFor('.retrieved_by_sample_relation', id='<id>', _external=True)
     sample = ForeignReferenceField(endpoint='mass_flask_api.sample', queryset=Sample.objects(), query_parameter='id')
     other = ForeignReferenceField(endpoint='mass_flask_api.sample', queryset=Sample.objects(), query_parameter='id')
 
