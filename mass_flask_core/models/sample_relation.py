@@ -100,7 +100,7 @@ class RetrievedBySampleRelation(SampleRelation):
 
 
 class SsdeepSampleRelation(SampleRelation):
-    match = FloatField(min_value=0, max_value=100)
+    match = FloatField(min_value=0, max_value=100, required=True)
 
     def __repr__(self):
         repr_string = '[SsdeepSampleRelation] {0.sample} {0.other} => {0.match}'.format(self)
