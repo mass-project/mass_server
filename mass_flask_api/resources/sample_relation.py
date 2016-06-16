@@ -128,129 +128,90 @@ class SampleRelationResource(BaseResource):
                     description: The request is malformed.
         """
         data = request.get_json()
-        sample_relation = self.schema.load(data).data
+        schema = DroppedBySampleRelationSchema()
+        sample_relation = schema.load(data).data
         sample_relation.save()
-        schema = _get_schema_for_model_class(sample_relation.__class__.__name__)
-        return jsonify(schema().dump(sample_relation).data), 201
+        return jsonify(schema.dump(sample_relation).data), 201
 
-#     def submit_ip(self):
-#         """
-#         ---
-#         post:
-#             description: Submit an IP address to the MASS server
-#             parameters:
-#                 - in: body
-#                   name: body
-#                   type: string
-#             responses:
-#                 201:
-#                     description: The IP address sample has been created on the MASS server. The metadata of the sample is returned.
-#                     schema: IPSampleSchema
-#                 400:
-#                     description: No IP address has been given or the request is malformed.
-#         """
-#         json_data = request.get_json()
-#         if not json_data:
-#             return jsonify({'error': 'No JSON data provided. Make sure to set the content type of your request to: application/json'}), 400
-#         else:
-#             sample = IPSample.create_or_update(**json_data)
-#             sample.save()
-#             schema = _get_schema_for_model_class(sample.__class__.__name__)
-#             return jsonify(schema().dump(sample).data), 201
+    def submit_resolved_by_sample_relation(self):
+        """
+        ---
+        post:
+            description: Submit a sample relation between a domain and a sample to the MASS server
+            parameters:
+                - in: body
+                  name: body
+                  type: ResolvedBySampleRelationSchema
+            responses:
+                201:
+                    description: The relation has been uploaded to the MASS server. The metadata of the sample is returned.
+                    schema: ResolvedBySampleRelationSchema
+                400:
+                    description: The request is malformed.
+        """
+        data = request.get_json()
+        schema = ResolvedBySampleRelationSchema()
+        sample_relation = schema.load(data).data
+        sample_relation.save()
+        return jsonify(schema.dump(sample_relation).data), 201
 
-#     def submit_domain(self):
-#         """
-#         ---
-#         post:
-#             description: Submit a domain name to the MASS server
-#             parameters:
-#                 - in: body
-#                   name: body
-#                   type: string
-#             responses:
-#                 201:
-#                     description: The domain name sample has been created on the MASS server. The metadata of the sample is returned.
-#                     schema: DomainSampleSchema
-#                 400:
-#                     description: No domain name has been given or the request is malformed.
-#         """
-#         json_data = request.get_json()
-#         if not json_data:
-#             return jsonify({'error': 'No JSON data provided. Make sure to set the content type of your request to: application/json'}), 400
-#         else:
-#             sample = DomainSample.create_or_update(**json_data)
-#             sample.save()
-#             schema = _get_schema_for_model_class(sample.__class__.__name__)
-#             return jsonify(schema().dump(sample).data), 201
+    def submit_contacted_by_sample_relation(self):
+        """
+        ---
+        post:
+            description: Submit a sample relation between an IP and a sample to the MASS server
+            parameters:
+                - in: body
+                  name: body
+                  type: ContactedBySampleRelationSchema
+            responses:
+                201:
+                    description: The relation has been uploaded to the MASS server. The metadata of the sample is returned.
+                    schema: ContactedBySampleRelationSchema
+                400:
+                    description: The request is malformed.
+        """
+        data = request.get_json()
+        schema = ContactedBySampleRelationSchema()
+        sample_relation = schema.load(data).data
+        sample_relation.save()
+        return jsonify(schema.dump(sample_relation).data), 201
 
-#     def submit_uri(self):
-#         """
-#         ---
-#         post:
-#             description: Submit a URI to the MASS server
-#             parameters:
-#                 - in: body
-#                   name: body
-#                   type: string
-#             responses:
-#                 201:
-#                     description: The URI sample has been created on the MASS server. The metadata of the sample is returned.
-#                     schema: URISampleSchema
-#                 400:
-#                     description: No URI has been given or the request is malformed.
-#         """
-#         json_data = request.get_json()
-#         if not json_data:
-#             return jsonify({'error': 'No JSON data provided. Make sure to set the content type of your request to: application/json'}), 400
-#         else:
-#             sample = URISample.create_or_update(**json_data)
-#             sample.save()
-#             schema = _get_schema_for_model_class(sample.__class__.__name__)
-#             return jsonify(schema().dump(sample).data), 201
-
-#     def reports(self, **kwargs):
-#         """
-#         ---
-#         get:
-#             description: Get the reports associated to the given sample
-#             parameters:
-#                 - in: path
-#                   name: id
-#                   type: string
-#             responses:
-#                 200:
-#                     description: The list of reports is returned.
-#                     schema: ReportSchema
-#                 404:
-#                     description: No sample with the specified id has been found.
-#         """
-#         sample = self.model.objects(id=kwargs['id']).first()
-#         if not sample:
-#             return jsonify({'error': 'No object with key \'{}\' found'.format(kwargs['id'])}), 404
-#         else:
-#             reports = Report.objects(sample=sample)
-#             serialized_result = ReportSchema(many=True).dump(reports)
-#             return jsonify({
-#                 'results': serialized_result.data,
-#             })
+    def submit_retrieved_by_sample_relation(self):
+        """
+        ---
+        post:
+            description: Submit a sample relation between a HTTP(S) URL and a sample to the MASS server
+            parameters:
+                - in: body
+                  name: body
+                  type: RetrievedBySampleRelationSchema
+            responses:
+                201:
+                    description: The relation has been uploaded to the MASS server. The metadata of the sample is returned.
+                    schema: RetrievedBySampleRelationSchema
+                400:
+                    description: The request is malformed.
+        """
+        data = request.get_json()
+        schema = RetrievedBySampleRelationSchema()
+        sample_relation = schema.load(data).data
+        sample_relation.save()
+        return jsonify(schema.dump(sample_relation).data), 201
 
 
 register_api_endpoint('sample_relation', SampleRelationResource)
 
-# api_blueprint.add_url_rule('/sample/<id>/download/', view_func=SampleResource().download_file, methods=['GET'], endpoint='sample_download')
-# api_blueprint.apispec.add_path(path='/sample/{id}/download/', view=SampleResource.download_file)
 
 api_blueprint.add_url_rule('/sample_relation/submit_dropped_by/', view_func=SampleRelationResource().submit_dropped_by_sample_relation, methods=['POST'])
 api_blueprint.apispec.add_path(path='/sample_relation/submit_dropped_by/', view=SampleRelationResource.submit_dropped_by_sample_relation)
 
-# api_blueprint.add_url_rule('/sample/submit_ip/', view_func=SampleResource().submit_ip, methods=['POST'])
-# api_blueprint.apispec.add_path(path='/sample/submit_ip/', view=SampleResource.submit_ip)
+api_blueprint.add_url_rule('/sample_relation/submit_resolved_by/', view_func=SampleRelationResource().submit_resolved_by_sample_relation, methods=['POST'])
+api_blueprint.apispec.add_path(path='/sample_relation/submit_resolved_by/', view=SampleRelationResource.submit_resolved_by_sample_relation)
 
-# api_blueprint.add_url_rule('/sample/submit_domain/', view_func=SampleResource().submit_domain, methods=['POST'])
-# api_blueprint.apispec.add_path(path='/sample/submit_domain/', view=SampleResource.submit_domain)
+api_blueprint.add_url_rule('/sample_relation/submit_contacted_by/', view_func=SampleRelationResource().submit_contacted_by_sample_relation, methods=['POST'])
+api_blueprint.apispec.add_path(path='/sample_relation/submit_contacted_by/', view=SampleRelationResource.submit_contacted_by_sample_relation)
 
-# api_blueprint.add_url_rule('/sample/submit_uri/', view_func=SampleResource().submit_uri, methods=['POST'])
-# api_blueprint.apispec.add_path(path='/sample/submit_uri/', view=SampleResource.submit_uri)
+api_blueprint.add_url_rule('/sample_relation/submit_retrieved_by/', view_func=SampleRelationResource().submit_retrieved_by_sample_relation, methods=['POST'])
+api_blueprint.apispec.add_path(path='/sample_relation/submit_retrieved_by/', view=SampleRelationResource.submit_retrieved_by_sample_relation)
 
-# api_blueprint.add_url_rule('/sample/<id>/reports/', view_func=SampleResource().reports, methods=['GET'], endpoint='sample_reports')
-# api_blueprint.apispec.add_path(path='/sample/{id}/reports/', view=SampleResource.reports)
