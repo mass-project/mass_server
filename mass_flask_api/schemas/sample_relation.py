@@ -4,10 +4,12 @@ from mass_flask_core.models import DroppedBySampleRelation
 from mass_flask_core.models import ResolvedBySampleRelation
 from mass_flask_core.models import ContactedBySampleRelation
 from mass_flask_core.models import RetrievedBySampleRelation
+from mass_flask_core.models import SsdeepSampleRelation
 from mass_flask_core.models import Sample
 from mass_flask_api.config import api_blueprint
 from .base import BaseSchema
 from .base import ForeignReferenceField
+from marshmallow.fields import Float
 
 
 class SampleRelationSchema(BaseSchema):
@@ -67,3 +69,15 @@ class RetrievedBySampleRelationSchema(SampleRelationSchema):
         dump_only = SampleRelationSchema.Meta.dump_only
 
 api_blueprint.apispec.definition('RetrievedBySampleRelation', schema=RetrievedBySampleRelationSchema)
+
+
+class SsdeepSampleRelationSchema(SampleRelationSchema):
+    sample = ForeignReferenceField(endpoint='mass_flask_api.sample', queryset=Sample.objects(), query_parameter='id')
+    other = ForeignReferenceField(endpoint='mass_flask_api.sample', queryset=Sample.objects(), query_parameter='id')
+    match = Float()
+
+    class Meta(BaseSchema.Meta):
+        model = SsdeepSampleRelation
+        dump_only = SampleRelationSchema.Meta.dump_only
+
+api_blueprint.apispec.definition('SsdeepSampleRelation', schema=SsdeepSampleRelationSchema)

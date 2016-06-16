@@ -5,8 +5,8 @@ from .dispatch_request import DispatchRequestSchema
 from .report import ReportSchema
 from .sample import SampleSchema, FileSampleSchema, ExecutableBinarySampleSchema, IPSampleSchema, DomainSampleSchema, URISampleSchema
 from .scheduled_analysis import ScheduledAnalysisSchema
-from .sample_relation import SampleRelationSchema, DroppedBySampleRelationSchema, ResolvedBySampleRelationSchema, ContactedBySampleRelationSchema, RetrievedBySampleRelationSchema
-from .ssdeep_sample_relation import SsdeepSampleRelationSchema
+from .sample_relation import SampleRelationSchema, DroppedBySampleRelationSchema, ResolvedBySampleRelationSchema, ContactedBySampleRelationSchema, RetrievedBySampleRelationSchema, SsdeepSampleRelationSchema
+from .schema_mapping import SchemaMapping
 
 __all__ = [
     'AnalysisRequestSchema',
