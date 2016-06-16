@@ -12,7 +12,7 @@ class Sample(db.Document):
     long_comment = StringField(verbose_name='Long comment', help_text='Long comment')
     delivery_date = DateTimeField(default=TimeFunctions.get_timestamp, required=True)
     first_seen = DateTimeField(default=TimeFunctions.get_timestamp, required=True)
-    tags = ListField(StringField())
+    tags = ListField(StringField(regex=r'^[\w:\-\_\/]+$'))
     dispatched_to = ListField(ReferenceField(AnalysisSystem))
     sample_relations = ListField(EmbeddedDocumentField(SampleRelation))
 
@@ -31,6 +31,10 @@ class Sample(db.Document):
     @property
     def title(self):
         return self.id
+
+    def add_tags(self, tags):
+        self.tags = ListFunctions.merge_lists_without_duplicates(self.tags, tags)
+        self.save()
 
     def _update(self, **kwargs):
         if 'comment' in kwargs:

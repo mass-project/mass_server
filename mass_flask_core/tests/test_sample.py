@@ -83,6 +83,40 @@ class SampleTestCase(FlaskTestCase):
         file_sample = self._create_file_sample()
         self.assertIn('sample-type:filesample', file_sample.tags)
 
+    def test_is_invalid_tag_rejected(self):
+        invalid_tags = [
+            'tag with spaces',
+            'some:weird/§&$-chars'
+        ]
+        for tag in invalid_tags:
+            self.assertInvalidTag(tag)
+
+    def test_is_valid_tag_accepted(self):
+        valid_tags = [
+            'foo:bar',
+            'bar:foo/test',
+            'some-thing:special',
+            'withoutspecialcharacters',
+            'some_dashes-included',
+            'tag:withnumber1234'
+        ]
+        for tag in valid_tags:
+            self.assertValidTag(tag)
+
+    def assertInvalidTag(self, tag):
+        sample = Sample()
+        sample.tags = [tag]
+        with self.assertRaises(ValidationError):
+            sample.save()
+
+    def assertValidTag(self, tag):
+        try:
+            sample = Sample()
+            sample.tags = [tag]
+            sample.save()
+        except ValidationError:
+            self.fail('Validation of a valid tag failed!')
+
     # def test_ip_sample_can_not_be_created_without_ip(self):
     #     kwargs = {}
     #     with self.assertRaises(ValidationError):
