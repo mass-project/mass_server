@@ -5,6 +5,8 @@ from .dispatch_request import DispatchRequestSchema
 from .report import ReportSchema
 from .sample import SampleSchema, FileSampleSchema, ExecutableBinarySampleSchema, IPSampleSchema, DomainSampleSchema, URISampleSchema
 from .scheduled_analysis import ScheduledAnalysisSchema
+from .sample_relation import SampleRelationSchema, DroppedBySampleRelationSchema, ResolvedBySampleRelationSchema, ContactedBySampleRelationSchema, RetrievedBySampleRelationSchema, SsdeepSampleRelationSchema
+from .schema_mapping import SchemaMapping
 
 __all__ = [
     'AnalysisRequestSchema',
@@ -13,10 +15,17 @@ __all__ = [
     'DispatchRequestSchema',
     'ReportSchema',
     'SampleSchema',
+    'SampleRelationSchema',
+    'DroppedBySampleRelationSchema',
+    'ResolvedBySampleRelationSchema',
+    'ContactedBySampleRelationSchema',
+    'RetrievedBySampleRelationSchema',
+    'SsdeepSampleRelationSchema',
     'FileSampleSchema',
     'ExecutableBinarySampleSchema',
     'IPSampleSchema',
     'DomainSampleSchema',
     'URISampleSchema',
-    'ScheduledAnalysisSchema'
+    'ScheduledAnalysisSchema',
+    'SchemaMapping'
 ]
