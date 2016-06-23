@@ -1,19 +1,86 @@
-from mongoengine import EmbeddedDocument, StringField, ReferenceField
+from mongoengine import FloatField
+from mongoengine import ReferenceField
+from mass_flask_config.app import db
+from .sample import Sample
 
 
-class SampleRelation(EmbeddedDocument):
-    SAMPLE_RELATION_TYPES = (
-        ('is_dropped_by', 'File was dropped by sample.'),
-        ('is_resolved_by', 'Domain is resolved by sample.'),
-        ('is_contacted_by', 'IP address is contacted by sample.'),
-        ('is_retrieved_by', 'HTTP(S) URL is retrieved by sample.')
-    )
-
-    sample = ReferenceField('Sample', required=True)
-    relation_type = StringField(choices=SAMPLE_RELATION_TYPES, required=True)
+class SampleRelation(db.Document):
+    sample = ReferenceField(Sample, required=True)
+    other = ReferenceField(Sample, required=True)
+    meta = {
+           'allow_inheritance': True,
+           }
 
     def __repr__(self):
-        return '[SampleRelation] ' + self.relation_type + ' ' + str(self.sample)
+        repr_string = '[{}] {} -- {}'
+        return repr_string.format(self.__class__.__name__, self.sample, self.other)
 
     def __str__(self):
         return self.__repr__()
+
+    @property
+    def title(self):
+        return self.id
+
+class DroppedBySampleRelation(SampleRelation):
+    '''
+    Relation between a file and a sample. The file was somehow dropped by or extracted from the sample.
+
+    Attributes:
+        sample  The file wich was dropped.
+        other   The sample which dropped the file.
+    '''
+
+    def __repr__(self):
+        repr_string = '[DroppedBySampleRelation] {} was dropped by {}'
+        return repr_string.format(self.sample, self.other)
+
+
+class ResolvedBySampleRelation(SampleRelation):
+    '''
+    Relation between a domain and a sample, i.e. the domain was resolved by the sample.
+
+    Attributes:
+        sample  the domain
+        other   The sample which resolved the domain.
+    '''
+
+    def __repr__(self):
+        repr_string = '[ResolvedBySampleRelation] {} was resolved by {}'
+        return repr_string.format(self.sample, self.other)
+
+
+class ContactedBySampleRelation(SampleRelation):
+    '''
+    Relation between an IP address and a sample, i.e. the IP was contacted by the sample.
+
+    Attributes:
+        sample  the IP address
+        other   The sample which contacted the IP.
+    '''
+
+    def __repr__(self):
+        repr_string = '[ContactedBySampleRelation] {} was contacted by {}'
+        return repr_string.format(self.sample, self.other)
+
+
+class RetrievedBySampleRelation(SampleRelation):
+    '''
+    Relation between an HTTP(S) URL  and a sample, i.e. the URL was retrieved by the sample.
+
+    Attributes:
+        sample  the IP address
+        other   The sample which contacted the IP.
+    '''
+
+    def __repr__(self):
+        repr_string = '[RetrievedBySampleRelation] {} was retrieved by {}'
+        return repr_string.format(self.sample, self.other)
+
+
+class SsdeepSampleRelation(SampleRelation):
+    match = FloatField(min_value=0, max_value=100)
+
+    def __repr__(self):
+        repr_string = '[SsdeepSampleRelation] {0.sample} {0.other} => {0.match}'.format(self)
+        return repr_string
