@@ -19,7 +19,7 @@ class PaginationFunctions:
                 else:
                     page = 1
                 queryset = view_function(*args, **kwargs)
-                page_count = ceil(len(queryset)/per_page)
+                page_count = ceil(queryset.count()/per_page)
                 paginated_queryset = queryset.paginate(page=page, per_page=per_page)
                 result = {
                     'results': paginated_queryset.items,
