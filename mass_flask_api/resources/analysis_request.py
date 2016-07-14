@@ -1,7 +1,7 @@
 from .base import BaseResource
-from mass_flask_api.utils import get_pagination_compatible_schema, register_api_endpoint
+from mass_flask_api.utils import get_pagination_compatible_schema, register_api_endpoint, check_api_key
 from mass_flask_api.schemas import AnalysisRequestSchema
-from mass_flask_core.models import AnalysisRequest
+from mass_flask_core.models import AnalysisRequest, AdminPrivilege
 
 
 class AnalysisRequestResource(BaseResource):
@@ -11,6 +11,7 @@ class AnalysisRequestResource(BaseResource):
     query_key_field = 'id'
     filter_parameters = []
 
+    @check_api_key(required_privileges=[AdminPrivilege])
     def get_list(self):
         """
         ---
@@ -23,6 +24,7 @@ class AnalysisRequestResource(BaseResource):
         """
         return super(AnalysisRequestResource, self).get_list()
 
+    @check_api_key(required_privileges=[AdminPrivilege])
     def get_detail(self, **kwargs):
         """
         ---
@@ -41,6 +43,7 @@ class AnalysisRequestResource(BaseResource):
         """
         return super(AnalysisRequestResource, self).get_detail(**kwargs)
 
+    @check_api_key(required_privileges=[AdminPrivilege])
     def post(self):
         """
         ---
@@ -59,6 +62,7 @@ class AnalysisRequestResource(BaseResource):
         """
         return super(AnalysisRequestResource, self).post()
 
+    @check_api_key(required_privileges=[AdminPrivilege])
     def put(self, **kwargs):
         """
         ---
@@ -82,6 +86,7 @@ class AnalysisRequestResource(BaseResource):
         """
         return super(AnalysisRequestResource, self).put(**kwargs)
 
+    @check_api_key(required_privileges=[AdminPrivilege])
     def delete(self, **kwargs):
         """
         ---

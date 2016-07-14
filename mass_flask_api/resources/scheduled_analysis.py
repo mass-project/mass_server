@@ -3,9 +3,9 @@ from mongoengine import GridFSProxy
 
 from mass_flask_api.config import api_blueprint
 from .base import BaseResource
-from mass_flask_api.utils import get_pagination_compatible_schema, register_api_endpoint
+from mass_flask_api.utils import get_pagination_compatible_schema, register_api_endpoint, check_api_key
 from mass_flask_api.schemas import ScheduledAnalysisSchema, ReportSchema
-from mass_flask_core.models import ScheduledAnalysis
+from mass_flask_core.models import ScheduledAnalysis, AdminPrivilege
 
 
 class ScheduledAnalysisResource(BaseResource):
@@ -15,6 +15,7 @@ class ScheduledAnalysisResource(BaseResource):
     query_key_field = 'id'
     filter_parameters = []
 
+    @check_api_key(required_privileges=[AdminPrivilege])
     def get_list(self):
         """
         ---
@@ -27,6 +28,7 @@ class ScheduledAnalysisResource(BaseResource):
         """
         return super(ScheduledAnalysisResource, self).get_list()
 
+    @check_api_key(required_privileges=[AdminPrivilege])
     def get_detail(self, **kwargs):
         """
         ---
@@ -45,6 +47,7 @@ class ScheduledAnalysisResource(BaseResource):
         """
         return super(ScheduledAnalysisResource, self).get_detail(**kwargs)
 
+    @check_api_key(required_privileges=[AdminPrivilege])
     def post(self):
         """
         ---
@@ -64,28 +67,9 @@ class ScheduledAnalysisResource(BaseResource):
         return super(ScheduledAnalysisResource, self).post()
 
     def put(self, **kwargs):
-        """
-        ---
-        put:
-            description: Update an existing scheduled analysis object
-            parameters:
-                - in: path
-                  name: id
-                  type: string
-                - in: body
-                  name: body
-                  schema: ScheduledAnalysisSchema
-            responses:
-                200:
-                    description: The object has been updated. The reply contains the updated object.
-                    schema: ScheduledAnalysisSchema
-                400:
-                    description: The server was not able to update an object based on the request data.
-                404:
-                    description: No scheduled analysis with the specified id has been found.
-        """
-        return super(ScheduledAnalysisResource, self).put(**kwargs)
+        return jsonify({'error': 'Method not allowed for this endpoint.'}), 405
 
+    @check_api_key(required_privileges=[AdminPrivilege])
     def delete(self, **kwargs):
         """
         ---
@@ -105,6 +89,7 @@ class ScheduledAnalysisResource(BaseResource):
         """
         return super(ScheduledAnalysisResource, self).delete(**kwargs)
 
+    @check_api_key(required_privileges=[AdminPrivilege])
     def submit_report(self, **kwargs):
         """
         ---

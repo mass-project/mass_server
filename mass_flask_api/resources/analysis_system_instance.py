@@ -2,9 +2,9 @@ from flask import jsonify
 
 from mass_flask_api.config import api_blueprint
 from .base import BaseResource
-from mass_flask_api.utils import get_pagination_compatible_schema, register_api_endpoint
+from mass_flask_api.utils import get_pagination_compatible_schema, register_api_endpoint, check_api_key
 from mass_flask_api.schemas import AnalysisSystemInstanceSchema, ScheduledAnalysisSchema
-from mass_flask_core.models import AnalysisSystemInstance, ScheduledAnalysis
+from mass_flask_core.models import AnalysisSystemInstance, ScheduledAnalysis, AdminPrivilege
 
 
 class AnalysisSystemInstanceResource(BaseResource):
@@ -14,6 +14,7 @@ class AnalysisSystemInstanceResource(BaseResource):
     query_key_field = 'uuid'
     filter_parameters = []
 
+    @check_api_key()
     def get_list(self):
         """
         ---
@@ -26,6 +27,7 @@ class AnalysisSystemInstanceResource(BaseResource):
         """
         return super(AnalysisSystemInstanceResource, self).get_list()
 
+    @check_api_key()
     def get_detail(self, **kwargs):
         """
         ---
@@ -44,6 +46,7 @@ class AnalysisSystemInstanceResource(BaseResource):
         """
         return super(AnalysisSystemInstanceResource, self).get_detail(**kwargs)
 
+    @check_api_key(required_privileges=[AdminPrivilege])
     def post(self):
         """
         ---
@@ -62,6 +65,7 @@ class AnalysisSystemInstanceResource(BaseResource):
         """
         return super(AnalysisSystemInstanceResource, self).post()
 
+    @check_api_key(required_privileges=[AdminPrivilege])
     def put(self, **kwargs):
         """
         ---
@@ -85,6 +89,7 @@ class AnalysisSystemInstanceResource(BaseResource):
         """
         return super(AnalysisSystemInstanceResource, self).put(**kwargs)
 
+    @check_api_key(required_privileges=[AdminPrivilege])
     def delete(self, **kwargs):
         """
         ---
@@ -104,6 +109,7 @@ class AnalysisSystemInstanceResource(BaseResource):
         """
         return super(AnalysisSystemInstanceResource, self).delete(**kwargs)
 
+    @check_api_key(required_privileges=[AdminPrivilege])
     def scheduled_analyses(self, **kwargs):
         """
         ---
