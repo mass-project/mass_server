@@ -1,7 +1,9 @@
 import os
 from flask import redirect, url_for
+
 from mass_flask_api.config import api_blueprint
 from mass_flask_webui.config import webui_blueprint
+from mass_flask_scheduling.config import scheduling_blueprint
 from mass_flask_config.app import app
 from mass_flask_core.signals import connect_signals
 
@@ -35,6 +37,7 @@ def bootstrap_mass_flask():
     connect_signals()
     app.register_blueprint(api_blueprint, url_prefix='/api')
     app.register_blueprint(webui_blueprint, url_prefix='/webui')
+    app.register_blueprint(scheduling_blueprint, url_prefix='/scheduling')
 
 
 
