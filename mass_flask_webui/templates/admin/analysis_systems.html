@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block page_title %}
+Manage analysis systems
+{% endblock %}
+
+{% block content %}
+
+    <div class="page-header">
+        <h1><i class="fa fa-tasks"></i> Manage analysis systems
+        </h1>
+    </div>
+
+    {% for analysis_system in analysis_systems %}
+        <div class="row">
+            <div class="col-md-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading"><h3 class="panel-title">{{ analysis_system.verbose_name }}</h3></div>
+                    <table class="table table-striped table-hover">
+                        <tr><th></th><th>Status information</th><th>Instance UUID</th><th>API key</th></tr>
+                        {% for instance in analysis_system.instances %}
+                            <tr>
+                                <td>
+                                    <form method="post" action="#">
+                                        <input type="hidden" name="uuid" value="{{ instance.uuid }}">
+                                        <input type="hidden" name="action" value="delete_instance">
+                                        <button type="submit" class="btn btn-danger btn-xs"><i class="fa fa-minus-square"></i></button>
+                                    </form>
+                                </td>
+                                {% if instance.is_online %}
+                                    <td><span class="label label-success">Online</span></td>
+                                {% else %}
+                                    <td><span class="label label-danger">Offline</span> Last seen: {{ instance.last_seen }}</td>
+                                {% endif %}
+                                <td>{{ instance.uuid }}</td>
+                                <td>
+                                    <form class="form-inline" method="post" action="#">
+                                        <input type="hidden" name="uuid" value="{{ instance.uuid }}">
+                                        <input type="hidden" name="action" value="regenerate_api_key">
+                                        <input class="form-control" id="apikey-{{ instance.uuid }}" type="text" readonly value="{{ instance.api_key }}"/>
+                                        <button type="submit" class="btn btn-default btn-sm"><i class="fa fa-retweet" aria-hidden="true"></i></button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                    <div class="panel-footer">
+                        <form class="form-inline" method="post" action="#">
+                            <input type="hidden" name="analysis_system" value="{{ analysis_system.id }}">
+                            <input type="hidden" name="action" value="create_instance">
+                            <div class="form-group">
+                                <input type="text" class="form-control" name="uuid" placeholder="UUID (leave empty to auto-assign)">
+                            </div>
+                            <button type="submit" class="btn btn-success btn-sm"><i class="fa fa-plus-square"></i> Create</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+
+
+
+{% endblock %}

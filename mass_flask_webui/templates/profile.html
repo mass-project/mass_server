@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block page_title %}
+Profile
+{% endblock %}
+
+{% block content %}
+
+    <div class="page-header">
+        <h1><i class="fa fa-user"></i> User profile
+        </h1>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+             <div class="panel panel-warning">
+                <div class="panel-heading"><h3 class="panel-title">API key</h3></div>
+                <div class="panel-body">
+                    <form class="form-horizontal">
+                        <div class="form-group">
+                            <label for="input_api_key" class="col-sm-3 control-label">Your API key</label>
+                            <div class="col-sm-9">
+                                <input type="email" class="form-control" id="input_api_key" readonly value="{{ api_key }}">
+                            </div>
+                        </div>
+                    </form>
+                    <b>Warning:</b> With this key you can access the MASS API. This key is bound to your account and should not be provided to a third party.
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
