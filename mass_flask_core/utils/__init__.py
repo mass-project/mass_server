@@ -6,6 +6,7 @@ from .list_functions import ListFunctions
 from .string_functions import StringFunctions
 from .pagination_functions import PaginationFunctions
 from .graph_functions import GraphFunctions
+from .auth_functions import AuthFunctions, current_api_key, AdminAccessPrivilege, ValidInstanceAccessPrivilege, ValidUserAccessPrivilege, UUIDCheckAccessPrivilege
 
 __all__ = [
     'HashFunctions',
@@ -15,5 +16,11 @@ __all__ = [
     'ListFunctions',
     'StringFunctions',
     'PaginationFunctions',
-    'GraphFunctions'
+    'GraphFunctions',
+    'AuthFunctions',
+    'current_api_key',
+    'AdminAccessPrivilege',
+    'ValidUserAccessPrivilege',
+    'ValidInstanceAccessPrivilege',
+    'UUIDCheckAccessPrivilege'
 ]

@@ -67,29 +67,3 @@ class InstanceAPIKey(APIKey):
             api_key = InstanceAPIKey(instance=instance.id)
             api_key.save()
         return api_key
-
-
-class APIKeyPrivilege:
-    @staticmethod
-    def check(api_key):
-        raise NotImplementedError('Privilege check not implemented for generic class APIKeyPrivilege')
-
-
-class AdminPrivilege(APIKeyPrivilege):
-    @staticmethod
-    def check(api_key):
-        if not isinstance(api_key, UserAPIKey):
-            return False
-        return api_key.user.is_admin
-
-
-class ValidUserPrivilege(APIKeyPrivilege):
-    @staticmethod
-    def check(api_key):
-        return isinstance(api_key, UserAPIKey)
-
-
-class ValidInstancePrivilege(APIKeyPrivilege):
-    @staticmethod
-    def check(api_key):
-        return isinstance(api_key, InstanceAPIKey)

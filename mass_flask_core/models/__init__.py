@@ -7,7 +7,7 @@ from .analysis_request import AnalysisRequest
 from .scheduled_analysis import ScheduledAnalysis
 from .report import Report
 from .user import User, AnonymousUser
-from .api_key import APIKey, UserAPIKey, InstanceAPIKey, AdminPrivilege, ValidInstancePrivilege, ValidUserPrivilege
+from .api_key import APIKey, UserAPIKey, InstanceAPIKey
 
 
 __all__ = [
@@ -32,8 +32,5 @@ __all__ = [
     "AnonymousUser",
     "APIKey",
     "UserAPIKey",
-    "InstanceAPIKey",
-    "AdminPrivilege",
-    "ValidInstancePrivilege",
-    "ValidUserPrivilege"
+    "InstanceAPIKey"
 ]
