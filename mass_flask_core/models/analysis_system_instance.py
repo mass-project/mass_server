@@ -1,3 +1,5 @@
+from uuid import uuid4
+
 from mass_flask_config.app import db
 from mongoengine import StringField, DateTimeField, ReferenceField
 from mass_flask_core.utils import TimeFunctions
@@ -5,9 +7,13 @@ from .analysis_system import AnalysisSystem
 import datetime
 
 
+def _gen_uuid():
+    return str(uuid4())
+
+
 class AnalysisSystemInstance(db.Document):
     analysis_system = ReferenceField(AnalysisSystem, required=True)
-    uuid = StringField(max_length=36, required=True, unique=True)
+    uuid = StringField(max_length=36, required=True, unique=True, default=_gen_uuid)
     last_seen = DateTimeField()
 
     meta = {
@@ -30,7 +36,5 @@ class AnalysisSystemInstance(db.Document):
         if self.last_seen is None:
             return False
 
-        print(TimeFunctions.get_timestamp())
-        print(self.last_seen)
         difference = TimeFunctions.get_timestamp() - self.last_seen
         return difference < datetime.timedelta(minutes=10)

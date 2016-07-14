@@ -3,10 +3,11 @@ from .sample_relation import SampleRelation, DroppedBySampleRelation, ResolvedBy
 from .sample_relation import SsdeepSampleRelation
 from .analysis_system import AnalysisSystem
 from .analysis_system_instance import AnalysisSystemInstance
-from .dispatch_request import DispatchRequest
 from .analysis_request import AnalysisRequest
 from .scheduled_analysis import ScheduledAnalysis
 from .report import Report
+from .user import User, AnonymousUser
+from .api_key import APIKey, UserAPIKey, InstanceAPIKey, AdminPrivilege, ValidInstancePrivilege, ValidUserPrivilege
 
 
 __all__ = [
@@ -24,8 +25,15 @@ __all__ = [
     "SsdeepSampleRelation",
     "AnalysisSystem",
     "AnalysisSystemInstance",
-    "DispatchRequest",
     "AnalysisRequest",
     "ScheduledAnalysis",
-    "Report"
+    "Report",
+    "User",
+    "AnonymousUser",
+    "APIKey",
+    "UserAPIKey",
+    "InstanceAPIKey",
+    "AdminPrivilege",
+    "ValidInstancePrivilege",
+    "ValidUserPrivilege"
 ]
