@@ -1,10 +1,11 @@
 from flask import jsonify
 
 from mass_flask_api.config import api_blueprint
+from mass_flask_core.utils import AuthFunctions, AdminAccessPrivilege
 from .base import BaseResource
-from mass_flask_api.utils import get_pagination_compatible_schema, register_api_endpoint, check_api_key
+from mass_flask_api.utils import get_pagination_compatible_schema, register_api_endpoint
 from mass_flask_api.schemas import ReportSchema
-from mass_flask_core.models import Report, AdminPrivilege
+from mass_flask_core.models import Report
 
 
 class ReportResource(BaseResource):
@@ -14,7 +15,7 @@ class ReportResource(BaseResource):
     query_key_field = 'id'
     filter_parameters = []
 
-    @check_api_key()
+    @AuthFunctions.check_api_key()
     def get_list(self):
         """
         ---
@@ -27,7 +28,7 @@ class ReportResource(BaseResource):
         """
         return super(ReportResource, self).get_list()
 
-    @check_api_key()
+    @AuthFunctions.check_api_key()
     def get_detail(self, **kwargs):
         """
         ---
@@ -52,7 +53,7 @@ class ReportResource(BaseResource):
     def put(self, **kwargs):
         return jsonify({'error': 'Method not allowed for this endpoint.'}), 405
 
-    @check_api_key(required_privileges=[AdminPrivilege])
+    @AuthFunctions.check_api_key(privileges=[AdminAccessPrivilege()])
     def delete(self, **kwargs):
         """
         ---
@@ -72,7 +73,7 @@ class ReportResource(BaseResource):
         """
         return super(ReportResource, self).delete(**kwargs)
 
-    @check_api_key()
+    @AuthFunctions.check_api_key()
     def get_json_report_object(self, **kwargs):
         """
         ---
@@ -104,7 +105,7 @@ class ReportResource(BaseResource):
                 file = obj.read()
                 return file, 200, {'Content-Type': 'application/json'}
 
-    @check_api_key()
+    @AuthFunctions.check_api_key()
     def get_raw_report_object(self, **kwargs):
         """
         ---
