@@ -17,3 +17,5 @@ coverage>=4.0.3
 uwsgi>=2.0.12
 flask-wtf>=0.12
 flask-bootstrap>=3.3.5.7
+flask-login>=0.3.2
+flask-apscheduler>=1.4.0

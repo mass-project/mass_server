@@ -13,3 +13,9 @@
 [submodule "mass_angular_webui"]
 	path = mass_angular_webui
 	url = ssh://git@atlassian-net.cs.uni-bonn.de:7999/mal/mass_angular_webui.git
+[submodule "mass_flask_bin"]
+	path = mass_flask_bin
+	url = ssh://git@atlassian-net.cs.uni-bonn.de:7999/mal/mass_flask_bin.git
+[submodule "mass_flask_scheduling"]
+	path = mass_flask_scheduling
+	url = ssh://git@atlassian-net.cs.uni-bonn.de:7999/mal/mass_flask_scheduling.git
