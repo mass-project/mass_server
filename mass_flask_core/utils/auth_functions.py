@@ -2,7 +2,6 @@ import re
 from flask import has_request_context, _request_ctx_stack, request, jsonify
 from functools import wraps
 from werkzeug.local import LocalProxy
-from mass_flask_core.models import APIKey, UserAPIKey, InstanceAPIKey
 
 current_api_key = LocalProxy(lambda: AuthFunctions.get_current_api_key())
 
@@ -16,6 +15,7 @@ class AuthFunctions:
 
     @staticmethod
     def _load_api_key():
+        from mass_flask_core.models import APIKey
         if 'Authorization' not in request.headers:
             _request_ctx_stack.top.api_key = None
             return
@@ -71,6 +71,7 @@ class AccessPrivilege:
 
 class AdminAccessPrivilege(AccessPrivilege):
     def check(self, api_key):
+        from mass_flask_core.models import UserAPIKey
         if not isinstance(api_key, UserAPIKey):
             return False
         return api_key.user.is_admin
@@ -78,11 +79,13 @@ class AdminAccessPrivilege(AccessPrivilege):
 
 class ValidUserAccessPrivilege(AccessPrivilege):
     def check(self, api_key):
+        from mass_flask_core.models import UserAPIKey
         return isinstance(api_key, UserAPIKey)
 
 
 class ValidInstanceAccessPrivilege(AccessPrivilege):
     def check(self, api_key):
+        from mass_flask_core.models import InstanceAPIKey
         return isinstance(api_key, InstanceAPIKey)
 
 
@@ -91,6 +94,7 @@ class UUIDCheckAccessPrivilege(AccessPrivilege):
         self._uuid_view_arg = uuid_view_arg
 
     def check(self, api_key):
+        from mass_flask_core.models import InstanceAPIKey
         if isinstance(api_key, InstanceAPIKey) and api_key.instance.uuid == request.view_args[self._uuid_view_arg]:
             return True
         else:
