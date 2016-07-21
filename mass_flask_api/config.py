@@ -3,10 +3,6 @@ from flask import Blueprint, jsonify, url_for
 
 api_blueprint = Blueprint('mass_flask_api', __name__)
 
-api_blueprint.config = {
-    'OBJECTS_PER_PAGE': 100
-}
-
 
 class BasePathAPISpec(APISpec):
     def to_dict(self):

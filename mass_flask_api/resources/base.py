@@ -1,7 +1,5 @@
 from flask import jsonify, request
 from flask.views import MethodView
-
-from mass_flask_api.config import api_blueprint
 from mass_flask_core.utils import PaginationFunctions
 
 
@@ -41,7 +39,7 @@ class BaseResource(MethodView):
     def filter_parameters(self):
         return Ref('filter_parameters').resolve(self)
 
-    @PaginationFunctions.paginate(per_page=api_blueprint.config['OBJECTS_PER_PAGE'])
+    @PaginationFunctions.paginate
     def _get_list(self):
         filter_condition = {}
         for parameter in self.filter_parameters:
