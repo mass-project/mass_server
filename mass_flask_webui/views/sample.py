@@ -5,7 +5,7 @@ from mass_flask_core.utils import PaginationFunctions, GraphFunctions
 from mass_flask_webui.config import webui_blueprint
 
 
-@PaginationFunctions.paginate(per_page=100)
+@PaginationFunctions.paginate
 def _get_samples_paginated():
     return Sample.objects()
 

@@ -79,7 +79,7 @@ def _get_common_filters(common_form_data):
     return result_dict
 
 
-@PaginationFunctions.paginate(per_page=100)
+@PaginationFunctions.paginate
 def _build_query_from_form_data(form_data):
     queryset = Sample
     query_arguments = {}
