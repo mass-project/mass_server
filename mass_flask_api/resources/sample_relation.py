@@ -1,5 +1,4 @@
-from flask import jsonify
-from flask import request
+from flask import jsonify, request
 
 from mass_flask_api.config import api_blueprint
 from mass_flask_api.schemas import SampleRelationSchema, DroppedBySampleRelationSchema, ResolvedBySampleRelationSchema, ContactedBySampleRelationSchema, RetrievedBySampleRelationSchema, SsdeepSampleRelationSchema
@@ -7,9 +6,8 @@ from mass_flask_api.schemas import SchemaMapping
 from mass_flask_api.utils import get_pagination_compatible_schema
 from mass_flask_api.utils import register_api_endpoint
 from mass_flask_core.models import SampleRelation
-from mass_flask_core.models import SsdeepSampleRelation
+from mass_flask_core.utils import AuthFunctions, AdminAccessPrivilege, ValidInstanceAccessPrivilege
 from .base import BaseResource
-
 
 
 class SampleRelationResource(BaseResource):
@@ -19,6 +17,7 @@ class SampleRelationResource(BaseResource):
     query_key_field = 'id'
     filter_parameters = []
 
+    @AuthFunctions.check_api_key()
     def get_list(self):
         """
         ---
@@ -40,6 +39,7 @@ class SampleRelationResource(BaseResource):
             'previous': paginated_sample_relations['previous']
         })
 
+    @AuthFunctions.check_api_key()
     def get_detail(self, **kwargs):
         """
         ---
@@ -69,6 +69,7 @@ class SampleRelationResource(BaseResource):
     def put(self, **kwargs):
         return jsonify({'error': 'Updating relation objects via the API is not supported yet.'}), 400
 
+    @AuthFunctions.check_api_key(privileges=[AdminAccessPrivilege()])
     def delete(self, **kwargs):
         """
         ---
@@ -88,6 +89,7 @@ class SampleRelationResource(BaseResource):
         """
         return super(SampleRelationResource, self).delete(**kwargs)
 
+    @AuthFunctions.check_api_key(privileges=[AdminAccessPrivilege(), ValidInstanceAccessPrivilege()], check_mode='require_any')
     def submit_dropped_by_sample_relation(self):
         """
         ---
@@ -110,6 +112,7 @@ class SampleRelationResource(BaseResource):
         sample_relation.save()
         return jsonify(schema.dump(sample_relation).data), 201
 
+    @AuthFunctions.check_api_key(privileges=[AdminAccessPrivilege(), ValidInstanceAccessPrivilege()], check_mode='require_any')
     def submit_resolved_by_sample_relation(self):
         """
         ---
@@ -132,6 +135,7 @@ class SampleRelationResource(BaseResource):
         sample_relation.save()
         return jsonify(schema.dump(sample_relation).data), 201
 
+    @AuthFunctions.check_api_key(privileges=[AdminAccessPrivilege(), ValidInstanceAccessPrivilege()], check_mode='require_any')
     def submit_contacted_by_sample_relation(self):
         """
         ---
@@ -154,6 +158,7 @@ class SampleRelationResource(BaseResource):
         sample_relation.save()
         return jsonify(schema.dump(sample_relation).data), 201
 
+    @AuthFunctions.check_api_key(privileges=[AdminAccessPrivilege(), ValidInstanceAccessPrivilege()], check_mode='require_any')
     def submit_retrieved_by_sample_relation(self):
         """
         ---
@@ -176,7 +181,7 @@ class SampleRelationResource(BaseResource):
         sample_relation.save()
         return jsonify(schema.dump(sample_relation).data), 201
 
-
+    @AuthFunctions.check_api_key(privileges=[AdminAccessPrivilege(), ValidInstanceAccessPrivilege()], check_mode='require_any')
     def submit_ssdeep_sample_relation(self):
         """
         ---
@@ -194,7 +199,8 @@ class SampleRelationResource(BaseResource):
                     description: The request is malformed.
         """
         data = request.get_json()
-        sample_relation = self.schema.load(data).data
+        schema = SsdeepSampleRelationSchema()
+        sample_relation = schema.load(data).data
         sample_relation.save()
         return jsonify(self.schema.dump(sample_relation).data), 201
 

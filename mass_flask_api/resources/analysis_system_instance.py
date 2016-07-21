@@ -5,6 +5,7 @@ from .base import BaseResource
 from mass_flask_api.utils import get_pagination_compatible_schema, register_api_endpoint
 from mass_flask_api.schemas import AnalysisSystemInstanceSchema, ScheduledAnalysisSchema
 from mass_flask_core.models import AnalysisSystemInstance, ScheduledAnalysis
+from mass_flask_core.utils import AuthFunctions, AdminAccessPrivilege, UUIDCheckAccessPrivilege
 
 
 class AnalysisSystemInstanceResource(BaseResource):
@@ -14,6 +15,7 @@ class AnalysisSystemInstanceResource(BaseResource):
     query_key_field = 'uuid'
     filter_parameters = []
 
+    @AuthFunctions.check_api_key()
     def get_list(self):
         """
         ---
@@ -26,6 +28,7 @@ class AnalysisSystemInstanceResource(BaseResource):
         """
         return super(AnalysisSystemInstanceResource, self).get_list()
 
+    @AuthFunctions.check_api_key()
     def get_detail(self, **kwargs):
         """
         ---
@@ -44,6 +47,7 @@ class AnalysisSystemInstanceResource(BaseResource):
         """
         return super(AnalysisSystemInstanceResource, self).get_detail(**kwargs)
 
+    @AuthFunctions.check_api_key(privileges=[AdminAccessPrivilege()])
     def post(self):
         """
         ---
@@ -62,6 +66,7 @@ class AnalysisSystemInstanceResource(BaseResource):
         """
         return super(AnalysisSystemInstanceResource, self).post()
 
+    @AuthFunctions.check_api_key(privileges=[AdminAccessPrivilege()])
     def put(self, **kwargs):
         """
         ---
@@ -85,6 +90,7 @@ class AnalysisSystemInstanceResource(BaseResource):
         """
         return super(AnalysisSystemInstanceResource, self).put(**kwargs)
 
+    @AuthFunctions.check_api_key(privileges=[AdminAccessPrivilege()])
     def delete(self, **kwargs):
         """
         ---
@@ -104,6 +110,7 @@ class AnalysisSystemInstanceResource(BaseResource):
         """
         return super(AnalysisSystemInstanceResource, self).delete(**kwargs)
 
+    @AuthFunctions.check_api_key(privileges=[AdminAccessPrivilege(), UUIDCheckAccessPrivilege()], check_mode='require_any')
     def scheduled_analyses(self, **kwargs):
         """
         ---

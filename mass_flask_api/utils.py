@@ -1,4 +1,11 @@
+import re
+
+from flask import request, jsonify
+from functools import wraps
+
 from mass_flask_api.config import api_blueprint
+from mass_flask_core.models import APIKey
+from mass_flask_core.utils import current_api_key
 
 
 def get_pagination_compatible_schema(schema_class):
@@ -25,3 +32,40 @@ def register_api_endpoint(endpoint_name, resource):
     api_blueprint.apispec.add_path(path=endpoint_detail_path_spec, view=resource.get_detail)
     api_blueprint.apispec.add_path(path=endpoint_detail_path_spec, view=resource.put)
     api_blueprint.apispec.add_path(path=endpoint_detail_path_spec, view=resource.delete)
+
+#
+# def _get_and_check_api_key():
+#     if 'Authorization' not in request.headers:
+#         return None
+#     authorization_header = request.headers['Authorization']
+#     m = re.match('^APIKEY (.*)$', authorization_header)
+#     if not m:
+#         return None
+#     token = m.group(1)
+#     api_key = APIKey.verify_auth_token(token)
+#     if not api_key:
+#         return None
+#     else:
+#         return api_key
+#
+#
+# def _check_required_privileges(api_key, required_privileges):
+#     for privilege in required_privileges:
+#         if not privilege.check(api_key):
+#             return False
+#     return True
+#
+#
+# def check_api_key(required_privileges=[]):
+#     def real_decorator(fn):
+#         @wraps(fn)
+#         def inner(*args, **kwargs):
+#             print(current_api_key)
+#             api_key = _get_and_check_api_key()
+#             if not api_key:
+#                 return jsonify({'error': 'Invalid API key. Provide a valid API key when accessing this resource.'}), 403
+#             if not _check_required_privileges(api_key, required_privileges):
+#                 return jsonify({'error': 'API key has insufficient permissions to access this resource.'}), 403
+#             return fn(*args, **kwargs)
+#         return inner
+#     return real_decorator

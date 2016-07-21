@@ -1,14 +1,11 @@
 import json
-
 from flask import jsonify, request
-
 from mass_flask_api.config import api_blueprint
-from mass_flask_api.schemas import SampleSchema, ReportSchema, SampleRelationSchema, SchemaMapping
+from mass_flask_api.schemas import SampleSchema, ReportSchema, SchemaMapping
 from mass_flask_core.models import Sample, FileSample, Report, IPSample, DomainSample, URISample
-from mass_flask_core.utils import GraphFunctions
-
-from .base import BaseResource
+from mass_flask_core.utils import GraphFunctions, AuthFunctions, AdminAccessPrivilege
 from mass_flask_api.utils import get_pagination_compatible_schema, register_api_endpoint
+from .base import BaseResource
 
 
 class SampleResource(BaseResource):
@@ -23,6 +20,7 @@ class SampleResource(BaseResource):
         'sha512sum'
     ]
 
+    @AuthFunctions.check_api_key()
     def get_list(self):
         """
         ---
@@ -57,6 +55,7 @@ class SampleResource(BaseResource):
             'previous': paginated_samples['previous']
         })
 
+    @AuthFunctions.check_api_key()
     def get_detail(self, **kwargs):
         """
         ---
@@ -86,6 +85,7 @@ class SampleResource(BaseResource):
     def put(self, **kwargs):
         return jsonify({'error': 'Updating sample objects via the API is not supported yet.'}), 400
 
+    @AuthFunctions.check_api_key(privileges=[AdminAccessPrivilege()])
     def delete(self, **kwargs):
         """
         ---
@@ -105,6 +105,7 @@ class SampleResource(BaseResource):
         """
         return super(SampleResource, self).delete(**kwargs)
 
+    @AuthFunctions.check_api_key()
     def download_file(self, **kwargs):
         """
         ---
@@ -131,6 +132,7 @@ class SampleResource(BaseResource):
             file = sample.file.read()
             return file, 200, {'Content-Type': 'application/octet-stream'}
 
+    @AuthFunctions.check_api_key()
     def submit_file(self):
         """
         ---
@@ -164,6 +166,7 @@ class SampleResource(BaseResource):
             schema = SchemaMapping.get_schema_for_model_class(sample.__class__.__name__)
             return jsonify(schema().dump(sample).data), 201
 
+    @AuthFunctions.check_api_key()
     def submit_ip(self):
         """
         ---
@@ -189,6 +192,7 @@ class SampleResource(BaseResource):
             schema = SchemaMapping.get_schema_for_model_class(sample.__class__.__name__)
             return jsonify(schema().dump(sample).data), 201
 
+    @AuthFunctions.check_api_key()
     def submit_domain(self):
         """
         ---
@@ -214,6 +218,7 @@ class SampleResource(BaseResource):
             schema = SchemaMapping.get_schema_for_model_class(sample.__class__.__name__)
             return jsonify(schema().dump(sample).data), 201
 
+    @AuthFunctions.check_api_key()
     def submit_uri(self):
         """
         ---
@@ -239,6 +244,7 @@ class SampleResource(BaseResource):
             schema = SchemaMapping.get_schema_for_model_class(sample.__class__.__name__)
             return jsonify(schema().dump(sample).data), 201
 
+    @AuthFunctions.check_api_key()
     def reports(self, **kwargs):
         """
         ---
@@ -265,6 +271,7 @@ class SampleResource(BaseResource):
                 'results': serialized_result.data,
             })
 
+    @AuthFunctions.check_api_key()
     def relation_graph(self, **kwargs):
         """
         ---

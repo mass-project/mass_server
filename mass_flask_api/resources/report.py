@@ -1,6 +1,7 @@
 from flask import jsonify
 
 from mass_flask_api.config import api_blueprint
+from mass_flask_core.utils import AuthFunctions, AdminAccessPrivilege
 from .base import BaseResource
 from mass_flask_api.utils import get_pagination_compatible_schema, register_api_endpoint
 from mass_flask_api.schemas import ReportSchema
@@ -14,6 +15,7 @@ class ReportResource(BaseResource):
     query_key_field = 'id'
     filter_parameters = []
 
+    @AuthFunctions.check_api_key()
     def get_list(self):
         """
         ---
@@ -26,6 +28,7 @@ class ReportResource(BaseResource):
         """
         return super(ReportResource, self).get_list()
 
+    @AuthFunctions.check_api_key()
     def get_detail(self, **kwargs):
         """
         ---
@@ -45,46 +48,12 @@ class ReportResource(BaseResource):
         return super(ReportResource, self).get_detail(**kwargs)
 
     def post(self):
-        """
-        ---
-        post:
-            description: Create a new report
-            parameters:
-                - in: body
-                  name: body
-                  schema: ReportSchema
-            responses:
-                201:
-                    description: The object has been created. The reply contains the newly created object.
-                    schema: ReportSchema
-                400:
-                    description: The server was not able to create an object based on the request data.
-        """
-        return super(ReportResource, self).post()
+        return jsonify({'error': 'Method not allowed for this endpoint.'}), 405
 
     def put(self, **kwargs):
-        """
-        ---
-        put:
-            description: Update an existing report object
-            parameters:
-                - in: path
-                  name: id
-                  type: string
-                - in: body
-                  name: body
-                  schema: ReportSchema
-            responses:
-                200:
-                    description: The object has been updated. The reply contains the updated object.
-                    schema: ReportSchema
-                400:
-                    description: The server was not able to update an object based on the request data.
-                404:
-                    description: No report with the specified id has been found.
-        """
-        return super(ReportResource, self).put(**kwargs)
+        return jsonify({'error': 'Method not allowed for this endpoint.'}), 405
 
+    @AuthFunctions.check_api_key(privileges=[AdminAccessPrivilege()])
     def delete(self, **kwargs):
         """
         ---
@@ -104,6 +73,7 @@ class ReportResource(BaseResource):
         """
         return super(ReportResource, self).delete(**kwargs)
 
+    @AuthFunctions.check_api_key()
     def get_json_report_object(self, **kwargs):
         """
         ---
@@ -135,6 +105,7 @@ class ReportResource(BaseResource):
                 file = obj.read()
                 return file, 200, {'Content-Type': 'application/json'}
 
+    @AuthFunctions.check_api_key()
     def get_raw_report_object(self, **kwargs):
         """
         ---
