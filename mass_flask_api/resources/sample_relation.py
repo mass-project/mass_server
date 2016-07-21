@@ -89,7 +89,7 @@ class SampleRelationResource(BaseResource):
         """
         return super(SampleRelationResource, self).delete(**kwargs)
 
-    @AuthFunctions.check_api_key(privileges=[AdminAccessPrivilege, ValidInstanceAccessPrivilege()], check_mode='require_any')
+    @AuthFunctions.check_api_key(privileges=[AdminAccessPrivilege(), ValidInstanceAccessPrivilege()], check_mode='require_any')
     def submit_dropped_by_sample_relation(self):
         """
         ---
@@ -112,7 +112,7 @@ class SampleRelationResource(BaseResource):
         sample_relation.save()
         return jsonify(schema.dump(sample_relation).data), 201
 
-    @AuthFunctions.check_api_key(privileges=[AdminAccessPrivilege, ValidInstanceAccessPrivilege()], check_mode='require_any')
+    @AuthFunctions.check_api_key(privileges=[AdminAccessPrivilege(), ValidInstanceAccessPrivilege()], check_mode='require_any')
     def submit_resolved_by_sample_relation(self):
         """
         ---
@@ -135,7 +135,7 @@ class SampleRelationResource(BaseResource):
         sample_relation.save()
         return jsonify(schema.dump(sample_relation).data), 201
 
-    @AuthFunctions.check_api_key(privileges=[AdminAccessPrivilege, ValidInstanceAccessPrivilege()], check_mode='require_any')
+    @AuthFunctions.check_api_key(privileges=[AdminAccessPrivilege(), ValidInstanceAccessPrivilege()], check_mode='require_any')
     def submit_contacted_by_sample_relation(self):
         """
         ---
@@ -158,7 +158,7 @@ class SampleRelationResource(BaseResource):
         sample_relation.save()
         return jsonify(schema.dump(sample_relation).data), 201
 
-    @AuthFunctions.check_api_key(privileges=[AdminAccessPrivilege, ValidInstanceAccessPrivilege()], check_mode='require_any')
+    @AuthFunctions.check_api_key(privileges=[AdminAccessPrivilege(), ValidInstanceAccessPrivilege()], check_mode='require_any')
     def submit_retrieved_by_sample_relation(self):
         """
         ---
@@ -181,7 +181,7 @@ class SampleRelationResource(BaseResource):
         sample_relation.save()
         return jsonify(schema.dump(sample_relation).data), 201
 
-    @AuthFunctions.check_api_key(privileges=[AdminAccessPrivilege, ValidInstanceAccessPrivilege()], check_mode='require_any')
+    @AuthFunctions.check_api_key(privileges=[AdminAccessPrivilege(), ValidInstanceAccessPrivilege()], check_mode='require_any')
     def submit_ssdeep_sample_relation(self):
         """
         ---
