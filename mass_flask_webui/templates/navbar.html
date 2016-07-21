@@ -23,6 +23,24 @@
            <li><a href="{{ url_for('mass_flask_webui.apidocs') }}"><i class="fa fa-question-circle"></i> API Documentation</a></li>
            <li><a href="{{ url_for('mass_flask_webui.cli_scripts') }}"><i class="fa fa-keyboard-o"></i> CLI Scripts</a></li>
        </ul>
+
+        <ul class="nav navbar-nav navbar-right">
+            {% if current_user.is_authenticated %}
+                {% if current_user.is_admin %}
+                    <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"><i class="fa fa-user-secret"></i> Admin <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="{{ url_for('mass_flask_webui.admin') }}"><i class="fa fa-cog"></i> Statistics / Maintenance</a></li>
+                            <li><a href="{{ url_for('mass_flask_webui.admin_analysis_systems') }}"><i class="fa fa-tasks"></i> Manage analysis systems</a></li>
+                        </ul>
+                    </li>
+                {% endif %}
+                <li><a href="{{ url_for('mass_flask_webui.profile') }}"><i class="fa fa-user"></i> {{ current_user.username }}</a></li>
+                <li><a href="{{ url_for('mass_flask_webui.logout') }}"><i class="fa fa-sign-out"></i> Logout</a></li>
+            {% else %}
+                <li><a href="{{ url_for('mass_flask_webui.login') }}"><i class="fa fa-sign-in"></i> Login</a></li>
+            {% endif %}
+        </ul>
     </div><!-- /.navbar-collapse -->
   </div><!-- /.container-fluid -->
 </nav>
