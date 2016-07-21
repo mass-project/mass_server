@@ -5,10 +5,6 @@ from mongoengine import DoesNotExist
 from mass_flask_core.models import User, AnonymousUser
 
 webui_blueprint = Blueprint('mass_flask_webui', __name__, template_folder='templates', static_folder='static')
-
-webui_blueprint.config = {
-}
-
 login_manager = LoginManager()
 login_manager.anonymous_user = AnonymousUser
 
