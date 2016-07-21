@@ -17,7 +17,7 @@ Manage analysis systems
                 <div class="panel panel-default">
                     <div class="panel-heading"><h3 class="panel-title">{{ analysis_system.verbose_name }}</h3></div>
                     <table class="table table-striped table-hover">
-                        <tr><th></th><th>Status information</th><th>Instance UUID</th><th>API key</th></tr>
+                        <tr><th></th><th class="col-md-3">Status information</th><th class="col-md-3">Instance UUID</th><th class="col-md-6">API key</th></tr>
                         {% for instance in analysis_system.instances %}
                             <tr>
                                 <td>
@@ -37,7 +37,7 @@ Manage analysis systems
                                     <form class="form-inline" method="post" action="#">
                                         <input type="hidden" name="uuid" value="{{ instance.uuid }}">
                                         <input type="hidden" name="action" value="regenerate_api_key">
-                                        <input class="form-control" id="apikey-{{ instance.uuid }}" type="text" readonly value="{{ instance.api_key }}"/>
+                                        <input style="width: 90%" class="form-control" id="apikey-{{ instance.uuid }}" type="text" readonly value="{{ instance.api_key }}"/>
                                         <button type="submit" class="btn btn-default btn-sm"><i class="fa fa-retweet" aria-hidden="true"></i></button>
                                     </form>
                                 </td>
