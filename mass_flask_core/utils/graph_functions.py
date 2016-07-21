@@ -1,7 +1,5 @@
 from mongoengine import Q
 
-from mass_flask_core.models import SampleRelation
-
 
 class GraphFunctions:
     @staticmethod
@@ -12,6 +10,7 @@ class GraphFunctions:
         found_relations = set()
 
         while current_depth < depth:
+            from mass_flask_core.models import SampleRelation
             relations_at_current_depth = SampleRelation.objects(Q(sample__in=samples_at_current_depth) | Q(other__in=samples_at_current_depth)).no_dereference()
             all_queried_samples.extend(samples_at_current_depth)
             samples_at_next_depth = []

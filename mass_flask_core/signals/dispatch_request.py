@@ -1,12 +1,5 @@
-from mass_flask_core.models import DispatchRequest, Sample, AnalysisSystem, AnalysisRequest
+from mass_flask_core.models import Sample, AnalysisSystem, AnalysisRequest
 from mass_flask_core.utils.tag_parser import TagParser
-
-
-def _create_dispatch_request(sample):
-    try:
-        DispatchRequest.objects.get(sample=sample)
-    except DispatchRequest.DoesNotExist:
-        DispatchRequest.objects.create(sample=sample)
 
 
 def _filter_matches_tags(tags, tag_filter):

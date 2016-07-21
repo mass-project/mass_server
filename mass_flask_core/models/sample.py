@@ -3,7 +3,6 @@ from .analysis_system import AnalysisSystem
 from mongoengine import StringField, DateTimeField, ListField, ReferenceField, EmbeddedDocumentField, FileField, IntField, FloatField, EmbeddedDocument, LongField, ValidationError, \
     DoesNotExist
 from mass_flask_core.utils import TimeFunctions, HashFunctions, FileFunctions, ListFunctions, StringFunctions
-import pefile
 
 
 class Sample(db.Document):
