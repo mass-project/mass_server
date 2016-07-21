@@ -1,9 +1,6 @@
 import sys
-
+from flask import current_app
 from mass_flask_core.models import AnalysisSystemInstance, ScheduledAnalysis, AnalysisRequest
-
-
-MAX_SCHEDULE_THRESHOLD = 100
 
 
 def _prepare_instance_dict():
@@ -15,7 +12,7 @@ def _prepare_instance_dict():
         if not instance.is_online:
             continue
         instance.analyses_count = ScheduledAnalysis.objects(analysis_system_instance=instance).count()
-        if instance.analyses_count <= MAX_SCHEDULE_THRESHOLD:
+        if instance.analyses_count <= current_app.config['MAX_SCHEDULE_THRESHOLD']:
             instance_dict[instance.analysis_system.id].append(instance)
     return instance_dict
 
@@ -63,5 +60,3 @@ def schedule_analyses():
             requests_scheduled += 1
         else:
             requests_not_scheduled += 1
-    print("Requests scheduled: " + str(requests_scheduled))
-    print("Requests not scheduled: " + str(requests_not_scheduled))
