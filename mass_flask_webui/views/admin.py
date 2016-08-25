@@ -1,24 +1,12 @@
 import inspect
 
-from flask import current_app, render_template, request, flash
-from flask.ext.login import current_user
-from functools import wraps
+from flask import render_template, request, flash
+from flask_modular_auth import privilege_required, RolePrivilege
 
 from mass_flask_config.app import db
 from mass_flask_core import models
 from mass_flask_core.models import AnalysisSystem, AnalysisSystemInstance, InstanceAPIKey
 from mass_flask_webui.config import webui_blueprint
-
-
-def admin_required(func):
-    @wraps(func)
-    def decorated_view(*args, **kwargs):
-        if current_app.login_manager._login_disabled:
-            return func(*args, **kwargs)
-        elif not current_user.is_admin:
-            return current_app.login_manager.unauthorized()
-        return func(*args, **kwargs)
-    return decorated_view
 
 
 def _get_db_statistics():
@@ -30,14 +18,14 @@ def _get_db_statistics():
 
 
 @webui_blueprint.route('/admin/', methods=['GET'])
-@admin_required
+@privilege_required(RolePrivilege('admin'))
 def admin():
     _get_db_statistics()
     return render_template('admin/admin.html', database_statistics=_get_db_statistics())
 
 
 @webui_blueprint.route('/admin/analysis_systems/', methods=['GET', 'POST'])
-@admin_required
+@privilege_required(RolePrivilege('admin'))
 def admin_analysis_systems():
     if request.method == 'POST':
         _process_analysis_system_action()

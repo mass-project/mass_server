@@ -1,5 +1,5 @@
 from flask.ext.wtf import Form
-from mongoengine import DoesNotExist
+from flask import flash
 from wtforms import StringField, SubmitField, PasswordField
 from wtforms.validators import DataRequired, ValidationError
 
@@ -18,13 +18,10 @@ class LoginForm(Form):
     def validate(self, extra_validators=None):
         if not super(LoginForm, self).validate():
             return False
-        try:
-            user = User.objects.get(username=self.data['username'])
-        except DoesNotExist:
-            self.username.errors.append('Username invalid')
+        user = User.user_loader(username=self.data['username'], password=self.data['password'])
+        if not user:
+            flash('Username/password incorrect.', 'warning')
             return False
-        if not user.check_password(self.data['password']):
-            self.password.errors.append('Password invalid')
-            return False
-        self.user = user
-        return True
+        else:
+            self.user = user
+            return True

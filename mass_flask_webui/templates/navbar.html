@@ -10,7 +10,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="{{ url_for('mass_flask_webui.index') }}">MASS</a>
+      <a class="navbar-brand" href="{{ url_for('mass_flask_webui.index') }}"><img src="{{ url_for('mass_flask_webui.static', filename='images/mass_mini_header.svg') }}" alt="MASS" style="height: 150%; margin-top: -5px"></a>
     </div>
 
     <!-- Collect the nav links, forms, and other content for toggling -->
@@ -25,8 +25,8 @@
        </ul>
 
         <ul class="nav navbar-nav navbar-right">
-            {% if current_user.is_authenticated %}
-                {% if current_user.is_admin %}
+            {% if current_authenticated_entity.is_authenticated %}
+                {% if current_authenticated_entity.is_admin %}
                     <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"><i class="fa fa-user-secret"></i> Admin <span class="caret"></span></a>
                         <ul class="dropdown-menu">
@@ -35,7 +35,7 @@
                         </ul>
                     </li>
                 {% endif %}
-                <li><a href="{{ url_for('mass_flask_webui.profile') }}"><i class="fa fa-user"></i> {{ current_user.username }}</a></li>
+                <li><a href="{{ url_for('mass_flask_webui.profile') }}"><i class="fa fa-user"></i> {{ current_authenticated_entity.username }}</a></li>
                 <li><a href="{{ url_for('mass_flask_webui.logout') }}"><i class="fa fa-sign-out"></i> Logout</a></li>
             {% else %}
                 <li><a href="{{ url_for('mass_flask_webui.login') }}"><i class="fa fa-sign-in"></i> Login</a></li>
