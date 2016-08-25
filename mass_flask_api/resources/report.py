@@ -1,7 +1,9 @@
 from flask import jsonify
+from mongoengine import DoesNotExist
+
+from flask_modular_auth import privilege_required, AuthenticatedPrivilege, RolePrivilege
 
 from mass_flask_api.config import api_blueprint
-from mass_flask_core.utils import AuthFunctions, AdminAccessPrivilege
 from .base import BaseResource
 from mass_flask_api.utils import get_pagination_compatible_schema, register_api_endpoint
 from mass_flask_api.schemas import ReportSchema
@@ -11,11 +13,11 @@ from mass_flask_core.models import Report
 class ReportResource(BaseResource):
     schema = ReportSchema()
     pagination_schema = get_pagination_compatible_schema(ReportSchema)
-    model = Report
+    queryset = Report.objects
     query_key_field = 'id'
     filter_parameters = []
 
-    @AuthFunctions.check_api_key()
+    @privilege_required(AuthenticatedPrivilege())
     def get_list(self):
         """
         ---
@@ -28,7 +30,7 @@ class ReportResource(BaseResource):
         """
         return super(ReportResource, self).get_list()
 
-    @AuthFunctions.check_api_key()
+    @privilege_required(AuthenticatedPrivilege())
     def get_detail(self, **kwargs):
         """
         ---
@@ -53,7 +55,7 @@ class ReportResource(BaseResource):
     def put(self, **kwargs):
         return jsonify({'error': 'Method not allowed for this endpoint.'}), 405
 
-    @AuthFunctions.check_api_key(privileges=[AdminAccessPrivilege()])
+    @privilege_required(RolePrivilege('admin'))
     def delete(self, **kwargs):
         """
         ---
@@ -73,7 +75,7 @@ class ReportResource(BaseResource):
         """
         return super(ReportResource, self).delete(**kwargs)
 
-    @AuthFunctions.check_api_key()
+    @privilege_required(AuthenticatedPrivilege())
     def get_json_report_object(self, **kwargs):
         """
         ---
@@ -94,18 +96,18 @@ class ReportResource(BaseResource):
                 404:
                     description: No report with the specified id has been found.
         """
-        report = self.model.objects(id=kwargs['id']).first()
-        if not report:
-            return jsonify({'error': 'No object with key \'{}\' found'.format(kwargs['id'])}), 404
-        else:
+        try:
+            report = self.queryset.get(id=kwargs['id'])
             obj = report.json_report_objects[kwargs['object_name']]
             if not obj:
                 return jsonify({'error': 'No object with key \'{}\' found'.format(kwargs['object_name'])}), 404
             else:
                 file = obj.read()
                 return file, 200, {'Content-Type': 'application/json'}
+        except DoesNotExist:
+            return jsonify({'error': 'No object with key \'{}\' found'.format(kwargs['id'])}), 404
 
-    @AuthFunctions.check_api_key()
+    @privilege_required(AuthenticatedPrivilege())
     def get_raw_report_object(self, **kwargs):
         """
         ---
@@ -126,16 +128,16 @@ class ReportResource(BaseResource):
                 404:
                     description: No report with the specified id has been found.
         """
-        report = self.model.objects(id=kwargs['id']).first()
-        if not report:
-            return jsonify({'error': 'No object with key \'{}\' found'.format(kwargs['id'])}), 404
-        else:
+        try:
+            report = self.queryset.get(id=kwargs['id'])
             obj = report.raw_report_objects[kwargs['object_name']]
             if not obj:
                 return jsonify({'error': 'No object with key \'{}\' found'.format(kwargs['object_name'])}), 404
             else:
                 file = obj.read()
                 return file, 200, {'Content-Type': 'binary/octet-stream'}
+        except DoesNotExist:
+            return jsonify({'error': 'No object with key \'{}\' found'.format(kwargs['id'])}), 404
 
 
 register_api_endpoint('report', ReportResource)
