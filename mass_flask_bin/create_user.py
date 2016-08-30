@@ -1,5 +1,5 @@
 from getpass import getpass
-from mass_flask_core.models import User
+from mass_flask_core.models import User, UserLevel
 from mass_flask_config.app import app
 
 if __name__ == '__main__':
@@ -22,7 +22,10 @@ if __name__ == '__main__':
     user = User()
     user.username = username
     user.set_password(password)
-    user._is_admin = make_admin
+    if make_admin:
+        user.user_level = UserLevel.USER_LEVEL_ADMIN
+    else:
+        user.user_level = UserLevel.USER_LEVEL_USER
     user.save()
     print('New user has been created!')
     exit(0)
