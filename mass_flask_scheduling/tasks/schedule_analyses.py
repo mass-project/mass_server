@@ -1,6 +1,7 @@
 import sys
 from flask import current_app
 from mass_flask_core.models import AnalysisSystemInstance, ScheduledAnalysis, AnalysisRequest
+from mass_flask_config.app import app
 
 
 def _prepare_instance_dict():
@@ -44,19 +45,20 @@ def _schedule_analysis_request(request, instance_dict):
 
     min_instance = _get_instance_with_minimum_count(instances)
     _schedule_analysis(request, min_instance)
-    if min_instance.analyses_count > MAX_SCHEDULE_THRESHOLD:
+    if min_instance.analyses_count > current_app.config['MAX_SCHEDULE_THRESHOLD']:
         instances.remove(min_instance)
     return True
 
 
 def schedule_analyses():
-    instance_dict = _prepare_instance_dict()
-    analysis_requests = AnalysisRequest.objects().no_dereference()
-    requests_scheduled = 0
-    requests_not_scheduled = 0
-    for request in analysis_requests:
-        if _schedule_analysis_request(request, instance_dict):
-            request.delete()
-            requests_scheduled += 1
-        else:
-            requests_not_scheduled += 1
+    with app.app_context():
+        instance_dict = _prepare_instance_dict()
+        analysis_requests = AnalysisRequest.objects().no_dereference()
+        requests_scheduled = 0
+        requests_not_scheduled = 0
+        for request in analysis_requests:
+            if _schedule_analysis_request(request, instance_dict):
+                request.delete()
+                requests_scheduled += 1
+            else:
+                requests_not_scheduled += 1
