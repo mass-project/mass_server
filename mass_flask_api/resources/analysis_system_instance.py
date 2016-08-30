@@ -111,7 +111,7 @@ class AnalysisSystemInstanceResource(BaseResource):
         """
         return super(AnalysisSystemInstanceResource, self).delete(**kwargs)
 
-    @privilege_required(AuthenticatedPrivilege())
+    @privilege_required(RolePrivilege('admin'), RolePrivilege('analysis_system_instance'))
     def scheduled_analyses(self, **kwargs):
         """
         ---

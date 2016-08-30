@@ -30,7 +30,7 @@ class ScheduledAnalysisResource(BaseResource):
         """
         return super(ScheduledAnalysisResource, self).get_list()
 
-    @privilege_required(RolePrivilege('admin'))
+    @privilege_required(RolePrivilege('admin'), RolePrivilege('analysis_system_instance'))
     def get_detail(self, **kwargs):
         """
         ---
