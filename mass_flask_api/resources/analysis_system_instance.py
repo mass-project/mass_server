@@ -2,7 +2,7 @@ from flask import jsonify
 from flask_modular_auth import privilege_required, RolePrivilege, AuthenticatedPrivilege, current_authenticated_entity
 
 from mass_flask_api.config import api_blueprint
-from models import User
+from mass_flask_core.models import User
 from .base import BaseResource
 from mass_flask_api.utils import get_pagination_compatible_schema, register_api_endpoint
 from mass_flask_api.schemas import AnalysisSystemInstanceSchema, ScheduledAnalysisSchema

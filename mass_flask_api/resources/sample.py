@@ -80,7 +80,6 @@ class SampleResource(BaseResource):
             sample = self.queryset().get(id=kwargs['id'])
             schema = SchemaMapping.get_schema_for_model_class(sample.__class__.__name__)
             data = schema().dump(sample).data
-            print(data)
             return jsonify(data)
         except DoesNotExist:
             return jsonify({'error': 'No object with key \'{}\' found'.format(kwargs['id'])}), 404
@@ -130,7 +129,7 @@ class SampleResource(BaseResource):
                     description: No sample with the specified id has been found.
         """
         try:
-            sample = self.queryset.get(id=kwargs['id'])
+            sample = self.queryset().get(id=kwargs['id'])
             if not isinstance(sample, FileSample):
                 return jsonify({'error': 'There is no file available for this sample'}), 400
             else:
@@ -168,7 +167,6 @@ class SampleResource(BaseResource):
             }
             data.update(metadata)
             sample = FileSample.create_or_update(**data)
-            print(sample)
             sample.save()
             schema = SchemaMapping.get_schema_for_model_class(sample.__class__.__name__)
             return jsonify(schema().dump(sample).data), 201
