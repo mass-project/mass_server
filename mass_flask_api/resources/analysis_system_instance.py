@@ -131,7 +131,7 @@ class AnalysisSystemInstanceResource(BaseResource):
         if kwargs['uuid'] is None:
             return jsonify({'error': 'Parameter \'{}\' must be specified'.format(self.query_key_field)}), 400
         elif (isinstance(current_authenticated_entity._get_current_object(), AnalysisSystemInstance) and current_authenticated_entity.uuid == kwargs['uuid']) \
-            or (isinstance(current_authenticated_entity, User) and current_authenticated_entity.is_admin):
+            or (isinstance(current_authenticated_entity._get_current_object(), User) and current_authenticated_entity.is_admin):
             analysis_system_instance = AnalysisSystemInstance.objects.get(uuid=kwargs['uuid'])
             if not analysis_system_instance:
                 return jsonify({'error': 'No object with key \'{}\' found'.format(kwargs[self.query_key_field])}), 404
@@ -142,7 +142,7 @@ class AnalysisSystemInstanceResource(BaseResource):
                 'results': serialized_result.data,
             })
         else:
-            return jsonify({'error': 'You  \'{}\' found'.format(kwargs[self.query_key_field])}), 404
+            return jsonify({'error': 'Analysis instance  \'{}\' not found'.format(kwargs[self.query_key_field])}), 404
 
 
 register_api_endpoint('analysis_system_instance', AnalysisSystemInstanceResource)
