@@ -1,23 +1,24 @@
 from flask import jsonify, request
+from mongoengine import DoesNotExist
+
+from flask_modular_auth import privilege_required, AuthenticatedPrivilege, RolePrivilege
 
 from mass_flask_api.config import api_blueprint
 from mass_flask_api.schemas import SampleRelationSchema, DroppedBySampleRelationSchema, ResolvedBySampleRelationSchema, ContactedBySampleRelationSchema, RetrievedBySampleRelationSchema, SsdeepSampleRelationSchema
 from mass_flask_api.schemas import SchemaMapping
-from mass_flask_api.utils import get_pagination_compatible_schema
-from mass_flask_api.utils import register_api_endpoint
+from mass_flask_api.utils import get_pagination_compatible_schema, register_api_endpoint
 from mass_flask_core.models import SampleRelation
-from mass_flask_core.utils import AuthFunctions, AdminAccessPrivilege, ValidInstanceAccessPrivilege
 from .base import BaseResource
 
 
 class SampleRelationResource(BaseResource):
     schema = SampleRelationSchema()
     pagination_schema = get_pagination_compatible_schema(SampleRelationSchema)
-    model = SampleRelation
+    queryset = SampleRelation.objects
     query_key_field = 'id'
     filter_parameters = []
 
-    @AuthFunctions.check_api_key()
+    @privilege_required(AuthenticatedPrivilege())
     def get_list(self):
         """
         ---
@@ -39,7 +40,7 @@ class SampleRelationResource(BaseResource):
             'previous': paginated_sample_relations['previous']
         })
 
-    @AuthFunctions.check_api_key()
+    @privilege_required(AuthenticatedPrivilege())
     def get_detail(self, **kwargs):
         """
         ---
@@ -56,12 +57,12 @@ class SampleRelationResource(BaseResource):
                 404:
                     description: No sample relation with the specified id has been found.
         """
-        sample_relation = self.model.objects(id=kwargs['id']).first()
-        if not sample_relation:
-            return jsonify({'error': 'No object with key \'{}\' found'.format(kwargs['id'])}), 404
-        else:
+        try:
+            sample_relation = self.queryset.get(id=kwargs['id'])
             schema = SchemaMapping.get_schema_for_model_class(sample_relation.__class__.__name__)
             return jsonify(schema().dump(sample_relation).data)
+        except DoesNotExist:
+            return jsonify({'error': 'No object with key \'{}\' found'.format(kwargs['id'])}), 404
 
     def post(self):
         return jsonify({'error': 'Posting sample relations directly to the sample relation endpoint is not allowed. Instead please use the respective endpoints of each specific relation type.'}), 400
@@ -69,7 +70,7 @@ class SampleRelationResource(BaseResource):
     def put(self, **kwargs):
         return jsonify({'error': 'Updating relation objects via the API is not supported yet.'}), 400
 
-    @AuthFunctions.check_api_key(privileges=[AdminAccessPrivilege()])
+    @privilege_required(RolePrivilege('admin'))
     def delete(self, **kwargs):
         """
         ---
@@ -89,7 +90,7 @@ class SampleRelationResource(BaseResource):
         """
         return super(SampleRelationResource, self).delete(**kwargs)
 
-    @AuthFunctions.check_api_key(privileges=[AdminAccessPrivilege(), ValidInstanceAccessPrivilege()], check_mode='require_any')
+    @privilege_required(RolePrivilege('admin'), RolePrivilege('analysis_system_instance'))
     def submit_dropped_by_sample_relation(self):
         """
         ---
@@ -112,7 +113,7 @@ class SampleRelationResource(BaseResource):
         sample_relation.save()
         return jsonify(schema.dump(sample_relation).data), 201
 
-    @AuthFunctions.check_api_key(privileges=[AdminAccessPrivilege(), ValidInstanceAccessPrivilege()], check_mode='require_any')
+    @privilege_required(RolePrivilege('admin'), RolePrivilege('analysis_system_instance'))
     def submit_resolved_by_sample_relation(self):
         """
         ---
@@ -135,7 +136,7 @@ class SampleRelationResource(BaseResource):
         sample_relation.save()
         return jsonify(schema.dump(sample_relation).data), 201
 
-    @AuthFunctions.check_api_key(privileges=[AdminAccessPrivilege(), ValidInstanceAccessPrivilege()], check_mode='require_any')
+    @privilege_required(RolePrivilege('admin'), RolePrivilege('analysis_system_instance'))
     def submit_contacted_by_sample_relation(self):
         """
         ---
@@ -158,7 +159,7 @@ class SampleRelationResource(BaseResource):
         sample_relation.save()
         return jsonify(schema.dump(sample_relation).data), 201
 
-    @AuthFunctions.check_api_key(privileges=[AdminAccessPrivilege(), ValidInstanceAccessPrivilege()], check_mode='require_any')
+    @privilege_required(RolePrivilege('admin'), RolePrivilege('analysis_system_instance'))
     def submit_retrieved_by_sample_relation(self):
         """
         ---
@@ -181,7 +182,7 @@ class SampleRelationResource(BaseResource):
         sample_relation.save()
         return jsonify(schema.dump(sample_relation).data), 201
 
-    @AuthFunctions.check_api_key(privileges=[AdminAccessPrivilege(), ValidInstanceAccessPrivilege()], check_mode='require_any')
+    @privilege_required(RolePrivilege('admin'), RolePrivilege('analysis_system_instance'))
     def submit_ssdeep_sample_relation(self):
         """
         ---

@@ -1,6 +1,9 @@
 from flask import request, jsonify, json
+from mongoengine import DoesNotExist
+
+from flask_modular_auth import privilege_required, RolePrivilege
+
 from mass_flask_api.config import api_blueprint
-from mass_flask_core.utils import AuthFunctions, AdminAccessPrivilege, ValidInstanceAccessPrivilege
 from .base import BaseResource
 from mass_flask_api.utils import get_pagination_compatible_schema, register_api_endpoint
 from mass_flask_api.schemas import ScheduledAnalysisSchema, ReportSchema
@@ -10,11 +13,11 @@ from mass_flask_core.models import ScheduledAnalysis
 class ScheduledAnalysisResource(BaseResource):
     schema = ScheduledAnalysisSchema()
     pagination_schema = get_pagination_compatible_schema(ScheduledAnalysisSchema)
-    model = ScheduledAnalysis
+    queryset = ScheduledAnalysis.objects
     query_key_field = 'id'
     filter_parameters = []
 
-    @AuthFunctions.check_api_key(privileges=[AdminAccessPrivilege()])
+    @privilege_required(RolePrivilege('admin'))
     def get_list(self):
         """
         ---
@@ -27,7 +30,7 @@ class ScheduledAnalysisResource(BaseResource):
         """
         return super(ScheduledAnalysisResource, self).get_list()
 
-    @AuthFunctions.check_api_key(privileges=[AdminAccessPrivilege()])
+    @privilege_required(RolePrivilege('admin'), RolePrivilege('analysis_system_instance'))
     def get_detail(self, **kwargs):
         """
         ---
@@ -46,7 +49,7 @@ class ScheduledAnalysisResource(BaseResource):
         """
         return super(ScheduledAnalysisResource, self).get_detail(**kwargs)
 
-    @AuthFunctions.check_api_key(privileges=[AdminAccessPrivilege()])
+    @privilege_required(RolePrivilege('admin'))
     def post(self):
         """
         ---
@@ -65,11 +68,10 @@ class ScheduledAnalysisResource(BaseResource):
         """
         return super(ScheduledAnalysisResource, self).post()
 
-    @AuthFunctions.check_api_key(privileges=[AdminAccessPrivilege()])
     def put(self, **kwargs):
         return jsonify({'error': 'Method not allowed for this endpoint.'}), 405
 
-    @AuthFunctions.check_api_key(privileges=[AdminAccessPrivilege()])
+    @privilege_required(RolePrivilege('admin'))
     def delete(self, **kwargs):
         """
         ---
@@ -89,7 +91,7 @@ class ScheduledAnalysisResource(BaseResource):
         """
         return super(ScheduledAnalysisResource, self).delete(**kwargs)
 
-    @AuthFunctions.check_api_key(privileges=[AdminAccessPrivilege(), ValidInstanceAccessPrivilege()], check_mode='require_any')
+    @privilege_required(RolePrivilege('admin'), RolePrivilege('analysis_system_instance'))
     def submit_report(self, **kwargs):
         """
         ---
@@ -110,34 +112,37 @@ class ScheduledAnalysisResource(BaseResource):
                 404:
                     description: No scheduled analysis with the specified id has been found.
         """
-        scheduled_analysis = self.model.objects(id=kwargs['id']).first()
+        try:
+            scheduled_analysis = self.queryset.get(id=kwargs['id'])
 
-        if 'metadata' not in request.files:
-            return jsonify({'error': 'JSON metadata missing in POST request.'}), 400
-        else:
-            data = json.loads(request.files['metadata'].read())
-            data['json_report_objects'] = {}
-            data['raw_report_objects'] = {}
+            if 'metadata' not in request.files:
+                return jsonify({'error': 'JSON metadata missing in POST request.'}), 400
+            else:
+                data = json.loads(request.files['metadata'].read())
+                data['json_report_objects'] = {}
+                data['raw_report_objects'] = {}
 
-            parsed_report = ReportSchema().load(data, partial=True)
-            if parsed_report.errors:
-                return jsonify(parsed_report.errors), 400
-            report = parsed_report.data
+                parsed_report = ReportSchema().load(data, partial=True)
+                if parsed_report.errors:
+                    return jsonify(parsed_report.errors), 400
+                report = parsed_report.data
 
-            report.sample = scheduled_analysis.sample
-            report.analysis_system = scheduled_analysis.analysis_system_instance.analysis_system
+                report.sample = scheduled_analysis.sample
+                report.analysis_system = scheduled_analysis.analysis_system_instance.analysis_system
 
-            for key, f in request.files.items():
-                if key == 'metadata':
-                    continue
-                if f.mimetype == "application/json":
-                    report.add_json_report_object(f)
-                else:
-                    report.add_raw_report_object(f)
+                for key, f in request.files.items():
+                    if key == 'metadata':
+                        continue
+                    if f.mimetype == "application/json":
+                        report.add_json_report_object(f)
+                    else:
+                        report.add_raw_report_object(f)
 
-            report.save()
-            scheduled_analysis.delete()
-            return '', 204
+                report.save()
+                scheduled_analysis.delete()
+                return '', 204
+        except DoesNotExist:
+            return jsonify({'error': 'No object with key \'{}\' found'.format(kwargs['id'])}), 404
 
 
 register_api_endpoint('scheduled_analysis', ScheduledAnalysisResource)

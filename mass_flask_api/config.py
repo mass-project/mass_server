@@ -1,5 +1,5 @@
 from apispec import APISpec
-from flask import Blueprint, jsonify, url_for
+from flask import Blueprint, jsonify, url_for, _request_ctx_stack
 
 api_blueprint = Blueprint('mass_flask_api', __name__)
 
@@ -29,3 +29,14 @@ def api_root():
 @api_blueprint.route('/swagger/')
 def swagger():
     return jsonify(api_blueprint.apispec.to_dict())
+
+
+def api_unauthorized_callback():
+    return jsonify({'error': 'You do not have access to this resource.'}), 403
+
+
+@api_blueprint.before_request
+def before_request_set_unauthorized_callback():
+    ctx = _request_ctx_stack.top
+    ctx.unauthorized_callback = api_unauthorized_callback
+    return None

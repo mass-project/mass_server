@@ -1,18 +1,18 @@
+from flask_modular_auth import privilege_required, AuthenticatedPrivilege, RolePrivilege
 from mass_flask_api.schemas import AnalysisSystemSchema
 from mass_flask_api.utils import get_pagination_compatible_schema, register_api_endpoint
 from mass_flask_core.models import AnalysisSystem
-from mass_flask_core.utils import AuthFunctions, AdminAccessPrivilege
 from .base import BaseResource
 
 
 class AnalysisSystemResource(BaseResource):
     schema = AnalysisSystemSchema()
     pagination_schema = get_pagination_compatible_schema(AnalysisSystemSchema)
-    model = AnalysisSystem
+    queryset = AnalysisSystem.objects
     query_key_field = 'identifier_name'
     filter_parameters = []
 
-    @AuthFunctions.check_api_key()
+    @privilege_required(AuthenticatedPrivilege())
     def get_list(self):
         """
         ---
@@ -25,7 +25,7 @@ class AnalysisSystemResource(BaseResource):
         """
         return super(AnalysisSystemResource, self).get_list()
 
-    @AuthFunctions.check_api_key()
+    @privilege_required(AuthenticatedPrivilege())
     def get_detail(self, **kwargs):
         """
         ---
@@ -44,7 +44,7 @@ class AnalysisSystemResource(BaseResource):
         """
         return super(AnalysisSystemResource, self).get_detail(**kwargs)
 
-    @AuthFunctions.check_api_key(privileges=[AdminAccessPrivilege()])
+    @privilege_required(RolePrivilege('admin'))
     def post(self):
         """
         ---
@@ -63,7 +63,7 @@ class AnalysisSystemResource(BaseResource):
         """
         return super(AnalysisSystemResource, self).post()
 
-    @AuthFunctions.check_api_key(privileges=[AdminAccessPrivilege()])
+    @privilege_required(RolePrivilege('admin'))
     def put(self, **kwargs):
         """
         ---
@@ -87,7 +87,7 @@ class AnalysisSystemResource(BaseResource):
         """
         return super(AnalysisSystemResource, self).put(**kwargs)
 
-    @AuthFunctions.check_api_key(privileges=[AdminAccessPrivilege()])
+    @privilege_required(RolePrivilege('admin'))
     def delete(self, **kwargs):
         """
         ---

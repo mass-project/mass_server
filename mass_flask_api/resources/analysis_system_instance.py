@@ -1,21 +1,22 @@
 from flask import jsonify
+from flask_modular_auth import privilege_required, RolePrivilege, AuthenticatedPrivilege, current_authenticated_entity
 
 from mass_flask_api.config import api_blueprint
+from mass_flask_core.models import User
 from .base import BaseResource
 from mass_flask_api.utils import get_pagination_compatible_schema, register_api_endpoint
 from mass_flask_api.schemas import AnalysisSystemInstanceSchema, ScheduledAnalysisSchema
 from mass_flask_core.models import AnalysisSystemInstance, ScheduledAnalysis
-from mass_flask_core.utils import AuthFunctions, AdminAccessPrivilege, UUIDCheckAccessPrivilege
 
 
 class AnalysisSystemInstanceResource(BaseResource):
     schema = AnalysisSystemInstanceSchema()
     pagination_schema = get_pagination_compatible_schema(AnalysisSystemInstanceSchema)
-    model = AnalysisSystemInstance
+    queryset = AnalysisSystemInstance.objects
     query_key_field = 'uuid'
     filter_parameters = []
 
-    @AuthFunctions.check_api_key()
+    @privilege_required(AuthenticatedPrivilege())
     def get_list(self):
         """
         ---
@@ -28,7 +29,7 @@ class AnalysisSystemInstanceResource(BaseResource):
         """
         return super(AnalysisSystemInstanceResource, self).get_list()
 
-    @AuthFunctions.check_api_key()
+    @privilege_required(AuthenticatedPrivilege())
     def get_detail(self, **kwargs):
         """
         ---
@@ -47,7 +48,7 @@ class AnalysisSystemInstanceResource(BaseResource):
         """
         return super(AnalysisSystemInstanceResource, self).get_detail(**kwargs)
 
-    @AuthFunctions.check_api_key(privileges=[AdminAccessPrivilege()])
+    @privilege_required(RolePrivilege('admin'))
     def post(self):
         """
         ---
@@ -66,7 +67,7 @@ class AnalysisSystemInstanceResource(BaseResource):
         """
         return super(AnalysisSystemInstanceResource, self).post()
 
-    @AuthFunctions.check_api_key(privileges=[AdminAccessPrivilege()])
+    @privilege_required(RolePrivilege('admin'))
     def put(self, **kwargs):
         """
         ---
@@ -90,7 +91,7 @@ class AnalysisSystemInstanceResource(BaseResource):
         """
         return super(AnalysisSystemInstanceResource, self).put(**kwargs)
 
-    @AuthFunctions.check_api_key(privileges=[AdminAccessPrivilege()])
+    @privilege_required(RolePrivilege('admin'))
     def delete(self, **kwargs):
         """
         ---
@@ -110,7 +111,7 @@ class AnalysisSystemInstanceResource(BaseResource):
         """
         return super(AnalysisSystemInstanceResource, self).delete(**kwargs)
 
-    @AuthFunctions.check_api_key(privileges=[AdminAccessPrivilege(), UUIDCheckAccessPrivilege()], check_mode='require_any')
+    @privilege_required(RolePrivilege('admin'), RolePrivilege('analysis_system_instance'))
     def scheduled_analyses(self, **kwargs):
         """
         ---
@@ -129,7 +130,8 @@ class AnalysisSystemInstanceResource(BaseResource):
         """
         if kwargs['uuid'] is None:
             return jsonify({'error': 'Parameter \'{}\' must be specified'.format(self.query_key_field)}), 400
-        else:
+        elif (isinstance(current_authenticated_entity._get_current_object(), AnalysisSystemInstance) and current_authenticated_entity.uuid == kwargs['uuid']) \
+            or (isinstance(current_authenticated_entity, User) and current_authenticated_entity.is_admin):
             analysis_system_instance = AnalysisSystemInstance.objects.get(uuid=kwargs['uuid'])
             if not analysis_system_instance:
                 return jsonify({'error': 'No object with key \'{}\' found'.format(kwargs[self.query_key_field])}), 404
@@ -139,6 +141,8 @@ class AnalysisSystemInstanceResource(BaseResource):
             return jsonify({
                 'results': serialized_result.data,
             })
+        else:
+            return jsonify({'error': 'You  \'{}\' found'.format(kwargs[self.query_key_field])}), 404
 
 
 register_api_endpoint('analysis_system_instance', AnalysisSystemInstanceResource)

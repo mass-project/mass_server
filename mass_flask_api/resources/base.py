@@ -1,5 +1,7 @@
 from flask import jsonify, request
 from flask.views import MethodView
+from mongoengine import DoesNotExist
+
 from mass_flask_core.utils import PaginationFunctions
 
 
@@ -15,7 +17,7 @@ class Ref(object):
 class BaseResource(MethodView):
     schema = None
     pagination_schema = None
-    model = None
+    queryset = None
     query_key_field = None
     filter_parameters = []
 
@@ -28,8 +30,8 @@ class BaseResource(MethodView):
         return Ref('pagination_schema').resolve(self)
 
     @property
-    def model(self):
-        return Ref('model').resolve(self)
+    def queryset(self):
+        return Ref('queryset').resolve(self)
 
     @property
     def query_key_field(self):
@@ -46,7 +48,7 @@ class BaseResource(MethodView):
             if parameter in request.args:
                 filter_condition[parameter] = request.args[parameter]
 
-        return self.model.objects(**filter_condition)
+        return self.queryset().filter(**filter_condition)
 
     def get_list(self):
         paginated_objects = self._get_list()
@@ -57,12 +59,12 @@ class BaseResource(MethodView):
         query_filter = {
             self.query_key_field: kwargs[self.query_key_field]
         }
-        obj = self.model.objects(**query_filter).first()
-        if not obj:
-            return jsonify({'error': 'No object with key \'{}\' found'.format(kwargs[self.query_key_field])}), 404
-        else:
+        try:
+            obj = self.queryset().get(**query_filter)
             result = self.schema.dump(obj)
             return jsonify(result.data)
+        except DoesNotExist:
+            return jsonify({'error': 'No object with key \'{}\' found'.format(kwargs[self.query_key_field])}), 404
 
     def get(self, **kwargs):
         if kwargs[self.query_key_field] is None:
@@ -93,13 +95,13 @@ class BaseResource(MethodView):
             query_filter = {
                 self.query_key_field: kwargs[self.query_key_field]
             }
-            obj = self.model.objects(**query_filter).first()
-            if not obj:
-                return jsonify({'error': 'No object with key \'{}\' found'.format(kwargs[self.query_key_field])}), 404
-            else:
+            try:
+                obj = self.queryset.get(**query_filter)
                 obj.modify(**json_data)
                 result = self.schema.dump(obj)
                 return jsonify(result.data)
+            except DoesNotExist:
+                return jsonify({'error': 'No object with key \'{}\' found'.format(kwargs[self.query_key_field])}), 404
 
     def delete(self, **kwargs):
         if kwargs[self.query_key_field] is None:
@@ -108,9 +110,9 @@ class BaseResource(MethodView):
             query_filter = {
                 self.query_key_field: kwargs[self.query_key_field]
             }
-            obj = self.model.objects(**query_filter).first()
-            if not obj:
-                return jsonify({'error': 'No object with key \'{}\' found'.format(kwargs[self.query_key_field])}), 404
-            else:
+            try:
+                obj = self.queryset.get(**query_filter)
                 obj.delete()
                 return '', 204
+            except DoesNotExist:
+                return jsonify({'error': 'No object with key \'{}\' found'.format(kwargs[self.query_key_field])}), 404

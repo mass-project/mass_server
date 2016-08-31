@@ -1,9 +1,13 @@
 import json
 from flask import jsonify, request
+from mongoengine import DoesNotExist
+
+from flask_modular_auth import privilege_required, RolePrivilege, AuthenticatedPrivilege
+
 from mass_flask_api.config import api_blueprint
 from mass_flask_api.schemas import SampleSchema, ReportSchema, SchemaMapping
 from mass_flask_core.models import Sample, FileSample, Report, IPSample, DomainSample, URISample
-from mass_flask_core.utils import GraphFunctions, AuthFunctions, AdminAccessPrivilege
+from mass_flask_core.utils import GraphFunctions
 from mass_flask_api.utils import get_pagination_compatible_schema, register_api_endpoint
 from .base import BaseResource
 
@@ -11,7 +15,7 @@ from .base import BaseResource
 class SampleResource(BaseResource):
     schema = SampleSchema()
     pagination_schema = get_pagination_compatible_schema(SampleSchema)
-    model = Sample
+    queryset = Sample.objects.get_with_tlp_level_filter
     query_key_field = 'id'
     filter_parameters = [
         'md5sum',
@@ -20,7 +24,7 @@ class SampleResource(BaseResource):
         'sha512sum'
     ]
 
-    @AuthFunctions.check_api_key()
+    @privilege_required(AuthenticatedPrivilege())
     def get_list(self):
         """
         ---
@@ -55,7 +59,7 @@ class SampleResource(BaseResource):
             'previous': paginated_samples['previous']
         })
 
-    @AuthFunctions.check_api_key()
+    @privilege_required(AuthenticatedPrivilege())
     def get_detail(self, **kwargs):
         """
         ---
@@ -72,12 +76,13 @@ class SampleResource(BaseResource):
                 404:
                     description: No sample with the specified id has been found.
         """
-        sample = self.model.objects(id=kwargs['id']).first()
-        if not sample:
-            return jsonify({'error': 'No object with key \'{}\' found'.format(kwargs['id'])}), 404
-        else:
+        try:
+            sample = self.queryset().get(id=kwargs['id'])
             schema = SchemaMapping.get_schema_for_model_class(sample.__class__.__name__)
-            return jsonify(schema().dump(sample).data)
+            data = schema().dump(sample).data
+            return jsonify(data)
+        except DoesNotExist:
+            return jsonify({'error': 'No object with key \'{}\' found'.format(kwargs['id'])}), 404
 
     def post(self):
         return jsonify({'error': 'Posting samples directly to the sample endpoint is not allowed. Instead please use the respective endpoints of each specific sample type.'}), 400
@@ -85,7 +90,7 @@ class SampleResource(BaseResource):
     def put(self, **kwargs):
         return jsonify({'error': 'Updating sample objects via the API is not supported yet.'}), 400
 
-    @AuthFunctions.check_api_key(privileges=[AdminAccessPrivilege()])
+    @privilege_required(RolePrivilege('admin'))
     def delete(self, **kwargs):
         """
         ---
@@ -105,7 +110,7 @@ class SampleResource(BaseResource):
         """
         return super(SampleResource, self).delete(**kwargs)
 
-    @AuthFunctions.check_api_key()
+    @privilege_required(AuthenticatedPrivilege())
     def download_file(self, **kwargs):
         """
         ---
@@ -123,16 +128,17 @@ class SampleResource(BaseResource):
                 404:
                     description: No sample with the specified id has been found.
         """
-        sample = self.model.objects(id=kwargs['id']).first()
-        if not sample:
+        try:
+            sample = self.queryset().get(id=kwargs['id'])
+            if not isinstance(sample, FileSample):
+                return jsonify({'error': 'There is no file available for this sample'}), 400
+            else:
+                file = sample.file.read()
+                return file, 200, {'Content-Type': 'application/octet-stream'}
+        except DoesNotExist:
             return jsonify({'error': 'No object with key \'{}\' found'.format(kwargs['id'])}), 404
-        elif not isinstance(sample, FileSample):
-            return jsonify({'error': 'There is no file available for this sample'}), 400
-        else:
-            file = sample.file.read()
-            return file, 200, {'Content-Type': 'application/octet-stream'}
 
-    @AuthFunctions.check_api_key()
+    @privilege_required(AuthenticatedPrivilege())
     def submit_file(self):
         """
         ---
@@ -161,12 +167,11 @@ class SampleResource(BaseResource):
             }
             data.update(metadata)
             sample = FileSample.create_or_update(**data)
-            print(sample)
             sample.save()
             schema = SchemaMapping.get_schema_for_model_class(sample.__class__.__name__)
             return jsonify(schema().dump(sample).data), 201
 
-    @AuthFunctions.check_api_key()
+    @privilege_required(AuthenticatedPrivilege())
     def submit_ip(self):
         """
         ---
@@ -192,7 +197,7 @@ class SampleResource(BaseResource):
             schema = SchemaMapping.get_schema_for_model_class(sample.__class__.__name__)
             return jsonify(schema().dump(sample).data), 201
 
-    @AuthFunctions.check_api_key()
+    @privilege_required(AuthenticatedPrivilege())
     def submit_domain(self):
         """
         ---
@@ -218,7 +223,7 @@ class SampleResource(BaseResource):
             schema = SchemaMapping.get_schema_for_model_class(sample.__class__.__name__)
             return jsonify(schema().dump(sample).data), 201
 
-    @AuthFunctions.check_api_key()
+    @privilege_required(AuthenticatedPrivilege())
     def submit_uri(self):
         """
         ---
@@ -244,7 +249,7 @@ class SampleResource(BaseResource):
             schema = SchemaMapping.get_schema_for_model_class(sample.__class__.__name__)
             return jsonify(schema().dump(sample).data), 201
 
-    @AuthFunctions.check_api_key()
+    @privilege_required(AuthenticatedPrivilege())
     def reports(self, **kwargs):
         """
         ---
@@ -261,17 +266,17 @@ class SampleResource(BaseResource):
                 404:
                     description: No sample with the specified id has been found.
         """
-        sample = self.model.objects(id=kwargs['id']).first()
-        if not sample:
-            return jsonify({'error': 'No object with key \'{}\' found'.format(kwargs['id'])}), 404
-        else:
+        try:
+            sample = self.queryset.get(id=kwargs['id'])
             reports = Report.objects(sample=sample)
             serialized_result = ReportSchema(many=True).dump(reports)
             return jsonify({
                 'results': serialized_result.data,
             })
+        except DoesNotExist:
+            return jsonify({'error': 'No object with key \'{}\' found'.format(kwargs['id'])}), 404
 
-    @AuthFunctions.check_api_key()
+    @privilege_required(AuthenticatedPrivilege())
     def relation_graph(self, **kwargs):
         """
         ---
@@ -290,10 +295,8 @@ class SampleResource(BaseResource):
                 404:
                     description: No sample with the specified id has been found.
         """
-        sample = self.model.objects(id=kwargs['id']).first()
-        if not sample:
-            return jsonify({'error': 'No object with key \'{}\' found'.format(kwargs['id'])}), 404
-        else:
+        try:
+            sample = self.queryset.get(id=kwargs['id'])
             if 'depth' in request.args:
                 sample_relations = GraphFunctions.get_relation_graph(sample, int(request.args['depth']))
             else:
@@ -305,6 +308,8 @@ class SampleResource(BaseResource):
             return jsonify({
                 'results': serialized_sample_relations
             })
+        except DoesNotExist:
+            return jsonify({'error': 'No object with key \'{}\' found'.format(kwargs['id'])}), 404
 
 
 register_api_endpoint('sample', SampleResource)

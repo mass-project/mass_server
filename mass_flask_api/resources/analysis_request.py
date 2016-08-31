@@ -1,4 +1,4 @@
-from mass_flask_core.utils import AuthFunctions, AdminAccessPrivilege
+from flask_modular_auth import privilege_required, RolePrivilege
 from .base import BaseResource
 from mass_flask_api.utils import get_pagination_compatible_schema, register_api_endpoint
 from mass_flask_api.schemas import AnalysisRequestSchema
@@ -8,11 +8,11 @@ from mass_flask_core.models import AnalysisRequest
 class AnalysisRequestResource(BaseResource):
     schema = AnalysisRequestSchema()
     pagination_schema = get_pagination_compatible_schema(AnalysisRequestSchema)
-    model = AnalysisRequest
+    queryset = AnalysisRequest.objects
     query_key_field = 'id'
     filter_parameters = []
 
-    @AuthFunctions.check_api_key(privileges=[AdminAccessPrivilege()])
+    @privilege_required(RolePrivilege('admin'))
     def get_list(self):
         """
         ---
@@ -25,7 +25,7 @@ class AnalysisRequestResource(BaseResource):
         """
         return super(AnalysisRequestResource, self).get_list()
 
-    @AuthFunctions.check_api_key(privileges=[AdminAccessPrivilege()])
+    @privilege_required(RolePrivilege('admin'))
     def get_detail(self, **kwargs):
         """
         ---
@@ -44,7 +44,7 @@ class AnalysisRequestResource(BaseResource):
         """
         return super(AnalysisRequestResource, self).get_detail(**kwargs)
 
-    @AuthFunctions.check_api_key(privileges=[AdminAccessPrivilege()])
+    @privilege_required(RolePrivilege('admin'))
     def post(self):
         """
         ---
@@ -63,7 +63,7 @@ class AnalysisRequestResource(BaseResource):
         """
         return super(AnalysisRequestResource, self).post()
 
-    @AuthFunctions.check_api_key(privileges=[AdminAccessPrivilege()])
+    @privilege_required(RolePrivilege('admin'))
     def put(self, **kwargs):
         """
         ---
@@ -87,7 +87,7 @@ class AnalysisRequestResource(BaseResource):
         """
         return super(AnalysisRequestResource, self).put(**kwargs)
 
-    @AuthFunctions.check_api_key(privileges=[AdminAccessPrivilege()])
+    @privilege_required(RolePrivilege('admin'))
     def delete(self, **kwargs):
         """
         ---
