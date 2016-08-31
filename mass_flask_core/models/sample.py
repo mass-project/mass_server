@@ -1,22 +1,37 @@
-from mass_flask_config.app import db
-from .analysis_system import AnalysisSystem
+from flask_mongoengine import BaseQuerySet
 from mongoengine import StringField, DateTimeField, ListField, ReferenceField, EmbeddedDocumentField, FileField, IntField, FloatField, EmbeddedDocument, LongField, ValidationError, \
-    DoesNotExist
+    DoesNotExist, Q, GenericReferenceField
+
+from flask_modular_auth import current_authenticated_entity
+from mass_flask_config.app import db
 from mass_flask_core.utils import TimeFunctions, HashFunctions, FileFunctions, ListFunctions, StringFunctions
+from .tlp_level import TLPLevelField
+from .analysis_system import AnalysisSystem
+from .comment import Comment
+
+
+class SampleQuerySet(BaseQuerySet):
+    def get_with_tlp_level_filter(self):
+        if current_authenticated_entity.is_authenticated:
+            return self.filter(Q(tlp_level__lte=current_authenticated_entity.max_tlp_level) | Q(created_by=current_authenticated_entity._get_current_object()))
+        else:
+            return self.filter(tlp_level__lte=current_authenticated_entity.max_tlp_level)
 
 
 class Sample(db.Document):
-    comment = StringField(max_length=160, verbose_name='Comment', help_text='Leave a short comment (max. 160 characters)')
-    long_comment = StringField(verbose_name='Long comment', help_text='Long comment')
     delivery_date = DateTimeField(default=TimeFunctions.get_timestamp, required=True)
     first_seen = DateTimeField(default=TimeFunctions.get_timestamp, required=True)
     tags = ListField(StringField(regex=r'^[\w:\-\_\/]+$'))
     dispatched_to = ListField(ReferenceField(AnalysisSystem))
+    created_by = GenericReferenceField()
+    tlp_level = TLPLevelField(verbose_name='TLP Level', help_text='Privacy level of this sample', required=True)
+    comments = ListField(EmbeddedDocumentField(Comment))
 
     meta = {
         'allow_inheritance': True,
         'ordering': ['-delivery_date'],
-        'indexes': ['delivery_date']
+        'indexes': ['delivery_date'],
+        'queryset_class': SampleQuerySet
     }
 
     def __repr__(self):
@@ -34,12 +49,12 @@ class Sample(db.Document):
         self.save()
 
     def _update(self, **kwargs):
-        if 'comment' in kwargs:
-            self.comment = kwargs['comment']
-        if 'long_comment' in kwargs:
-            self.long_comment = kwargs['long_comment']
         if 'first_seen' in kwargs and kwargs['first_seen'] < self.first_seen:
             self.first_seen = kwargs['first_seen']
+        if 'tlp_level' in kwargs and not self.tlp_level:
+            self.tlp_level = kwargs['tlp_level']
+        if current_authenticated_entity.is_authenticated and not self.created_by:
+            self.created_by = current_authenticated_entity._get_current_object()
         if 'tags' in kwargs:
             tags = kwargs['tags']
         else:

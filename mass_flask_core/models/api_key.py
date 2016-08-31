@@ -1,7 +1,7 @@
 from mongoengine import DateTimeField, ListField, StringField, ReferenceField
 from itsdangerous import URLSafeSerializer as Serializer, BadSignature
 from mass_flask_core.utils.time_functions import TimeFunctions
-from mass_flask_config.app import db, app
+from mass_flask_config.app import db, app, setup_key_based_auth
 from mass_flask_core.models import User, AnalysisSystemInstance
 
 API_SCOPES = [
@@ -31,16 +31,21 @@ class APIKey(db.Document):
         else:
             raise ValueError('APIKey must be saved before requesting an auth token.')
 
+    @property
+    def referenced_entity(self):
+        return None
+
     @staticmethod
-    def verify_auth_token(token):
+    def api_key_loader(key):
         s = Serializer(app.secret_key)
         try:
-            data = s.loads(token)
+            data = s.loads(key)
             api_key = APIKey.objects(id=data).first()
             if api_key.is_expired():
                 api_key.delete()
                 return None
-            return api_key
+            else:
+                return api_key.referenced_entity
         except BadSignature:
             return None  # invalid token
 
@@ -56,6 +61,10 @@ class UserAPIKey(APIKey):
             api_key.save()
         return api_key
 
+    @property
+    def referenced_entity(self):
+        return self.user
+
 
 class InstanceAPIKey(APIKey):
     instance = ReferenceField(AnalysisSystemInstance, required=True)
@@ -67,3 +76,9 @@ class InstanceAPIKey(APIKey):
             api_key = InstanceAPIKey(instance=instance.id)
             api_key.save()
         return api_key
+
+    @property
+    def referenced_entity(self):
+        return self.instance
+
+setup_key_based_auth(key_loader=APIKey.api_key_loader)
