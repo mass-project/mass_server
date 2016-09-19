@@ -10,8 +10,8 @@ scheduler = APScheduler()
 
 @scheduling_blueprint.record_once
 def on_load(state):
-    if state.app.config['MASS_TESTING'] is True:
-        print('Not starting scheduler when TESTING=True')
+    if 'MASS_TESTING' in state.app.config and state.app.config['MASS_TESTING'] is True:
+        print('Not starting scheduler when MASS_TESTING=True')
         return
     elif not state.app.debug or os.environ.get('WERKZEUG_RUN_MAIN') == 'true':
         scheduler.init_app(state.app)
