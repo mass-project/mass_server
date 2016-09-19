@@ -2,7 +2,8 @@
 {% block title %}MASS - {% block page_title %}{% endblock %}{% endblock %}
 
 {% block styles %}
-    {{super()}}
+    <!-- Bootstrap -->
+    <link href="{{ url_for('mass_flask_webui.static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
 
     <!-- Font awesome -->
     <link href="{{ url_for('mass_flask_webui.static', filename='font-awesome/css/font-awesome.min.css') }}" rel="stylesheet">

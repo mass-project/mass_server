@@ -1,11 +1,12 @@
 import inspect
 
 from flask import render_template, request, flash
+from mongoengine import DoesNotExist
+
 from flask_modular_auth import privilege_required, RolePrivilege
 
 from mass_flask_config.app import db
-from mass_flask_core import models
-from mass_flask_core.models import AnalysisSystem, AnalysisSystemInstance, InstanceAPIKey
+from mass_flask_core.models import AnalysisSystem, AnalysisSystemInstance, InstanceAPIKey, User
 from mass_flask_webui.config import webui_blueprint
 
 
@@ -35,6 +36,15 @@ def admin_analysis_systems():
         for instance in system.instances:
             instance.api_key = InstanceAPIKey.get_or_create(instance).generate_auth_token()
     return render_template('admin/analysis_systems.html', analysis_systems=analysis_systems)
+
+
+@webui_blueprint.route('/admin/users/', methods=['GET', 'POST'])
+@privilege_required(RolePrivilege('admin'))
+def admin_users():
+    if request.method == 'POST':
+        _process_user_action()
+    users = User.objects()
+    return render_template('admin/users.html', users=users)
 
 
 def _process_analysis_system_action():
@@ -79,3 +89,22 @@ def _regenerate_api_key():
         flash('Old API key deleted! New key will be automatically generated.', 'success')
     else:
         flash('Could not find the old API key associated to this instance UUID!', 'danger')
+
+
+def _process_user_action():
+    action = request.form['action']
+    if action == 'delete_user':
+        _delete_user()
+    elif action == 'edit_user':
+        _edit_user()
+    else:
+        flash('Unknown operation requested.', 'danger')
+
+
+def _delete_user():
+    try:
+        user = User.objects.get(id=request.form['id'])
+        user.delete()
+        flash('User deleted!', 'success')
+    except DoesNotExist:
+        flash('Delete failed - User ID not found!', 'danger')

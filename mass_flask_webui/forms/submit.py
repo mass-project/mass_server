@@ -1,5 +1,5 @@
-from flask.ext.wtf import Form
-from flask.ext.wtf.file import FileField, FileRequired
+from flask_wtf import Form
+from flask_wtf.file import FileField, FileRequired
 from wtforms import StringField, SubmitField, SelectField
 from wtforms.validators import InputRequired, IPAddress, URL
 

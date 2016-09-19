@@ -2,7 +2,7 @@ import datetime
 
 from flask import render_template
 
-from mass_flask_core.models import Sample, Report, FileSample, ExecutableBinarySample, IPSample, DomainSample, URISample
+from mass_flask_core.models import Sample
 from mass_flask_core.utils import TimeFunctions
 from mass_flask_webui.config import webui_blueprint
 

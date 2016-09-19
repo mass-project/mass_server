@@ -1,7 +1,7 @@
-from flask.ext.wtf import Form
+from flask_wtf import Form
 from flask import flash
 from wtforms import StringField, SubmitField, PasswordField
-from wtforms.validators import DataRequired, ValidationError
+from wtforms.validators import DataRequired
 
 from mass_flask_core.models import User
 

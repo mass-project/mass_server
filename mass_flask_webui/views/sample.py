@@ -1,9 +1,11 @@
 from flask import render_template, jsonify, flash, redirect, url_for
 from mongoengine import DoesNotExist
 
+from flask_modular_auth import current_authenticated_entity
 from mass_flask_core.models import Sample, Report
-from mass_flask_core.utils import PaginationFunctions, GraphFunctions
+from mass_flask_core.utils import PaginationFunctions, GraphFunctions, TimeFunctions
 from mass_flask_webui.config import webui_blueprint
+from mass_flask_webui.forms.comment import CommentForm
 
 
 @PaginationFunctions.paginate
@@ -17,12 +19,47 @@ def sample_list():
     return render_template('sample_list.html', samples=samples)
 
 
-@webui_blueprint.route('/sample/<sample_id>/')
+@webui_blueprint.route('/sample/<sample_id>/', methods=['GET', 'POST'])
 def sample_detail(sample_id):
     try:
         sample = Sample.objects.get_with_tlp_level_filter().get(id=sample_id)
+        comment_form = CommentForm()
+        if comment_form.validate_on_submit():
+            sample.add_comment(comment_form.data['comment'], TimeFunctions.get_timestamp(), current_authenticated_entity._get_current_object())
+            sample.save()
+            flash('Your comment has been added', 'success')
+            return redirect(url_for('.sample_detail', sample_id=sample.id))
         reports = Report.objects(sample=sample)
-        return render_template('sample_detail.html', sample=sample, reports=reports)
+        activity = [{
+            'class': 'info',
+            'glyph': 'fa-paper-plane',
+            'title': 'Sample delivered to MASS',
+            'timestamp': sample.delivery_date
+        },
+        {
+            'class': 'info',
+            'glyph': 'fa-star',
+            'title': 'First known occurrence of the sample',
+            'timestamp': sample.first_seen
+        }
+        ]
+        for report in reports:
+            activity.append({
+                'class': 'success',
+                'glyph': 'fa-search',
+                'title': '{} report added'.format(report.analysis_system.verbose_name),
+                'timestamp': report.upload_date
+            })
+        for comment in sample.comments:
+            activity.append({
+                'class': '',
+                'glyph': 'fa-comment',
+                'title': '{} added a comment'.format(comment.user.username),
+                'timestamp': comment.post_date,
+                'content': comment.comment
+            })
+        sorted_activity = sorted(activity, key=lambda k: k['timestamp'])
+        return render_template('sample_detail.html', sample=sample, reports=reports, activity=sorted_activity, comment_form=comment_form)
     except DoesNotExist:
         flash('Sample not found or you do not have access to this sample.', 'warning')
         return redirect(url_for('.index'))

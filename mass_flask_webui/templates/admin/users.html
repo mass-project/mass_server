@@ -15,21 +15,16 @@ Manage users
         <div class="col-md-12">
             <div class="panel panel-default">
                 <table class="table table-striped table-hover">
-                    <tr><th></th><th class="col-md-5">Username</th><th class="col-md-5">User level</th><th class="col-md-2">Action</th></tr>
+                    <tr><th class="col-md-4">Username</th><th class="col-md-4">User level</th><th class="col-md-4">Action</th></tr>
                     {% for user in users %}
                         <tr>
                             <td>{{ user.username }}</td>
-                            <td>{{ user.user_level }}</td>
+                            <td>{{ user_level(user) }}</td>
                             <td>
                                 <form class="form-inline" method="post" action="#">
                                     <input type="hidden" name="id" value="{{ user.id }}">
-                                    <input type="hidden" name="action" value="edit_user">
-                                    <button type="submit" class="btn btn-default btn-sm"><i class="fa fa-pencil" aria-hidden="true"></i> Edit</button>
-                                </form>
-                                <form class="form-inline" method="post" action="#">
-                                    <input type="hidden" name="id" value="{{ user.id }}">
-                                    <input type="hidden" name="action" value="delete_user">
-                                    <button type="submit" class="btn btn-danger btn-sm"><i class="fa fa-trash" aria-hidden="true"></i> Delete</button>
+                                    <button type="submit" name="action" value="edit_user" class="btn btn-default btn-sm"><i class="fa fa-pencil" aria-hidden="true"></i> Edit</button>
+                                    <button type="submit" name="action" value="delete_user" class="btn btn-danger btn-sm"><i class="fa fa-trash" aria-hidden="true"></i> Delete</button>
                                 </form>
                             </td>
                         </tr>
