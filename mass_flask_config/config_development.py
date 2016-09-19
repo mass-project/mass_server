@@ -5,7 +5,5 @@ class DevelopmentConfig(BaseConfig):
     DEBUG = True
     MONGODB_SETTINGS = {
         'db': 'mass-flask-development',
-        'host': 'localhost',
-        'port': 27017,
-        'tz_aware': True
+        'host': 'mongodb://localhost:27017/'
     }

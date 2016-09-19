@@ -1,6 +1,7 @@
 import os
 import subprocess
 
+from pymongo import MongoClient
 from flask import Flask, redirect, url_for, request, flash
 from flask_bootstrap import Bootstrap
 from flask_mongoengine import MongoEngine
@@ -30,6 +31,16 @@ except IOError:
 # Load config
 config_path = os.getenv('CONFIG_PATH', 'mass_flask_config.config_development.DevelopmentConfig')
 app.config.from_object(config_path)
+
+
+# Dirty monkey patching of MongoClient to enable tz_aware
+_original_init = MongoClient.__init__
+
+
+def _patched_init(*args, **kwargs):
+    _original_init(*args, **kwargs, tz_aware=True)
+
+MongoClient.__init__ = _patched_init
 
 # Init db
 db = MongoEngine(app)
