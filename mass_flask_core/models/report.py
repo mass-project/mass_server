@@ -41,8 +41,8 @@ class Report(db.Document):
     error_message = StringField(null=True, required=False)
     tags = ListField(StringField())
     additional_metadata = DictField()
-    json_report_objects = MapField(field=FileField())
-    raw_report_objects = MapField(field=FileField())
+    json_report_objects = MapField(field=FileField(db_alias='default-mongodb-connection'))
+    raw_report_objects = MapField(field=FileField(db_alias='default-mongodb-connection'))
 
     meta = {
         'ordering': ['-upload_date'],
@@ -56,7 +56,7 @@ class Report(db.Document):
         return self.__repr__()
 
     def _add_report_object(self, file, target):
-        proxy = GridFSProxy()
+        proxy = GridFSProxy(db_alias='default-mongodb-connection')
         proxy.put(file)
         target[file.name] = proxy
 
