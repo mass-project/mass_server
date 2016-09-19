@@ -67,7 +67,7 @@ class BaseResource(MethodView):
             return jsonify({'error': 'No object with key \'{}\' found'.format(kwargs[self.query_key_field])}), 404
 
     def get(self, **kwargs):
-        if kwargs[self.query_key_field] is None:
+        if self.query_key_field not in kwargs or kwargs[self.query_key_field] is None:
             return self.get_list()
         else:
             return self.get_detail(**kwargs)

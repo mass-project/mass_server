@@ -1,4 +1,4 @@
-from flask.ext.marshmallow.fields import URLFor
+from flask_marshmallow.fields import URLFor
 from marshmallow.fields import Boolean, Method
 
 from mass_flask_api.config import api_blueprint
@@ -7,8 +7,8 @@ from mass_flask_core.models import AnalysisSystemInstance, AnalysisSystem, Sched
 
 
 class AnalysisSystemInstanceSchema(BaseSchema):
-    url = URLFor('.analysis_system_instance', uuid='<uuid>', _external=True)
-    analysis_system = ForeignReferenceField(endpoint='mass_flask_api.analysis_system', queryset=AnalysisSystem.objects(), query_parameter='identifier_name')
+    url = URLFor('.analysis_system_instance_detail', uuid='<uuid>', _external=True)
+    analysis_system = ForeignReferenceField(endpoint='.analysis_system_detail', queryset=AnalysisSystem.objects(), query_parameter='identifier_name')
     is_online = Boolean()
     scheduled_analyses_count = Method("get_scheduled_analyses_count")
 

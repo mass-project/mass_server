@@ -1,13 +1,13 @@
 from mass_flask_api.config import api_blueprint
 from .base import BaseSchema, ForeignReferenceField
 from mass_flask_core.models import AnalysisRequest, AnalysisSystem, Sample
-from flask.ext.marshmallow.fields import URLFor
+from flask_marshmallow.fields import URLFor
 
 
 class AnalysisRequestSchema(BaseSchema):
-    url = URLFor('.analysis_request', id='<id>', _external=True)
-    sample = ForeignReferenceField(endpoint='mass_flask_api.sample', queryset=Sample.objects(), query_parameter='id')
-    analysis_system = ForeignReferenceField(endpoint='mass_flask_api.analysis_system', queryset=AnalysisSystem.objects(), query_parameter='identifier_name')
+    url = URLFor('.analysis_request_detail', id='<id>', _external=True)
+    sample = ForeignReferenceField(endpoint='.sample_detail', queryset=Sample.objects(), query_parameter='id')
+    analysis_system = ForeignReferenceField(endpoint='.analysis_system_detail', queryset=AnalysisSystem.objects(), query_parameter='identifier_name')
 
     class Meta(BaseSchema.Meta):
         model = AnalysisRequest
