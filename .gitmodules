@@ -1,21 +1,18 @@
 [submodule "mass_flask_core"]
 	path = mass_flask_core
-	url = ssh://git@atlassian-net.cs.uni-bonn.de:7999/mal/mass_flask_core.git
+	url = ssh://git@github.com/mass-project/mass_flask_core.git
 [submodule "mass_flask_config"]
 	path = mass_flask_config
-	url = ssh://git@atlassian-net.cs.uni-bonn.de:7999/mal/mass_flask_config.git
+	url = ssh://git@github.com/mass-project/mass_flask_config.git
 [submodule "mass_flask_api"]
 	path = mass_flask_api
-	url = ssh://git@atlassian-net.cs.uni-bonn.de:7999/mal/mass_flask_api.git
+	url = ssh://git@github.com/mass-project/mass_flask_api.git
 [submodule "mass_flask_webui"]
 	path = mass_flask_webui
-	url = ssh://git@atlassian-net.cs.uni-bonn.de:7999/mal/mass_flask_webui.git
-[submodule "mass_angular_webui"]
-	path = mass_angular_webui
-	url = ssh://git@atlassian-net.cs.uni-bonn.de:7999/mal/mass_angular_webui.git
+	url = ssh://git@github.com/mass-project/mass_flask_webui.git
 [submodule "mass_flask_bin"]
 	path = mass_flask_bin
-	url = ssh://git@atlassian-net.cs.uni-bonn.de:7999/mal/mass_flask_bin.git
+	url = ssh://git@github.com/mass-project/mass_flask_bin.git
 [submodule "mass_flask_scheduling"]
 	path = mass_flask_scheduling
-	url = ssh://git@atlassian-net.cs.uni-bonn.de:7999/mal/mass_flask_scheduling.git
+	url = ssh://git@github.com/mass-project/mass_flask_scheduling.git
