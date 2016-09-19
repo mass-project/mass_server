@@ -1,1 +1,0 @@
-git+https://github.com/pypa/pip.git@8.0.2

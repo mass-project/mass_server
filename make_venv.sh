@@ -25,7 +25,4 @@ virtualenv --python ${PYTHON_BIN} --no-site-packages ${VENV}
 source ${VENV}/bin/activate
 
 # install required packages
-pip install -r requirements_upgrade_pip.txt
-pip install -r requirements_upgrade_setuptools.txt
-pip install -r requirements_upgrade_wheel.txt
 pip install -r requirements.txt
