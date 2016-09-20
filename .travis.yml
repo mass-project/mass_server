@@ -7,7 +7,7 @@ addons:
   apt:
     sources:
       - mongodb-upstart
-      - mongodb-3.0-precise
+      - mongodb-3.2-precise
     packages:
       - mongodb-org-server
       - mongodb-org-shell
@@ -15,7 +15,9 @@ services:
   - mongodb
 install:
   - "BUILD_LIB=1 pip install ssdeep" # Install ssdeep with included library to fix build error
-  - "pip install -r requirements.txt"
-  - "mongod --version"
+  - "pip install -r requirements.txt" # Install all other requirements
+  - "mongod --version" # Check if current MongoDB version is correctly installed
 script:
-  - "CONFIG_PATH=mass_flask_config.config_testing.TestingConfig nosetests"
+  - "CONFIG_PATH=mass_flask_config.config_testing.TestingConfig nosetests --with-coverage"
+after_success:
+  - codecov
