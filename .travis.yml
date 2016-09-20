@@ -2,10 +2,20 @@ language: python
 python:
   - "3.4"
   - "3.5"
+sudo: false
+addons:
+  apt:
+    sources:
+      - mongodb-upstart
+      - mongodb-3.0-precise
+    packages:
+      - mongodb-org-server
+      - mongodb-org-shell
 services:
   - mongodb
 install:
   - "BUILD_LIB=1 pip install ssdeep" # Install ssdeep with included library to fix build error
   - "pip install -r requirements.txt"
+  - "mongod --version"
 script:
   - "CONFIG_PATH=mass_flask_config.config_testing.TestingConfig nosetests"
