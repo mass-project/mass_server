@@ -38,7 +38,8 @@ _original_init = MongoClient.__init__
 
 
 def _patched_init(*args, **kwargs):
-    _original_init(*args, **kwargs, tz_aware=True)
+    kwargs['tz_aware'] = True
+    _original_init(*args, **kwargs)
 
 MongoClient.__init__ = _patched_init
 
