@@ -5,6 +5,8 @@ python:
 services:
   - mongodb
 # command to install dependencies
-install: "pip install -r requirements.txt"
+install:
+  - "pip install -r requirements.txt"
+  - "git submodule init && git submodule update"
 # command to run tests
 script: nosetests
