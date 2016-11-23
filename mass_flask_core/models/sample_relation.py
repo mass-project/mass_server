@@ -14,8 +14,8 @@ class SampleRelation(db.Document):
     sample = ReferenceField(Sample, required=True)
     other = ReferenceField(Sample, required=True)
     meta = {
-           'allow_inheritance': True,
-           }
+        'allow_inheritance': True,
+    }
 
     def __repr__(self):
         repr_string = '[{}] {} -- {}'

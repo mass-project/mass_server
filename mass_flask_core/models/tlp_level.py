@@ -8,9 +8,10 @@ class TLPLevelField(IntField):
     TLP_LEVEL_RED = 3    # Access only for explicitly mentioned users/groups
 
     def __init__(self, *args, **kwargs):
-        super(TLPLevelField, self).__init__(*args, **kwargs, choices=[
+        kwargs['choices'] = [
             TLPLevelField.TLP_LEVEL_WHITE,
             TLPLevelField.TLP_LEVEL_GREEN,
             TLPLevelField.TLP_LEVEL_AMBER,
             TLPLevelField.TLP_LEVEL_RED
-        ])
+        ]
+        super(TLPLevelField, self).__init__(*args, **kwargs)

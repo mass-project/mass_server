@@ -7,7 +7,7 @@ from mass_flask_config.app import db
 from mass_flask_core.utils import TimeFunctions, HashFunctions, FileFunctions, ListFunctions, StringFunctions
 from .tlp_level import TLPLevelField
 from .analysis_system import AnalysisSystem
-from .comment import Comment
+from .comment import CommentsMixin
 
 
 class SampleQuerySet(BaseQuerySet):
@@ -18,14 +18,13 @@ class SampleQuerySet(BaseQuerySet):
             return self.filter(tlp_level__lte=current_authenticated_entity.max_tlp_level)
 
 
-class Sample(db.Document):
+class Sample(db.Document, CommentsMixin):
     delivery_date = DateTimeField(default=TimeFunctions.get_timestamp, required=True)
     first_seen = DateTimeField(default=TimeFunctions.get_timestamp, required=True)
-    tags = ListField(StringField(regex=r'^[\w:\-\_\/]+$'))
+    tags = ListField(StringField(regex=r'^[\w:\-\_\/\+]+$'))
     dispatched_to = ListField(ReferenceField(AnalysisSystem))
     created_by = GenericReferenceField()
     tlp_level = TLPLevelField(verbose_name='TLP Level', help_text='Privacy level of this sample', required=True)
-    comments = ListField(EmbeddedDocumentField(Comment))
 
     meta = {
         'allow_inheritance': True,
@@ -67,7 +66,7 @@ class Sample(db.Document):
 
 
 class FileSample(Sample):
-    file = FileField()
+    file = FileField(db_alias='default-mongodb-connection')
     file_names = ListField(StringField())
     file_size = IntField(required=True)
     magic_string = StringField(required=True)

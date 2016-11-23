@@ -17,13 +17,14 @@ class UserLevel:
 
 class UserLevelField(IntField):
     def __init__(self, *args, **kwargs):
-        super(UserLevelField, self).__init__(*args, **kwargs, choices=[
+        kwargs['choices'] = [
             UserLevel.USER_LEVEL_ANONYMOUS,
             UserLevel.USER_LEVEL_USER,
             UserLevel.USER_LEVEL_PRIVILEGED,
             UserLevel.USER_LEVEL_MANAGER,
             UserLevel.USER_LEVEL_ADMIN
-        ])
+        ]
+        super(UserLevelField, self).__init__(*args, **kwargs)
 
 
 class UserMixin(AbstractAuthEntity):

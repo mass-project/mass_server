@@ -9,7 +9,7 @@ class FileFunctions:
     @staticmethod
     def get_magic_string_from_file(file):
         if isinstance(file, BufferedReader) or isinstance(file, FileStorage):
-            magic_string = magic.from_buffer(file.read()).decode('utf-8')
+            magic_string = magic.from_buffer(file.read())
             file.seek(0)
             return magic_string
         else:
@@ -18,7 +18,7 @@ class FileFunctions:
     @staticmethod
     def get_mime_type_from_file(file):
         if isinstance(file, BufferedReader) or isinstance(file, FileStorage):
-            mime_string = magic.from_buffer(file.read(), mime=True).decode('utf-8')
+            mime_string = magic.from_buffer(file.read(), mime=True)
             file.seek(0)
             return mime_string
         else:

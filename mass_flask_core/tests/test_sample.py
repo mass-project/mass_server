@@ -1,7 +1,6 @@
-from datetime import datetime
 from mixer.backend.mongoengine import mixer
 from mongoengine import ValidationError
-from mass_flask_core.models import Sample, FileSample
+from mass_flask_core.models import Sample, FileSample, TLPLevelField
 from mass_flask_core.tests import FlaskTestCase
 from mass_flask_core.utils import TimeFunctions
 
@@ -15,7 +14,8 @@ class SampleTestCase(FlaskTestCase):
             'file': open('mass_flask_core/tests/test_data/gpl-2.0.txt', 'rb'),
             'comment': 'GPL 2.0',
             'long_comment': 'This is a copy of the GPL for testing.',
-            'first_seen': self._timestamp
+            'first_seen': self._timestamp,
+            'tlp_level': TLPLevelField.TLP_LEVEL_WHITE
         }
         file_sample = FileSample.create_or_update(**file_sample_args)
         return file_sample
@@ -104,16 +104,12 @@ class SampleTestCase(FlaskTestCase):
             self.assertValidTag(tag)
 
     def assertInvalidTag(self, tag):
-        sample = Sample()
-        sample.tags = [tag]
         with self.assertRaises(ValidationError):
-            sample.save()
+            sample = mixer.blend(Sample, tags=[tag])
 
     def assertValidTag(self, tag):
         try:
-            sample = Sample()
-            sample.tags = [tag]
-            sample.save()
+            mixer.blend(Sample, tags=[tag])
         except ValidationError:
             self.fail('Validation of a valid tag failed!')
 
