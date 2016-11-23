@@ -1,37 +1,49 @@
-from flask.ext.wtf import Form
-from flask.ext.wtf.file import FileField, FileRequired
-from wtforms import StringField, SubmitField, FormField
-from wtforms.validators import Length, InputRequired, IPAddress, URL
+from flask_wtf import Form
+from flask_wtf.file import FileField, FileRequired
+from wtforms import StringField, SubmitField, SelectField
+from wtforms.validators import InputRequired, IPAddress, URL
 
-
-class SubmitOptionalDataForm(Form):
-    comment = StringField('Comment', validators=[Length(min=0, max=200)])
-    long_comment = StringField('Long comment')
-
-    def __init__(self, *args, **kwargs):
-        kwargs['csrf_enabled'] = False
-        super(SubmitOptionalDataForm, self).__init__(*args, **kwargs)
-
+from mass_flask_core.models import TLPLevelField
 
 class FileSampleSubmitForm(Form):
     file = FileField('File', validators=[FileRequired()])
+    tlp_level = SelectField('Sample privacy (TLP level)', coerce=int, choices=[
+        (TLPLevelField.TLP_LEVEL_WHITE, 'WHITE (unlimited)'),
+        (TLPLevelField.TLP_LEVEL_GREEN, 'GREEN (community)'),
+        (TLPLevelField.TLP_LEVEL_AMBER, 'AMBER (limited distribution)'),
+        (TLPLevelField.TLP_LEVEL_RED, 'RED (personal for named recipients)'),
+    ])
     submit = SubmitField()
-    optional = FormField(SubmitOptionalDataForm, label='Optional data')
 
 
 class IPSampleSubmitForm(Form):
     ip_address = StringField('IPv4/IPv6 address', validators=[InputRequired(), IPAddress()])
+    tlp_level = SelectField('Sample privacy (TLP level)', coerce=int, choices=[
+        (TLPLevelField.TLP_LEVEL_WHITE, 'WHITE (unlimited)'),
+        (TLPLevelField.TLP_LEVEL_GREEN, 'GREEN (community)'),
+        (TLPLevelField.TLP_LEVEL_AMBER, 'AMBER (limited distribution)'),
+        (TLPLevelField.TLP_LEVEL_RED, 'RED (personal for named recipients)'),
+    ])
     submit = SubmitField()
-    optional = FormField(SubmitOptionalDataForm, label='Optional data')
 
 
 class DomainSampleSubmitForm(Form):
     domain = StringField('Domain name', validators=[InputRequired()])
+    tlp_level = SelectField('Sample privacy (TLP level)', coerce=int, choices=[
+        (TLPLevelField.TLP_LEVEL_WHITE, 'WHITE (unlimited)'),
+        (TLPLevelField.TLP_LEVEL_GREEN, 'GREEN (community)'),
+        (TLPLevelField.TLP_LEVEL_AMBER, 'AMBER (limited distribution)'),
+        (TLPLevelField.TLP_LEVEL_RED, 'RED (personal for named recipients)'),
+    ])
     submit = SubmitField()
-    optional = FormField(SubmitOptionalDataForm, label='Optional data')
 
 
 class URISampleSubmitForm(Form):
     uri = StringField('URI', validators=[InputRequired(), URL()])
+    tlp_level = SelectField('Sample privacy (TLP level)', coerce=int, choices=[
+        (TLPLevelField.TLP_LEVEL_WHITE, 'WHITE (unlimited)'),
+        (TLPLevelField.TLP_LEVEL_GREEN, 'GREEN (community)'),
+        (TLPLevelField.TLP_LEVEL_AMBER, 'AMBER (limited distribution)'),
+        (TLPLevelField.TLP_LEVEL_RED, 'RED (personal for named recipients)'),
+    ])
     submit = SubmitField()
-    optional = FormField(SubmitOptionalDataForm, label='Optional data')

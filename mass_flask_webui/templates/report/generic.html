@@ -1,0 +1,78 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">{{ report.analysis_system.verbose_name }}</h3>
+    </div>
+    <table class="table">
+        <tr>
+            <th style="width: 200px">Report ID</th>
+            <td>{{ report.id }}</td>
+        </tr>
+        <tr>
+            <th>Report status</th>
+            <td>
+                {% if report.status == 0 %}
+                    <span class="label label-success">Analysis completed without errors</span>
+                {% elif report.status == 1 %}
+                    <span class="label label-danger">Analysis completed with errors</span>
+                {% else %}
+                    <span class="label label-warning">Unknown analysis result status</span>
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>API Link</th>
+            <td><a href="{{ url_for('mass_flask_api.report_detail', id=report.id) }}"><i class="fa fa-share"></i> View report metadata in REST API</a></td>
+        </tr>
+        <tr>
+            <th>Report upload date</th>
+            <td>{{ report.upload_date }}</td>
+        </tr>
+        <tr>
+            <th>Report analysis date</th>
+            <td>{{ report.analysis_date }}</td>
+        </tr>
+        <tr>
+            <th>Tags</th>
+            <td>
+                {% for tag in report.tags %}
+                    <span class="label label-default">{{ tag }}</span>
+                {% else %}
+                    <span class="label label-default"><em>No tags found</em></span>
+                {% endfor %}
+            </td>
+        </tr>
+    </table>
+    <div class="panel-body">
+        No detailed visualization is available for this report type. A generic representation of the report contents follows.
+    </div>
+    <table class="table">
+        <caption>Additional report metadata</caption>
+        {% for key, value in report.additional_metadata.items() %}
+            <tr>
+                <th style="width: 200px">{{ key }}</th><td>{{ value }}</td>
+            </tr>
+        {% else %}
+            <tr><th><em>No data found</em></th></tr>
+        {% endfor %}
+    </table>
+    <table class="table">
+        <caption>JSON report objects</caption>
+        {% for obj in report.json_report_objects %}
+            <tr>
+                <th style="width: 200px">{{ obj }}</th><td><a href="{{ url_for('mass_flask_api.json_report_object', id=report.id, object_name=obj) }}"><i class="fa fa-share"></i> View in REST API</a></td>
+            </tr>
+        {% else %}
+            <tr><th><em>No objects found</em></th></tr>
+        {% endfor %}
+    </table>
+    <table class="table">
+        <caption>Raw report objects</caption>
+        {% for obj in report.raw_report_objects %}
+            <tr>
+                <th style="width: 200px">{{ obj }}</th><td><a href="{{ url_for('mass_flask_api.raw_report_object', id=report.id, object_name=obj) }}"><i class="fa fa-download"></i> Download file</a></td>
+            </tr>
+        {% else %}
+            <tr><th><em>No objects found</em></th></tr>
+        {% endfor %}
+    </table>
+</div>
