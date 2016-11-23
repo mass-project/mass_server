@@ -1,5 +1,4 @@
 from flask import url_for, render_template, redirect
-from werkzeug.utils import redirect
 
 from mass_flask_core.models import FileSample, IPSample, DomainSample, URISample
 from mass_flask_webui.config import webui_blueprint
@@ -10,7 +9,7 @@ from mass_flask_webui.forms.submit import FileSampleSubmitForm, IPSampleSubmitFo
 def submit_file():
     form = FileSampleSubmitForm()
     if form.validate_on_submit():
-        sample = FileSample.create_or_update(file=form.data['file'], **form.data['optional'])
+        sample = FileSample.create_or_update(file=form.data['file'], tlp_level=form.data['tlp_level'])
         return redirect(url_for('mass_flask_webui.sample_detail', sample_id=sample.id))
     return render_template('submit.html', form=form, submit_mode="file")
 
@@ -19,7 +18,7 @@ def submit_file():
 def submit_ip():
     form = IPSampleSubmitForm()
     if form.validate_on_submit():
-        sample = IPSample.create_or_update(ip_address=form.data['ip_address'], **form.data['optional'])
+        sample = IPSample.create_or_update(ip_address=form.data['ip_address'], tlp_level=form.data['tlp_level'])
         return redirect(url_for('mass_flask_webui.sample_detail', sample_id=sample.id))
     return render_template('submit.html', form=form, submit_mode="ip")
 
@@ -28,7 +27,7 @@ def submit_ip():
 def submit_domain():
     form = DomainSampleSubmitForm()
     if form.validate_on_submit():
-        sample = DomainSample.create_or_update(domain=form.data['domain'], **form.data['optional'])
+        sample = DomainSample.create_or_update(domain=form.data['domain'], tlp_level=form.data['tlp_level'])
         return redirect(url_for('mass_flask_webui.sample_detail', sample_id=sample.id))
     return render_template('submit.html', form=form, submit_mode="domain")
 
@@ -37,6 +36,6 @@ def submit_domain():
 def submit_uri():
     form = URISampleSubmitForm()
     if form.validate_on_submit():
-        sample = URISample.create_or_update(uri=form.data['uri'], **form.data['optional'])
+        sample = URISample.create_or_update(uri=form.data['uri'], tlp_level=form.data['tlp_level'])
         return redirect(url_for('mass_flask_webui.sample_detail', sample_id=sample.id))
     return render_template('submit.html', form=form, submit_mode="uri")

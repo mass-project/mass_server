@@ -1,7 +1,7 @@
-from flask import current_app, render_template
+from flask import current_app, render_template, url_for
 from markupsafe import Markup
 
-from mass_flask_core.models import FileSample, IPSample, DomainSample, URISample, ExecutableBinarySample
+from mass_flask_core.models import FileSample, IPSample, DomainSample, URISample, ExecutableBinarySample, UserLevel
 from mass_flask_webui.config import webui_blueprint
 
 
@@ -25,10 +25,39 @@ def sample_processors():
     def is_executable_binary_sample(sample):
         return isinstance(sample, ExecutableBinarySample)
 
+    def tag_search_link(tag):
+        kwargs = {
+            'common-tags': tag,
+            'submit': 'Submit'
+        }
+        return url_for('.sample_search', **kwargs)
+
     return dict(
         sample_icon=sample_icon,
         is_file_sample=is_file_sample,
-        is_executable_binary_sample=is_executable_binary_sample
+        is_executable_binary_sample=is_executable_binary_sample,
+        tag_search_link=tag_search_link
+    )
+
+
+@webui_blueprint.context_processor
+def user_processors():
+    def user_level(user):
+        if user.user_level == UserLevel.USER_LEVEL_ADMIN:
+            return 'Administrator'
+        elif user.user_level == UserLevel.USER_LEVEL_MANAGER:
+            return 'Manager'
+        elif user.user_level == UserLevel.USER_LEVEL_PRIVILEGED:
+            return 'Privileged user'
+        elif user.user_level == UserLevel.USER_LEVEL_USER:
+            return 'Normal user'
+        elif user.user_level == UserLevel.USER_LEVEL_ANONYMOUS:
+            return 'Guest user'
+        else:
+            return 'Unknown user level'
+
+    return dict(
+        user_level=user_level
     )
 
 
