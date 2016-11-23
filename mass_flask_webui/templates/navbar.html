@@ -1,0 +1,46 @@
+{# {% load menu %} #}
+
+<nav class="navbar navbar-default navbar-fixed-top">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#mass_navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="{{ url_for('mass_flask_webui.index') }}">MASS</a>
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="mass_navbar">
+       <ul class="nav navbar-nav">
+           <li><a href="{{ url_for('mass_flask_webui.index') }}"><i class="fa fa-server"></i> Home</a></li>
+           <li><a href="{{ url_for('mass_flask_webui.submit_file') }}"><i class="fa fa-paper-plane"></i> Submit a sample</a></li>
+           <li><a href="{{ url_for('mass_flask_webui.sample_list') }}"><i class="fa fa-list"></i> Sample list</a></li>
+           <li><a href="{{ url_for('mass_flask_webui.sample_search') }}"><i class="fa fa-search"></i> Sample search</a></li>
+           <li><a href="{{ url_for('mass_flask_webui.apidocs') }}"><i class="fa fa-question-circle"></i> API Documentation</a></li>
+           <li><a href="{{ url_for('mass_flask_webui.cli_scripts') }}"><i class="fa fa-keyboard-o"></i> CLI Scripts</a></li>
+       </ul>
+
+        <ul class="nav navbar-nav navbar-right">
+            {% if current_user.is_authenticated %}
+                {% if current_user.is_admin %}
+                    <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"><i class="fa fa-user-secret"></i> Admin <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="{{ url_for('mass_flask_webui.admin') }}"><i class="fa fa-cog"></i> Statistics / Maintenance</a></li>
+                            <li><a href="{{ url_for('mass_flask_webui.admin_analysis_systems') }}"><i class="fa fa-tasks"></i> Manage analysis systems</a></li>
+                        </ul>
+                    </li>
+                {% endif %}
+                <li><a href="{{ url_for('mass_flask_webui.profile') }}"><i class="fa fa-user"></i> {{ current_user.username }}</a></li>
+                <li><a href="{{ url_for('mass_flask_webui.logout') }}"><i class="fa fa-sign-out"></i> Logout</a></li>
+            {% else %}
+                <li><a href="{{ url_for('mass_flask_webui.login') }}"><i class="fa fa-sign-in"></i> Login</a></li>
+            {% endif %}
+        </ul>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>

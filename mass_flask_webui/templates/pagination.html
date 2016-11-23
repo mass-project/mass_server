@@ -1,0 +1,33 @@
+<nav class="pagination-nav">
+    <ul class="pagination">
+        {% if paginator.previous %}
+            <li>
+                <a href="{{ paginator.previous }}">
+                    <span>&laquo;</span>
+                </a>
+            </li>
+        {% else %}
+            <li class="disabled">
+                <a href="#">
+                    <span>&laquo;</span>
+                </a>
+            </li>
+        {% endif %}
+
+        <li><a href="#">Page {{ paginator.page }} of {{ paginator.page_count }}</a></li>
+
+        {% if paginator.next %}
+            <li>
+                <a href="{{ paginator.next }}">
+                    <span>&raquo;</span>
+                </a>
+            </li>
+        {% else %}
+            <li class="disabled">
+                <a href="#">
+                    <span>&raquo;</span>
+                </a>
+            </li>
+        {% endif %}
+    </ul>
+</nav>

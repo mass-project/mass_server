@@ -1,0 +1,56 @@
+{% extends "mass_core/base.html" %}
+
+{% block page_title %}
+Analysis system {{ system.verbose_name }}
+{% endblock %}
+
+{% block content %}
+
+<h1>Analysis system {{ system.verbose_name }}</h1>
+
+<dl class="dl-horizontal">
+    <dt>Identifier name</dt><dd>{{ system.identifier_name }}</dd>
+    <dt>Verbose name</dt><dd>{{ system.verbose_name }}</dd>
+    <dt>Description</dt><dd>{{ system.information_text }}</dd>
+</dl>
+
+<h2>System instances</h2>
+
+<table class="table table-striped">
+    <tr><th>Status</th><th>Instance UUID</th><th>Last status update</th></tr>
+    {% for instance in system.instances.all %}
+        <tr>
+            <td>{% if instance.is_online %}<span class="label label-success">Online</span>{% else %}<span class="label label-danger">Offline</span>{% endif %}</td>
+            <td>{{ instance.uuid }}</td>
+            <td>{{ instance.last_seen }}</td>
+        </tr>
+    {% endfor %}
+</table>
+
+<h2>Latest analysis requests</h2>
+
+<table class="table table-striped">
+    <tr><th>Request time</th><th>Sample</th></tr>
+    {% for request in requests %}
+        <tr>
+            <td>{{ request.analysis_requested }}</td>
+            <td>{{ request.sample.comment }}</td>
+        </tr>
+    {% endfor %}
+</table>
+
+<h2>Latest reports</h2>
+
+<table class="table table-striped">
+    <tr><th>Report time</th><th>Sample</th><th>Is malware?</th><th>Short result</th></tr>
+    {% for report in reports %}
+        <tr>
+            <td>{{ report.report_date }}</td>
+            <td>{{ report.sample.comment }}</td>
+            <td>{% if report.is_malware %}<span class="label label-danger">Malware detected</span>{% else %}<span class="label label-success">No malware</span>{% endif %}</td>
+            <td>{{ report.short_result }}</td>
+        </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}
