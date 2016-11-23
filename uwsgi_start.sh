@@ -12,9 +12,6 @@ cd ${SCRIPTPATH}
 ./make_venv.sh
 source venv_mass/bin/activate
 
-# Update the submodules
-./update_submodules.sh
-
 # Configuration
 export CONFIG_PATH=mass_flask_config.config_production.ProductionConfig
 
