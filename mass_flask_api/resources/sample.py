@@ -168,6 +168,7 @@ class SampleResource(BaseResource):
             data.update(metadata)
             sample = FileSample.create_or_update(**data)
             sample.save()
+            sample = Sample.objects.get(id=sample.id)
             schema = SchemaMapping.get_schema_for_model_class(sample.__class__.__name__)
             return jsonify(schema().dump(sample).data), 201
 
@@ -267,7 +268,7 @@ class SampleResource(BaseResource):
                     description: No sample with the specified id has been found.
         """
         try:
-            sample = self.queryset.get(id=kwargs['id'])
+            sample = self.queryset().get(id=kwargs['id'])
             reports = Report.objects(sample=sample)
             serialized_result = ReportSchema(many=True).dump(reports)
             return jsonify({
@@ -296,7 +297,7 @@ class SampleResource(BaseResource):
                     description: No sample with the specified id has been found.
         """
         try:
-            sample = self.queryset.get(id=kwargs['id'])
+            sample = self.queryset().get(id=kwargs['id'])
             if 'depth' in request.args:
                 sample_relations = GraphFunctions.get_relation_graph(sample, int(request.args['depth']))
             else:

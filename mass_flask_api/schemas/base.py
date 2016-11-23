@@ -1,16 +1,9 @@
 from bson import DBRef
 from flask import url_for, _request_ctx_stack, request
-from marshmallow import ValidationError, post_dump, MarshalResult
+from marshmallow import ValidationError
 from marshmallow_mongoengine import ModelSchema
-from marshmallow_mongoengine.convert import default_converter
 import marshmallow.fields as mm_fields
-import marshmallow_mongoengine.fields as mmme_fields
 from werkzeug.exceptions import NotFound
-
-
-# Make these importable by other modules
-mm_fields = mm_fields
-mmme_fields = mmme_fields
 
 
 class SelfReferenceField(mm_fields.Field):
@@ -31,14 +24,6 @@ class ForeignReferenceField(mm_fields.Field):
         self._queryset = queryset
         self._query_parameter = query_parameter
 
-    # def serialize(self, attr, obj, accessor=None):
-    #     kwargs = {
-    #         'endpoint': self._endpoint,
-    #         '_external': True,
-    #         self._query_parameter: obj[attr][self._query_parameter],
-    #     }
-    #     return url_for(**kwargs)
-
     def _serialize(self, value, attr, obj):
         if isinstance(value, DBRef):
             if self._query_parameter == 'id':
@@ -55,6 +40,8 @@ class ForeignReferenceField(mm_fields.Field):
         return url_for(**kwargs)
 
     def _deserialize(self, value, attr=None, data=None):
+        if not value.endswith('/'):
+            value += '/'
         ctx = _request_ctx_stack.top
         adapter = ctx.url_adapter
         if adapter is None:
@@ -70,7 +57,18 @@ class ForeignReferenceField(mm_fields.Field):
         except NotFound:
             raise ValidationError('Reference URL for field {} incorrectly specified: The path of the URL points to a nonexistent API endpoint.'.format(attr))
 
-        if endpoint != self._endpoint:
+        blueprint_name = request.blueprint
+        if self._endpoint[:1] == '.':
+            if blueprint_name is not None:
+                full_endpoint = blueprint_name + self._endpoint
+            else:
+                full_endpoint = self._endpoint[1:]
+        else:
+            full_endpoint = self._endpoint
+
+        if endpoint != full_endpoint:
+            print(endpoint)
+            print(full_endpoint)
             raise ValidationError('Reference URL for field {} incorrectly specified. The path of the URL points to an endpoint that differs from the correct endpoint for this field.'.format(attr))
 
         query_result = self._queryset.filter(**params)
@@ -109,38 +107,4 @@ class FileMapField(mm_fields.Field):
 class BaseSchema(ModelSchema):
     class Meta:
         model_skip_values = []
-
-
-class DynamicBaseSchema(BaseSchema):
-    @staticmethod
-    def _serialize_dynamic_fields(obj, serialized_data):
-        if obj._dynamic:
-            for name, field in obj._dynamic_fields.items():
-                serialized_data[name] = default_converter.convert_field(field).serialize(name, obj)
-
-    def dump(self, obj, many=None, update_fields=True, **kwargs):
-        if self.many:
-            data = []
-            errors = []
-            for item in obj:
-                result = super(DynamicBaseSchema, self).dump(item, many=False, update_fields=update_fields, **kwargs)
-                self._serialize_dynamic_fields(item, result.data)
-                data.append(result.data)
-                if result.errors:
-                    errors.append(result.errors)
-            return MarshalResult(data, errors)
-        else:
-            result = super(DynamicBaseSchema, self).dump(obj, many=False, update_fields=update_fields, **kwargs)
-            self._serialize_dynamic_fields(obj, result.data)
-            return result
-
-    def load(self, data, many=None, partial=None, **kwargs):
-        result = super(DynamicBaseSchema, self).load(data, many=many, partial=partial, **kwargs)
-        if self.many:
-            print('Fix me!')
-        else:
-            for key, value in data.items():
-                if key not in result.data._fields:
-                    setattr(result.data, key, value)
-        return result
 
