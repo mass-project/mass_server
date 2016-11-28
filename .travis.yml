@@ -14,8 +14,7 @@ addons:
 services:
   - mongodb
 install:
-  - "BUILD_LIB=1 pip install ssdeep" # Install ssdeep with included library to fix build error
-  - "pip install -r requirements.txt" # Install all other requirements
+  - "BUILD_LIB=1 pip install -r requirements.txt" # Install requirements, add BUILD_LIB=1 for ssdeep
   - "mongod --version" # Check if current MongoDB version is correctly installed
 script:
   - "CONFIG_PATH=mass_flask_config.config_testing.TestingConfig nosetests"
