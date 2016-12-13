@@ -7,8 +7,9 @@ from mass_flask_config.bootstrap import bootstrap_mass_flask
 class FlaskTestCase(TestCase):
     @staticmethod
     def _clean_test_database():
-        conn = connection.get_connection(alias='default-mongodb-connection')
-        conn.drop_database(app.config['MONGODB_SETTINGS']['db'])
+        conn = connection.get_connection()
+        db = connection.get_db()
+        conn.drop_database(db)
 
     def __call__(self, result=None):
         self._pre_setup()

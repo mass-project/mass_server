@@ -41,8 +41,8 @@ class Report(db.Document):
     error_message = StringField(null=True, required=False)
     tags = ListField(StringField())
     additional_metadata = DictField()
-    json_report_objects = MapField(field=FileField(db_alias='default-mongodb-connection'))
-    raw_report_objects = MapField(field=FileField(db_alias='default-mongodb-connection'))
+    json_report_objects = MapField(field=FileField())
+    raw_report_objects = MapField(field=FileField())
 
     meta = {
         'ordering': ['-upload_date'],
