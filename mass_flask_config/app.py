@@ -32,17 +32,6 @@ except IOError:
 config_path = os.getenv('CONFIG_PATH', 'mass_flask_config.config_development.DevelopmentConfig')
 app.config.from_object(config_path)
 
-
-# Dirty monkey patching of MongoClient to enable tz_aware
-_original_init = MongoClient.__init__
-
-
-def _patched_init(*args, **kwargs):
-    kwargs['tz_aware'] = True
-    _original_init(*args, **kwargs)
-
-MongoClient.__init__ = _patched_init
-
 # Init db
 db = MongoEngine(app)
 

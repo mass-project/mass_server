@@ -66,7 +66,7 @@ class Sample(db.Document, CommentsMixin):
 
 
 class FileSample(Sample):
-    file = FileField(db_alias='default-mongodb-connection')
+    file = FileField()
     file_names = ListField(StringField())
     file_size = IntField(required=True)
     magic_string = StringField(required=True)
