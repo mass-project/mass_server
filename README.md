@@ -18,8 +18,7 @@ MASS is **free and open source software** licensed under the terms of the MIT li
 ## Installation
 
 1. `git clone git@github.com:mass-project/mass_server.git && cd mass_server`
-2. `git submodule init && git submodule update`
-3. Install Python dependencies using a) `./make_venv.sh` to build a virtual environment, or b) `pip install -r requirements.txt` to install the necessarry packages directly to your Python 3 installation. If any error is reported, make sure you have followed the **Prerequisites** section closely.
+2. Install Python dependencies using a) `./make_venv.sh` to build a virtual environment, or b) `pip install -r requirements.txt` to install the necessarry packages directly to your Python 3 installation. If any error is reported, make sure you have followed the **Prerequisites** section closely.
 
 ## Startup in development mode
 
