@@ -34,7 +34,7 @@ python-dateutil==2.6.0
 python-magic==0.4.12
 pytz==2016.10
 PyYAML==3.12
-requests==2.12.3
+requests==2.12.4
 six==1.10.0
 ssdeep==3.2
 tzlocal==1.3
