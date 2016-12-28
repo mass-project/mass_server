@@ -1,10 +1,10 @@
 apispec==0.17.1
-APScheduler==3.3.0
+APScheduler==3.3.1
 blinker==1.4
 cffi==1.9.1
 click==6.6
 codecov==2.0.5
-coverage==4.2
+coverage==4.3
 docopt==0.6.2
 dominate==2.3.1
 Faker==0.7.7
