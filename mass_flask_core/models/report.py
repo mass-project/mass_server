@@ -56,7 +56,7 @@ class Report(db.Document):
         return self.__repr__()
 
     def _add_report_object(self, file, target):
-        proxy = GridFSProxy(db_alias='default-mongodb-connection')
+        proxy = GridFSProxy()
         proxy.put(file)
         target[file.name] = proxy
 
