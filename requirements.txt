@@ -10,7 +10,7 @@ dominate==2.3.1
 Faker==0.7.7
 Flask==0.12
 Flask-APScheduler==1.6.0
-Flask-Bootstrap==3.3.7.0
+Flask-Bootstrap==3.3.7.1
 Flask-Login==0.4.0
 flask-marshmallow==0.7.0
 git+https://github.com/fabian-rump/flask_modular_auth.git
