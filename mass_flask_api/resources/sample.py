@@ -21,7 +21,9 @@ class SampleResource(BaseResource):
         'md5sum',
         'sha1sum',
         'sha256sum',
-        'sha512sum'
+        'sha512sum',
+        '_cls',
+        '_cls__startswith'
     ]
 
     @privilege_required(AuthenticatedPrivilege())
