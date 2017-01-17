@@ -68,7 +68,7 @@ class SampleTestCase(FlaskTestCase):
 
     def test_is_shannon_entropy_correct(self):
         file_sample = self._create_file_sample()
-        self.assertEqual(file_sample.shannon_entropy, 4.666564742606159)
+        self.assertAlmostEqual(file_sample.shannon_entropy, 4.666564742606159)
 
     def test_is_first_seen_correct(self):
         file_sample = self._create_file_sample()
