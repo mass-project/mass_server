@@ -59,5 +59,5 @@ def unauthorized_callback():
 
 auth_manager = AuthManager(app, unauthorized_callback=unauthorized_callback)
 
-# Load app version from git
-app.version = subprocess.check_output(['git', 'describe'], cwd=os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')).decode().strip()
+# Set the version number. For the future we should probably read it from a file.
+app.version = '1.0-alpha1'
