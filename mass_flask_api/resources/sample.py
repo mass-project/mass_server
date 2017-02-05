@@ -1,4 +1,6 @@
 import json
+
+
 from flask import jsonify, request
 from mongoengine import DoesNotExist
 
@@ -18,12 +20,17 @@ class SampleResource(BaseResource):
     queryset = Sample.objects.get_with_tlp_level_filter
     query_key_field = 'id'
     filter_parameters = [
-        'md5sum',
-        'sha1sum',
-        'sha256sum',
-        'sha512sum',
-        '_cls',
-        '_cls__startswith'
+        ('md5sum', str),
+        ('sha1sum', str),
+        ('sha256sum', str),
+        ('sha512sum', str),
+        ('mime_type', str),
+        ('delivery_date__lte', BaseResource._create_date_from_string),
+        ('delivery_date__gte', BaseResource._create_date_from_string),
+        ('first_seen__lte', BaseResource._create_date_from_string),
+        ('first_seen__gte', BaseResource._create_date_from_string),
+        ('_cls', str),
+        ('_cls__startswith', str)
     ]
 
     @privilege_required(AuthenticatedPrivilege())
@@ -45,6 +52,25 @@ class SampleResource(BaseResource):
                 - in: query
                   name: sha512sum
                   type: string
+                - in: query
+                  name: mime_type
+                  type: string
+                - in: query
+                  name: delivery_date__lte
+                  type: string
+                  format: dateTime
+                - in: query
+                  name: delivery_date__gte
+                  type: string
+                  format: dateTime
+                - in: query
+                  name: first_seen__lte
+                  type: string
+                  format: dateTime
+                - in: query
+                  name: first_seen__gte
+                  type: string
+                  format: dateTime
             responses:
                 200:
                     description: A list of samples is returned.
@@ -87,7 +113,8 @@ class SampleResource(BaseResource):
             return jsonify({'error': 'No object with key \'{}\' found'.format(kwargs['id'])}), 404
 
     def post(self):
-        return jsonify({'error': 'Posting samples directly to the sample endpoint is not allowed. Instead please use the respective endpoints of each specific sample type.'}), 400
+        return jsonify({
+            'error': 'Posting samples directly to the sample endpoint is not allowed. Instead please use the respective endpoints of each specific sample type.'}), 400
 
     def put(self, **kwargs):
         return jsonify({'error': 'Updating sample objects via the API is not supported yet.'}), 400
@@ -193,7 +220,8 @@ class SampleResource(BaseResource):
         """
         json_data = request.get_json()
         if not json_data:
-            return jsonify({'error': 'No JSON data provided. Make sure to set the content type of your request to: application/json'}), 400
+            return jsonify({
+                'error': 'No JSON data provided. Make sure to set the content type of your request to: application/json'}), 400
         else:
             sample = IPSample.create_or_update(**json_data)
             sample.save()
@@ -219,7 +247,8 @@ class SampleResource(BaseResource):
         """
         json_data = request.get_json()
         if not json_data:
-            return jsonify({'error': 'No JSON data provided. Make sure to set the content type of your request to: application/json'}), 400
+            return jsonify({
+                'error': 'No JSON data provided. Make sure to set the content type of your request to: application/json'}), 400
         else:
             sample = DomainSample.create_or_update(**json_data)
             sample.save()
@@ -245,7 +274,8 @@ class SampleResource(BaseResource):
         """
         json_data = request.get_json()
         if not json_data:
-            return jsonify({'error': 'No JSON data provided. Make sure to set the content type of your request to: application/json'}), 400
+            return jsonify({
+                'error': 'No JSON data provided. Make sure to set the content type of your request to: application/json'}), 400
         else:
             sample = URISample.create_or_update(**json_data)
             sample.save()
@@ -317,7 +347,8 @@ class SampleResource(BaseResource):
 
 register_api_endpoint('sample', SampleResource)
 
-api_blueprint.add_url_rule('/sample/<id>/download/', view_func=SampleResource().download_file, methods=['GET'], endpoint='sample_download')
+api_blueprint.add_url_rule('/sample/<id>/download/', view_func=SampleResource().download_file, methods=['GET'],
+                           endpoint='sample_download')
 api_blueprint.apispec.add_path(path='/sample/{id}/download/', view=SampleResource.download_file)
 
 api_blueprint.add_url_rule('/sample/submit_file/', view_func=SampleResource().submit_file, methods=['POST'])
@@ -332,8 +363,10 @@ api_blueprint.apispec.add_path(path='/sample/submit_domain/', view=SampleResourc
 api_blueprint.add_url_rule('/sample/submit_uri/', view_func=SampleResource().submit_uri, methods=['POST'])
 api_blueprint.apispec.add_path(path='/sample/submit_uri/', view=SampleResource.submit_uri)
 
-api_blueprint.add_url_rule('/sample/<id>/reports/', view_func=SampleResource().reports, methods=['GET'], endpoint='sample_reports')
+api_blueprint.add_url_rule('/sample/<id>/reports/', view_func=SampleResource().reports, methods=['GET'],
+                           endpoint='sample_reports')
 api_blueprint.apispec.add_path(path='/sample/{id}/reports/', view=SampleResource.reports)
 
-api_blueprint.add_url_rule('/sample/<id>/relation_graph/', view_func=SampleResource().relation_graph, methods=['GET'], endpoint='sample_relation_graph')
+api_blueprint.add_url_rule('/sample/<id>/relation_graph/', view_func=SampleResource().relation_graph, methods=['GET'],
+                           endpoint='sample_relation_graph')
 api_blueprint.apispec.add_path(path='/sample/{id}/relation_graph/', view=SampleResource.relation_graph)

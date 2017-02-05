@@ -1,6 +1,7 @@
 from flask import jsonify, request
 from flask.views import MethodView
 from mongoengine import DoesNotExist
+from datetime import datetime
 
 from mass_flask_core.utils import PaginationFunctions
 
@@ -20,6 +21,10 @@ class BaseResource(MethodView):
     queryset = None
     query_key_field = None
     filter_parameters = []
+
+    @staticmethod
+    def _create_date_from_string(string):
+        return datetime.strptime(string, '%Y-%m-%dT%H:%M:%S+00:00')
 
     @property
     def schema(self):
@@ -44,9 +49,9 @@ class BaseResource(MethodView):
     @PaginationFunctions.paginate
     def _get_list(self):
         filter_condition = {}
-        for parameter in self.filter_parameters:
+        for parameter, parameter_type in self.filter_parameters:
             if parameter in request.args:
-                filter_condition[parameter] = request.args[parameter]
+                filter_condition[parameter] = parameter_type(request.args[parameter])
 
         return self.queryset().filter(**filter_condition)
 
