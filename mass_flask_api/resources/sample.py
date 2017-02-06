@@ -25,6 +25,7 @@ class SampleResource(BaseResource):
         ('sha256sum', str),
         ('sha512sum', str),
         ('mime_type', str),
+        ('file_names', str),
         ('file_size__lte', int),
         ('file_size__gte', int),
         ('shannon_entropy__lte', float),
@@ -59,6 +60,21 @@ class SampleResource(BaseResource):
                 - in: query
                   name: mime_type
                   type: string
+                - in: query
+                  name: file_names
+                  type: string
+                - in: query
+                  name: file_size__lte
+                  type: integer
+                - in: query
+                  name: file_size_gte
+                  type: interger
+                - in: query
+                  name: shannon_entropy__lte
+                  type: float
+                - in: query
+                  name: shannon_entropy__gte
+                  type: float
                 - in: query
                   name: delivery_date__lte
                   type: string
