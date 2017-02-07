@@ -20,6 +20,16 @@ class SampleResource(BaseResource):
     queryset = Sample.objects.get_with_tlp_level_filter
     query_key_field = 'id'
     filter_parameters = [
+        ('ip_address', str),
+        ('ip_address__startswith', str),
+        ('domain', str),
+        ('domain__contains', str),
+        ('domain__startswith', str),
+        ('domain__endswith', str),
+        ('uri', str),
+        ('uri__contains', str),
+        ('uri__startswith', str),
+        ('uri__endswith', str),
         ('md5sum', str),
         ('sha1sum', str),
         ('sha256sum', str),
