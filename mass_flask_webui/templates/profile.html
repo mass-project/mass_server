@@ -13,6 +13,34 @@ Profile
 
     <div class="row">
         <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading"><h3 class="panel-title">Personal information</h3></div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <p class="text-center"><img src="{{ user.email| default('not set', true) | gravatar(size=200) }}"><br/><b>Profile picture (<a href="https://www.gravatar.com">Gravatar</a>)</b></p>
+                        </div>
+                        <div class="col-md-8">
+                            <dl class="dl-horizontal">
+                                <dt>Username</dt>
+                                <dd>{{ user.username }}</dd>
+                                <dt>First name</dt>
+                                <dd>{{ user.first_name|default('not set', true) }}</dd>
+                                <dt>Last name</dt>
+                                <dd>{{ user.last_name|default('not set', true) }}</dd>
+                                <dt>Organization / Company</dt>
+                                <dd>{{ user.organization|default('not set', true) }}</dd>
+                                <dt>Email address</dt>
+                                <dd>{{ user.email|default('not set', true) }}</dd>
+                            </dl>
+                            <a class="btn btn-default" href="{{ url_for('mass_flask_webui.profile_edit') }}" role="button">Edit personal information</a>
+                            <a class="btn btn-default" href="{{ url_for('mass_flask_webui.profile_change_password') }}" role="button">Change password</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
              <div class="panel panel-warning">
                 <div class="panel-heading"><h3 class="panel-title">API key</h3></div>
                 <div class="panel-body">

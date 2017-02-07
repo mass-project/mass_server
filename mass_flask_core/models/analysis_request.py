@@ -1,8 +1,8 @@
 from mass_flask_config.app import db
-from .analysis_system import AnalysisSystem
-from .sample import Sample
 from mongoengine import DateTimeField, ReferenceField, IntField
 from mass_flask_core.utils import TimeFunctions
+from .analysis_system import AnalysisSystem
+from .sample import Sample
 
 
 class AnalysisRequest(db.Document):

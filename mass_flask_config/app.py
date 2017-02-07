@@ -1,7 +1,6 @@
 import os
-import subprocess
 
-from pymongo import MongoClient
+from flask_gravatar import Gravatar
 from flask import Flask, redirect, url_for, request, flash
 from flask_bootstrap import Bootstrap
 from flask_mongoengine import MongoEngine
@@ -37,6 +36,15 @@ db = MongoEngine(app)
 
 # Init flask-bootstrap
 Bootstrap(app)
+
+# Gravatar
+gravatar = Gravatar(app,
+                    size=100,
+                    rating='g',
+                    default='mm',
+                    force_default=False,
+                    use_ssl=True,
+                    base_url=None)
 
 
 # Init auth system

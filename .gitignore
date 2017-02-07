@@ -94,3 +94,6 @@ venv_mass/
 
 # VIM swp
 *.swp
+
+# Flask secret key
+secret.txt
