@@ -26,6 +26,10 @@ class BaseResource(MethodView):
     def _create_date_from_string(string):
         return datetime.strptime(string, '%Y-%m-%dT%H:%M:%S+00:00')
 
+    @staticmethod
+    def _create_list_from_string(string):
+        return string.split(',')
+
     @property
     def schema(self):
         return Ref('schema').resolve(self)

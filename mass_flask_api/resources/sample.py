@@ -34,6 +34,7 @@ class SampleResource(BaseResource):
         ('delivery_date__gte', BaseResource._create_date_from_string),
         ('first_seen__lte', BaseResource._create_date_from_string),
         ('first_seen__gte', BaseResource._create_date_from_string),
+        ('tags__all', BaseResource._create_list_from_string),
         ('_cls', str),
         ('_cls__startswith', str)
     ]
@@ -91,6 +92,9 @@ class SampleResource(BaseResource):
                   name: first_seen__gte
                   type: string
                   format: dateTime
+                - in: query
+                  name: tags__all
+                  type: string
             responses:
                 200:
                     description: A list of samples is returned.
