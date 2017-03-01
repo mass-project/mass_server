@@ -140,7 +140,6 @@ class ScheduledAnalysisResource(BaseResource):
                 report.save()
                 scheduled_analysis.delete()
                 return jsonify(ReportSchema().dump(report).data), 201
-                # return '', 204
         except DoesNotExist:
             return jsonify({'error': 'No object with key \'{}\' found'.format(kwargs['id'])}), 404
 
