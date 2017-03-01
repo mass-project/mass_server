@@ -9,6 +9,7 @@ from mass_flask_api.utils import get_pagination_compatible_schema, register_api_
 from mass_flask_api.schemas import ScheduledAnalysisSchema, ReportSchema
 from mass_flask_core.models import ScheduledAnalysis
 
+import logging
 
 class ScheduledAnalysisResource(BaseResource):
     schema = ScheduledAnalysisSchema()
@@ -138,7 +139,8 @@ class ScheduledAnalysisResource(BaseResource):
 
                 report.save()
                 scheduled_analysis.delete()
-                return '', 204
+                return jsonify(ReportSchema().dump(report).data), 201
+                # return '', 204
         except DoesNotExist:
             return jsonify({'error': 'No object with key \'{}\' found'.format(kwargs['id'])}), 404
 
