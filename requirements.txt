@@ -1,4 +1,4 @@
-apispec==0.17.4
+apispec==0.19.0
 APScheduler==3.3.1
 blinker==1.4
 cffi==1.9.1
@@ -7,7 +7,7 @@ codecov==2.0.5
 coverage==4.3.4
 docopt==0.6.2
 dominate==2.3.1
-Faker==0.7.7
+Faker==0.7.10
 Flask==0.12
 Flask-APScheduler==1.6.0
 Flask-Bootstrap==3.3.7.1
@@ -19,8 +19,8 @@ Flask-WTF==0.14.2
 future==0.16.0
 itsdangerous==0.24
 Jinja2==2.9.5
-MarkupSafe==0.23
-marshmallow==2.12.2
+MarkupSafe==1.0
+marshmallow==2.13.3
 marshmallow-mongoengine==0.7.8
 mixer==5.6.6
 mongoengine==0.11.0
@@ -29,7 +29,7 @@ nose-exclude==0.5.0
 pefile==2016.3.28
 pycparser==2.17
 pymongo==3.4.0
-pyparsing==2.1.10
+pyparsing==2.2.0
 python-dateutil==2.6.0
 python-magic==0.4.12
 pytz==2016.10
@@ -40,5 +40,5 @@ ssdeep==3.2
 tzlocal==1.3
 uWSGI==2.0.14
 visitor==0.1.3
-Werkzeug==0.11.15
+Werkzeug==0.12
 WTForms==2.1
