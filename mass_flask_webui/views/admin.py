@@ -5,6 +5,7 @@ from mongoengine import DoesNotExist
 
 from flask_modular_auth import privilege_required, RolePrivilege
 
+from mass_flask_core import models
 from mass_flask_config.app import db
 from mass_flask_core.models import AnalysisSystem, AnalysisSystemInstance, InstanceAPIKey, User
 from mass_flask_webui.config import webui_blueprint
