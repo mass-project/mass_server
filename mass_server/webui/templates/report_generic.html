@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block page_title %}
+Detail page for report #{{ report.id }}
+{% endblock %}
+
+{% block content %}
+
+    <div class="page-header">
+        <h1>Report #{{ report.id }}
+            <small>Analysis system: {{ report.analysis_system.verbose_name }}</small>
+        </h1>
+    </div>
+
+    <div class="row">
+
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <dl class="list-group">
+                    <dt class="list-group-item">Sample</dt>
+                    <dd class="list-group-item">{{ sample_icon(report.sample) }} <a href="{{ url_for('webui.sample_detail', sample_id=report.sample.id) }}">{{ report.sample.title }}</a></dd>
+                    <dt class="list-group-item">Analysis system</dt>
+                    <dd class="list-group-item">{{ report.analysis_system.verbose_name }}</dd>
+                </dl>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <dl class="dl-horizontal">
+                <dt>Report status</dt>
+                <dd>
+                    {% if report.status == 0 %}
+                        <span class="label label-success">Analysis completed without errors</span>
+                    {% elif report.status == 1 %}
+                        <span class="label label-danger">Analysis completed with errors</span>
+                    {% else %}
+                        <span class="label label-warning">Unknown analysis result status</span>
+                    {% endif %}
+                </dd>
+                <dt>API Link</dt>
+                <dd><a href="{{ url_for('api.report', id=report.id) }}"><i class="fa fa-share"></i> Report metadata in JSON API</a></dd>
+                <dt>Report ID</dt>
+                <dd>{{ report.id }}</dd>
+                <dt>Report date</dt>
+                <dd>{{ report.report_date }}</dd>
+                <dt>Tags</dt>
+                <dd>
+                    <ul>
+                        {% for tag in report.tags %}
+                        <li>{{ tag }}</li>
+                        {% else %}
+                            <li><em>No tags found.</em>
+                        {% endfor %}
+                    </ul>
+                </dd>
+            </dl>
+        </div>
+    </div>
+
+    {% block report_details %}
+        <h2>Report details</h2>
+        <em>Sorry, but the detail view is not available for this report type.</em>
+    {%  endblock %}
+
+{% endblock %}

@@ -1,0 +1,341 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block page_title %}
+Detail page for sample #{{ sample.id }}
+{% endblock %}
+
+{% block content %}
+
+    <div class="page-header">
+        <h1>{{ sample.title }}
+            <small>{{ sample_icon(sample) }} {{ sample._cls }}</small>
+        </h1>
+    </div>
+
+    <p>
+        Sample ID <strong># {{ sample.id }}</strong>
+    </p>
+    <p>
+        {% if sample.created_by and sample.created_by.is_user %}
+            First upload on <strong>{{ sample.delivery_date }}</strong> by <strong>{{ sample.created_by.username }}</strong>
+        {% else %}
+            First upload on <strong>{{ sample.delivery_date }}</strong> by an unknown user or system
+        {% endif %}
+    </p>
+
+    <h3>
+        {% if sample.tlp_level == 0 %}
+            <span class="label label-default">TLP level: WHITE (unlimited)</span>
+        {% elif sample.tlp_level == 1 %}
+            <span class="label label-success">TLP level: GREEN (community)</span>
+        {% elif sample.tlp_level == 2 %}
+            <span class="label label-warning">TLP level: AMBER (limited distribution)</span>
+        {% elif sample.tlp_level == 3 %}
+            <span class="label label-danger">TLP level: RED (personal for named recipients)</span>
+        {% endif %}
+    </h3>
+
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active"><a href="#activity" role="tab" data-toggle="tab"><i class="fa fa-clock-o"></i> Activity</a></li>
+        <li role="presentation"><a href="#metadata" role="tab" data-toggle="tab"><i class="fa fa-info-circle"></i> Metadata</a></li>
+        <li role="presentation"><a href="#reports" role="tab" data-toggle="tab"><i class="fa fa-search" aria-hidden="true"></i> Reports</a></li>
+        <li role="presentation"><a href="#graph" role="tab" data-toggle="tab"><i class="fa fa-link"></i> Relation Graph</a></li>
+    </ul>
+
+    {% block scripts %}
+        {{ super() }}
+        <script>
+            var prefix = "tab_";
+
+            $( document ).ready(function() {
+                var hash = document.location.hash;
+                if (hash) {
+                    $('.nav-tabs a[href="' + hash.replace(prefix, "") + '"]').tab('show');
+                }
+            });
+
+            // Change hash for page-reload
+            $('.nav-tabs a').on('shown.bs.tab', function (e) {
+                window.location.hash = e.target.hash.replace("#", "#" + prefix);
+            });
+        </script>
+    {% endblock %}
+
+    <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="activity">
+            <ul class="timeline">
+                {% for item in activity %}
+                <li>
+                    <div class="timeline-badge {{ item.class }}"><i class="fa {{ item.glyph }}"></i></div>
+                    <div class="timeline-panel">
+                        <div class="timeline-heading">
+                            <h4 class="timeline-title">{{ item.title }}</h4>
+                            <p>
+                                <small class="text-muted"><i class="fa fa-clock-o"></i> {{ item.timestamp }}</small>
+                            </p>
+                        </div>
+                        {% if item.content %}
+                        <div class="timeline-body">
+                            <p>{{ item.content }}</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </li>
+                {% endfor %}
+                <li>
+                    <div class="timeline-badge"><i class="fa fa-comment"></i></div>
+                    <div class="timeline-panel">
+                        <div class="timeline-heading">
+                            <h4 class="timeline-title">Post a comment</h4>
+                        </div>
+                        <div class="timeline-body">
+                            {% if current_authenticated_entity.is_authenticated %}
+                                <p>{{ wtf.quick_form(comment_form) }}</p>
+                            {% else %}
+                                <p><em>Please login in order to post a comment.</em></p>
+                            {% endif %}
+
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="metadata">
+            <div class="row">
+                <div class="col-md-12">
+                    <h2>Common sample metadata</h2>
+                    <dl class="dl-horizontal">
+                        <dt>API Link</dt>
+                        <dd><a href="{{ url_for('api.sample_detail', id=sample.id) }}"><i class="fa fa-share"></i> View sample metadata in REST API</a></dd>
+                        <dt>Sample ID</dt>
+                        <dd>{{ sample.id }}</dd>
+                        <dt>Sample type</dt>
+                        <dd>{{ sample._cls }}</dd>
+                        <dt>Delivery date</dt>
+                        <dd>{{ sample.delivery_date }}</dd>
+                        <dt>First seen date</dt>
+                        <dd>{{ sample.first_seen }}</dd>
+                        <dt>Tags</dt>
+                        <dd>
+                            {% for tag in sample.tags %}
+                                <a class="btn btn-default btn-xs" href="{{ tag_search_link(tag) }}">{{ tag }}</a>
+                            {% else %}
+                                <span class="label label-default"><em>No tags found</em></span>
+                            {% endfor %}
+                        </dd>
+                    </dl>
+
+                    {% if is_file_sample(sample) %}
+                        <div>
+                            <h2>File sample metadata</h2>
+                            <dl class="dl-horizontal">
+                                <dt>Sample download</dt>
+                                <dd><a href="{{ url_for('api.sample_download', id=sample.id) }}"><i class="fa fa-download"></i> Download sample file</a></dd>
+                                <dt>File size</dt>
+                                <dd>{{ sample.file_size }} bytes</dd>
+                                <dt>MIME type</dt>
+                                <dd>{{ sample.mime_type }}</dd>
+                                <dt>Magic string</dt>
+                                <dd>{{ sample.magic_string }}</dd>
+                                <dt>MD5</dt>
+                                <dd>{{ sample.md5sum }}</dd>
+                                <dt>SHA1</dt>
+                                <dd>{{ sample.sha1sum }}</dd>
+                                <dt>SHA256</dt>
+                                <dd>{{ sample.sha256sum }}</dd>
+                                <dt>SHA512</dt>
+                                <dd>{{ sample.sha512sum }}</dd>
+                                <dt>File entropy</dt>
+                                <dd>{{ sample.shannon_entropy }}</dd>
+                                <dt>ssdeep hash</dt>
+                                <dd>{{ sample.ssdeep_hash }}</dd>
+                                <dt>File names</dt>
+                                <dd>
+                                    <ul>
+                                        {% for name in sample.file_names %}
+                                            <li>{{ name }}</li>
+                                        {% else %}
+                                            <li><em>No file names found.</em>
+                                        {% endfor %}
+                                    </ul>
+                                </dd>
+                            </dl>
+                        </div>
+                    {% endif %}
+
+                    {% if is_executable_binary_sample(sample) %}
+                        <div>
+                            <h2>Windows executable sample metadata</h2>
+                            <dl class="dl-horizontal">
+                                <dt>Stub</dt>
+                                <dd>Implement me!</dd>
+                            </dl>
+                        </div>
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="reports">
+            <div class="row">
+                <div class="col-md-12">
+                    {% for report in reports %}
+                        {% include "report/generic.html" %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="graph">
+            <div class="row">
+                <div class="col-md-12">
+                    <h2>Sample relation graph</h2>
+                    <div id="relationgraph"></div>
+                    <style type="text/css">
+                        #relationgraph {
+                            width: 100%;
+                            height: 600px;
+                            border: 1px solid lightgray;
+                        }
+                    </style>
+                    <script type="text/javascript">
+
+                        var nodes = new vis.DataSet();
+                        var edges = new vis.DataSet();
+                        var gephiImported;
+                        loadJSON("{{ url_for('webui.sample_graph', sample_id=sample.id) }}", redrawAll, function (err) {
+                            console.log("Error fetching graph data")
+                        });
+
+                        // create a network
+                        var container = document.getElementById("relationgraph");
+
+                        // Detail base URL
+                        var base_url = "{{ url_for('webui.sample_list') }}";
+
+                        // provide the data in the vis format
+                        var data = {
+                            nodes: nodes,
+                            edges: edges
+                        };
+                        var options = {
+                            nodes: {
+                                borderWidth: 1,
+                                borderWidthSelected: 2,
+                                color: {
+                                    border: '#18bc9c',
+                                    background: '#FFFFFF',
+                                    highlight: {
+                                        border: '#107e69',
+                                        background: '#18bc9c'
+                                    },
+                                    hover: {
+                                        border: '#107e69',
+                                        background: '#18bc9c'
+                                    }
+                                },
+                                font: {
+                                    color: '#000000',
+                                    size: 14, // px
+                                    face: 'Lato,Helvetica,Arial',
+                                    background: 'none',
+                                    align: 'center'
+                                },
+                                labelHighlightBold: true,
+                                shape: 'box',
+                                shapeProperties: {
+                                    borderDashes: false, // only for borders
+                                    borderRadius: 6,     // only for box shape
+                                    interpolation: false,  // only for image and circularImage shapes
+                                    useImageSize: false,  // only for image and circularImage shapes
+                                    useBorderWithImage: false  // only for image shape
+                                },
+                                size: 15,
+                            },
+                            edges: {
+                                arrows: 'to',
+                                shadow: false,
+                                smooth: true,
+                            },
+                            layout: {
+                                improvedLayout: false
+                            },
+                            interaction: {
+                                navigationButtons: true
+                            },
+                            physics: {
+                                solver: 'forceAtlas2Based',
+                                forceAtlas2Based: {
+                                    gravitationalConstant: -50,
+                                    centralGravity: 0.01,
+                                    springConstant: 0.15,
+                                    springLength: 100,
+                                    damping: 0.4,
+                                    avoidOverlap: 0
+                                },
+                                stabilization: {
+                                    enabled: true,
+                                    iterations: 100,
+                                    updateInterval: 25
+                                }
+                            }
+                        };
+
+
+                        function redrawAll(gephiJSON) {
+                            if (gephiJSON.nodes === undefined) {
+                                gephiJSON = gephiImported;
+                            }
+                            else {
+                                gephiImported = gephiJSON;
+                            }
+
+                            nodes.clear();
+                            edges.clear();
+
+                            var parsed = vis.network.gephiParser.parseGephi(gephiJSON, {
+                                fixed: true,
+                                parseColor: false
+                            });
+
+                            var data = {
+                                nodes: parsed.nodes,
+                                edges: parsed.edges
+                            };
+
+                            var network = new vis.Network(container, data, options);
+                            network.on("stabilizationIterationsDone", function () {
+                                network.setOptions({physics: false});
+                                network.fit();
+                            });
+                            network.on("resize", function () {
+                                network.fit();
+                            });
+                            network.on("selectNode", function (obj) {
+                                var selected_node = obj["nodes"][0];
+                                window.location.href = base_url + selected_node + "/";
+                            })
+                        }
+
+                        function loadJSON(path, success, error) {
+                            var xhr = new XMLHttpRequest();
+                            xhr.onreadystatechange = function () {
+                                if (xhr.readyState === 4) {
+                                    if (xhr.status === 200) {
+                                        success(JSON.parse(xhr.responseText));
+                                    }
+                                    else {
+                                        error(xhr);
+                                    }
+                                }
+                            };
+                            xhr.open('GET', path, true);
+                            xhr.send();
+                        }
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

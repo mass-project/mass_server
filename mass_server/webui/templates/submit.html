@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block page_title %}
+    Sample submission
+{% endblock %}
+
+{% block content %}
+
+    <div class="page-header">
+        <h1><i class="fa fa-paper-plane"></i> Sample submission</h1>
+    </div>
+    <ul class="nav nav-tabs submit-tabs">
+        <li class="{% if submit_mode == 'file' %}active{% endif %}"><a href="{{ url_for('webui.submit_file') }}"><i class="fa fa-file"></i> File</a></li>
+        <li class="{% if submit_mode == 'ip' %}active{% endif %}"><a href="{{ url_for('webui.submit_ip') }}"><i class="fa fa-desktop"></i> IP address</a></li>
+        <li class="{% if submit_mode == 'domain' %}active{% endif %}"><a href="{{ url_for('webui.submit_domain') }}"><i class="fa fa-globe"></i> Domain</a></li>
+        <li class="{% if submit_mode == 'uri' %}active{% endif %}"><a href="{{ url_for('webui.submit_uri') }}"><i class="fa fa-at"></i> URI</a></li>
+    </ul>
+
+    {{ wtf.quick_form(form) }}
+{% endblock %}

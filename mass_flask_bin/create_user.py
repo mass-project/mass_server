@@ -1,6 +1,7 @@
 from getpass import getpass
-from mass_flask_core.models import User, UserLevel
-from mass_flask_config.app import app
+
+from mass_server.core import User, UserLevel
+from mass_server.config.app import app
 
 if __name__ == '__main__':
     print('mass-server-flask version' + app.version)
