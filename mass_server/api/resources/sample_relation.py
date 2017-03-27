@@ -201,9 +201,11 @@ class SampleRelationResource(BaseResource):
         """
         data = request.get_json()
         schema = SsdeepSampleRelationSchema()
+
         sample_relation = schema.load(data).data
         sample_relation.save()
-        return jsonify(self.schema.dump(sample_relation).data), 201
+
+        return jsonify(schema.dump(sample_relation).data), 201
 
 
 register_api_endpoint('sample_relation', SampleRelationResource)

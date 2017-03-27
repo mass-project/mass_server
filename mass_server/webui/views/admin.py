@@ -4,6 +4,7 @@ from flask import render_template, request, flash
 from flask_modular_auth import privilege_required, RolePrivilege
 from mongoengine import DoesNotExist
 
+from mass_server.core import models
 from mass_server.core.models import AnalysisSystem, AnalysisSystemInstance, InstanceAPIKey, User
 from mass_server.config.app import db
 from mass_server.webui.config import webui_blueprint

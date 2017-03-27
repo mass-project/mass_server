@@ -1,5 +1,4 @@
 import json
-
 from flask import jsonify, request
 from flask_modular_auth import privilege_required, RolePrivilege, AuthenticatedPrivilege
 from mongoengine import DoesNotExist
@@ -18,12 +17,33 @@ class SampleResource(BaseResource):
     queryset = Sample.objects.get_with_tlp_level_filter
     query_key_field = 'id'
     filter_parameters = [
-        'md5sum',
-        'sha1sum',
-        'sha256sum',
-        'sha512sum',
-        '_cls',
-        '_cls__startswith'
+        ('ip_address', str),
+        ('ip_address__startswith', str),
+        ('domain', str),
+        ('domain__contains', str),
+        ('domain__startswith', str),
+        ('domain__endswith', str),
+        ('uri', str),
+        ('uri__contains', str),
+        ('uri__startswith', str),
+        ('uri__endswith', str),
+        ('md5sum', str),
+        ('sha1sum', str),
+        ('sha256sum', str),
+        ('sha512sum', str),
+        ('mime_type', str),
+        ('file_names', str),
+        ('file_size__lte', int),
+        ('file_size__gte', int),
+        ('shannon_entropy__lte', float),
+        ('shannon_entropy__gte', float),
+        ('delivery_date__lte', BaseResource._create_date_from_string),
+        ('delivery_date__gte', BaseResource._create_date_from_string),
+        ('first_seen__lte', BaseResource._create_date_from_string),
+        ('first_seen__gte', BaseResource._create_date_from_string),
+        ('tags__all', BaseResource._create_list_from_string),
+        ('_cls', str),
+        ('_cls__startswith', str)
     ]
 
     @privilege_required(AuthenticatedPrivilege())
@@ -44,6 +64,43 @@ class SampleResource(BaseResource):
                   type: string
                 - in: query
                   name: sha512sum
+                  type: string
+                - in: query
+                  name: mime_type
+                  type: string
+                - in: query
+                  name: file_names
+                  type: string
+                - in: query
+                  name: file_size__lte
+                  type: integer
+                - in: query
+                  name: file_size_gte
+                  type: interger
+                - in: query
+                  name: shannon_entropy__lte
+                  type: float
+                - in: query
+                  name: shannon_entropy__gte
+                  type: float
+                - in: query
+                  name: delivery_date__lte
+                  type: string
+                  format: dateTime
+                - in: query
+                  name: delivery_date__gte
+                  type: string
+                  format: dateTime
+                - in: query
+                  name: first_seen__lte
+                  type: string
+                  format: dateTime
+                - in: query
+                  name: first_seen__gte
+                  type: string
+                  format: dateTime
+                - in: query
+                  name: tags__all
                   type: string
             responses:
                 200:
@@ -87,7 +144,8 @@ class SampleResource(BaseResource):
             return jsonify({'error': 'No object with key \'{}\' found'.format(kwargs['id'])}), 404
 
     def post(self):
-        return jsonify({'error': 'Posting samples directly to the sample endpoint is not allowed. Instead please use the respective endpoints of each specific sample type.'}), 400
+        return jsonify({
+            'error': 'Posting samples directly to the sample endpoint is not allowed. Instead please use the respective endpoints of each specific sample type.'}), 400
 
     def put(self, **kwargs):
         return jsonify({'error': 'Updating sample objects via the API is not supported yet.'}), 400
@@ -193,7 +251,8 @@ class SampleResource(BaseResource):
         """
         json_data = request.get_json()
         if not json_data:
-            return jsonify({'error': 'No JSON data provided. Make sure to set the content type of your request to: application/json'}), 400
+            return jsonify({
+                'error': 'No JSON data provided. Make sure to set the content type of your request to: application/json'}), 400
         else:
             sample = IPSample.create_or_update(**json_data)
             sample.save()
@@ -219,7 +278,8 @@ class SampleResource(BaseResource):
         """
         json_data = request.get_json()
         if not json_data:
-            return jsonify({'error': 'No JSON data provided. Make sure to set the content type of your request to: application/json'}), 400
+            return jsonify({
+                'error': 'No JSON data provided. Make sure to set the content type of your request to: application/json'}), 400
         else:
             sample = DomainSample.create_or_update(**json_data)
             sample.save()
@@ -245,7 +305,8 @@ class SampleResource(BaseResource):
         """
         json_data = request.get_json()
         if not json_data:
-            return jsonify({'error': 'No JSON data provided. Make sure to set the content type of your request to: application/json'}), 400
+            return jsonify({
+                'error': 'No JSON data provided. Make sure to set the content type of your request to: application/json'}), 400
         else:
             sample = URISample.create_or_update(**json_data)
             sample.save()
@@ -317,7 +378,8 @@ class SampleResource(BaseResource):
 
 register_api_endpoint('sample', SampleResource)
 
-api_blueprint.add_url_rule('/sample/<id>/download/', view_func=SampleResource().download_file, methods=['GET'], endpoint='sample_download')
+api_blueprint.add_url_rule('/sample/<id>/download/', view_func=SampleResource().download_file, methods=['GET'],
+                           endpoint='sample_download')
 api_blueprint.apispec.add_path(path='/sample/{id}/download/', view=SampleResource.download_file)
 
 api_blueprint.add_url_rule('/sample/submit_file/', view_func=SampleResource().submit_file, methods=['POST'])
@@ -332,8 +394,10 @@ api_blueprint.apispec.add_path(path='/sample/submit_domain/', view=SampleResourc
 api_blueprint.add_url_rule('/sample/submit_uri/', view_func=SampleResource().submit_uri, methods=['POST'])
 api_blueprint.apispec.add_path(path='/sample/submit_uri/', view=SampleResource.submit_uri)
 
-api_blueprint.add_url_rule('/sample/<id>/reports/', view_func=SampleResource().reports, methods=['GET'], endpoint='sample_reports')
+api_blueprint.add_url_rule('/sample/<id>/reports/', view_func=SampleResource().reports, methods=['GET'],
+                           endpoint='sample_reports')
 api_blueprint.apispec.add_path(path='/sample/{id}/reports/', view=SampleResource.reports)
 
-api_blueprint.add_url_rule('/sample/<id>/relation_graph/', view_func=SampleResource().relation_graph, methods=['GET'], endpoint='sample_relation_graph')
+api_blueprint.add_url_rule('/sample/<id>/relation_graph/', view_func=SampleResource().relation_graph, methods=['GET'],
+                           endpoint='sample_relation_graph')
 api_blueprint.apispec.add_path(path='/sample/{id}/relation_graph/', view=SampleResource.relation_graph)

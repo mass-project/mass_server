@@ -8,6 +8,7 @@ from mass_server.api.schemas import ScheduledAnalysisSchema, ReportSchema
 from mass_server.api.utils import get_pagination_compatible_schema, register_api_endpoint
 from .base import BaseResource
 
+import logging
 
 class ScheduledAnalysisResource(BaseResource):
     schema = ScheduledAnalysisSchema()
@@ -114,10 +115,10 @@ class ScheduledAnalysisResource(BaseResource):
         try:
             scheduled_analysis = self.queryset.get(id=kwargs['id'])
 
-            if 'metadata' not in request.files:
+            if 'metadata' not in request.form:
                 return jsonify({'error': 'JSON metadata missing in POST request.'}), 400
             else:
-                data = json.loads(request.files['metadata'].read())
+                data = json.loads(request.form['metadata'])
                 data['json_report_objects'] = {}
                 data['raw_report_objects'] = {}
 
@@ -130,8 +131,6 @@ class ScheduledAnalysisResource(BaseResource):
                 report.analysis_system = scheduled_analysis.analysis_system_instance.analysis_system
 
                 for key, f in request.files.items():
-                    if key == 'metadata':
-                        continue
                     if f.mimetype == "application/json":
                         report.add_json_report_object(f)
                     else:
@@ -139,7 +138,7 @@ class ScheduledAnalysisResource(BaseResource):
 
                 report.save()
                 scheduled_analysis.delete()
-                return '', 204
+                return jsonify(ReportSchema().dump(report).data), 201
         except DoesNotExist:
             return jsonify({'error': 'No object with key \'{}\' found'.format(kwargs['id'])}), 404
 
