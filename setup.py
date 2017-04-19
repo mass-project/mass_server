@@ -47,7 +47,10 @@ setup(
         'Werkzeug==0.12.1',
         'WTForms==2.1'
     ],
-    dependency_links=['git+https://github.com/fabian-rump/flask_modular_auth.git#egg=flask_modular_auth-0.2'],
+    dependency_links=[
+        'git+https://github.com/fabian-rump/flask_modular_auth.git#egg=flask_modular_auth-0.2',
+        'git+https://github.com/erocarrera/pefile.git#egg=pefile-2016.3.28'
+    ],
     entry_points={
         'console_scripts': ['mass_server=mass_server.bin.mass_server:main']
     }
