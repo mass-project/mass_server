@@ -1,0 +1,2 @@
+recursive-include mass_server/webui/templates *
+recursive-include mass_server/webui/static *
