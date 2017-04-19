@@ -1,9 +1,10 @@
+from flask import current_app
 from itsdangerous import URLSafeSerializer as Serializer, BadSignature
 from mongoengine import DateTimeField, ListField, StringField, ReferenceField
 
 from mass_server.core.models import User, AnalysisSystemInstance
 from mass_server.core.utils.time_functions import TimeFunctions
-from mass_server.config.app import db, app, setup_key_based_auth
+from mass_server import db
 
 API_SCOPES = [
     'view_sample',
@@ -27,7 +28,7 @@ class APIKey(db.Document):
 
     def generate_auth_token(self):
         if self.id:
-            s = Serializer(app.secret_key)
+            s = Serializer(current_app.secret_key)
             return s.dumps(str(self.id))
         else:
             raise ValueError('APIKey must be saved before requesting an auth token.')
@@ -38,7 +39,7 @@ class APIKey(db.Document):
 
     @staticmethod
     def api_key_loader(key):
-        s = Serializer(app.secret_key)
+        s = Serializer(current_app.secret_key)
         try:
             data = s.loads(key)
             api_key = APIKey.objects(id=data).first()
@@ -81,5 +82,3 @@ class InstanceAPIKey(APIKey):
     @property
     def referenced_entity(self):
         return self.instance
-
-setup_key_based_auth(key_loader=APIKey.api_key_loader)

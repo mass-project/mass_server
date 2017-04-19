@@ -3,7 +3,7 @@ from mongoengine import StringField, DateTimeField, ReferenceField, IntField, Li
     DictField, MapField, GridFSProxy
 
 from mass_server.core.utils import TimeFunctions
-from mass_server.config.app import db
+from mass_server import db
 from .analysis_system import AnalysisSystem
 from .sample import Sample
 

@@ -7,8 +7,9 @@ from .base import BaseSchema, ForeignReferenceField
 
 class AnalysisRequestSchema(BaseSchema):
     url = URLFor('.analysis_request_detail', id='<id>', _external=True)
-    sample = ForeignReferenceField(endpoint='.sample_detail', queryset=Sample.objects(), query_parameter='id')
-    analysis_system = ForeignReferenceField(endpoint='.analysis_system_detail', queryset=AnalysisSystem.objects(), query_parameter='identifier_name')
+    sample = ForeignReferenceField(endpoint='.sample_detail', model_class=Sample, query_parameter='id')
+    # sample = URLFor('.sample_detail', id='<sample.id>', _external=True)
+    analysis_system = ForeignReferenceField(endpoint='.analysis_system_detail', model_class=AnalysisSystem, query_parameter='identifier_name')
 
     class Meta(BaseSchema.Meta):
         model = AnalysisRequest

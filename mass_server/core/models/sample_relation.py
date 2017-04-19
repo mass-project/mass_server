@@ -4,7 +4,7 @@ from mongoengine import FloatField
 from mongoengine import ReferenceField
 from mongoengine import ValidationError
 
-from mass_server.config.app import db
+from mass_server import db
 from .sample import Sample
 
 logging.basicConfig(level=logging.INFO)

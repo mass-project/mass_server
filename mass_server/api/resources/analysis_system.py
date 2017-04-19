@@ -9,7 +9,6 @@ from .base import BaseResource
 class AnalysisSystemResource(BaseResource):
     schema = AnalysisSystemSchema()
     pagination_schema = get_pagination_compatible_schema(AnalysisSystemSchema)
-    queryset = AnalysisSystem.objects
     query_key_field = 'identifier_name'
     filter_parameters = []
 

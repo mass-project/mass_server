@@ -18,7 +18,7 @@ class Ref(object):
 class BaseResource(MethodView):
     schema = None
     pagination_schema = None
-    queryset = None
+    model_class = None
     query_key_field = None
     filter_parameters = []
 
@@ -39,8 +39,8 @@ class BaseResource(MethodView):
         return Ref('pagination_schema').resolve(self)
 
     @property
-    def queryset(self):
-        return Ref('queryset').resolve(self)
+    def model_class(self):
+        return Ref('model_class').resolve(self)
 
     @property
     def query_key_field(self):
@@ -57,10 +57,18 @@ class BaseResource(MethodView):
             if parameter in request.args:
                 filter_condition[parameter] = parameter_type(request.args[parameter])
 
-        return self.queryset().filter(**filter_condition)
+        return self.schema.model.objects.filter(**filter_condition)
 
     def get_list(self):
         paginated_objects = self._get_list()
+        for obj in paginated_objects['results']:
+            schema = SchemaMapping.get_schema_for_model_class(obj.__class__.__name__)
+            serialized_samples.append(schema().dump(obj).data)
+        return jsonify({
+            'results': serialized_samples,
+            'next': paginated_samples['next'],
+            'previous': paginated_samples['previous']
+        })
         result = self.pagination_schema.dump(paginated_objects)
         return jsonify(result.data)
 
@@ -69,7 +77,7 @@ class BaseResource(MethodView):
             self.query_key_field: kwargs[self.query_key_field]
         }
         try:
-            obj = self.queryset().get(**query_filter)
+            obj = self.schema.model.objects.get(**query_filter)
             result = self.schema.dump(obj)
             return jsonify(result.data)
         except DoesNotExist:
@@ -105,7 +113,7 @@ class BaseResource(MethodView):
                 self.query_key_field: kwargs[self.query_key_field]
             }
             try:
-                obj = self.queryset.get(**query_filter)
+                obj = self.schema.model.objects.get(**query_filter)
                 obj.modify(**json_data)
                 result = self.schema.dump(obj)
                 return jsonify(result.data)
@@ -120,7 +128,7 @@ class BaseResource(MethodView):
                 self.query_key_field: kwargs[self.query_key_field]
             }
             try:
-                obj = self.queryset.get(**query_filter)
+                obj = self.schema.model.objects.get(**query_filter)
                 obj.delete()
                 return '', 204
             except DoesNotExist:

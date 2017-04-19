@@ -1,7 +1,7 @@
 from mongoengine import StringField, DateTimeField, ReferenceField, EmbeddedDocumentField, ListField
 
 from mass_server.core.utils import TimeFunctions
-from mass_server.config.app import db
+from mass_server import db
 from .user import User
 
 

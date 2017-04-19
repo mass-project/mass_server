@@ -11,7 +11,6 @@ from .base import BaseResource
 class AnalysisSystemInstanceResource(BaseResource):
     schema = AnalysisSystemInstanceSchema()
     pagination_schema = get_pagination_compatible_schema(AnalysisSystemInstanceSchema)
-    queryset = AnalysisSystemInstance.objects
     query_key_field = 'uuid'
     filter_parameters = []
 

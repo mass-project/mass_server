@@ -4,7 +4,7 @@ from mongoengine import StringField, DateTimeField, ListField, ReferenceField, E
     DoesNotExist, Q, GenericReferenceField
 
 from mass_server.core.utils import TimeFunctions, HashFunctions, FileFunctions, ListFunctions, StringFunctions
-from mass_server.config.app import db
+from mass_server import db
 from .analysis_system import AnalysisSystem
 from .comment import CommentsMixin
 from .tlp_level import TLPLevelField

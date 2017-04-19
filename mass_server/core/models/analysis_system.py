@@ -1,6 +1,6 @@
 from mongoengine import StringField
 
-from mass_server.config.app import db
+from mass_server import db
 
 
 class AnalysisSystem(db.Document):

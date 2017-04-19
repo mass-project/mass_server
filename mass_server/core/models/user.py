@@ -3,7 +3,7 @@ from flask_modular_auth import AbstractAuthEntity
 from mongoengine import StringField, IntField
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from mass_server.config.app import db, setup_session_auth, auth_manager
+from mass_server import db, auth
 from .tlp_level import TLPLevelField
 
 
@@ -112,7 +112,3 @@ class AnonymousUser(UserMixin):
     @property
     def is_authenticated(self):
         return False
-
-
-auth_manager.set_unauthenticated_entity_class(AnonymousUser)
-setup_session_auth(user_loader=User.user_loader)

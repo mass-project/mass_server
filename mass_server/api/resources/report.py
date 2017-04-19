@@ -12,7 +12,6 @@ from .base import BaseResource
 class ReportResource(BaseResource):
     schema = ReportSchema()
     pagination_schema = get_pagination_compatible_schema(ReportSchema)
-    queryset = Report.objects
     query_key_field = 'id'
     filter_parameters = []
 

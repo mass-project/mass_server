@@ -18,10 +18,10 @@ class SelfReferenceField(mm_fields.Field):
 
 
 class ForeignReferenceField(mm_fields.Field):
-    def __init__(self, endpoint, queryset, query_parameter='id', *args, **kwargs):
+    def __init__(self, endpoint, model_class, query_parameter='id', *args, **kwargs):
         super(ForeignReferenceField, self).__init__(*args, **kwargs)
         self._endpoint = endpoint
-        self._queryset = queryset
+        self._model_class = model_class
         self._query_parameter = query_parameter
 
     def _serialize(self, value, attr, obj):
@@ -67,11 +67,9 @@ class ForeignReferenceField(mm_fields.Field):
             full_endpoint = self._endpoint
 
         if endpoint != full_endpoint:
-            print(endpoint)
-            print(full_endpoint)
             raise ValidationError('Reference URL for field {} incorrectly specified. The path of the URL points to an endpoint that differs from the correct endpoint for this field.'.format(attr))
 
-        query_result = self._queryset.filter(**params)
+        query_result = self._model_class.objects().filter(**params)
 
         if not query_result:
             raise ValidationError('Reference URL for field {} incorrectly specified. The format of the URL is correct but the referenced object could not be found.'.format(attr))

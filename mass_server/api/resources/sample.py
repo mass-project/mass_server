@@ -14,7 +14,7 @@ from .base import BaseResource
 class SampleResource(BaseResource):
     schema = SampleSchema()
     pagination_schema = get_pagination_compatible_schema(SampleSchema)
-    queryset = Sample.objects.get_with_tlp_level_filter
+    # queryset = Sample.objects.get_with_tlp_level_filter
     query_key_field = 'id'
     filter_parameters = [
         ('ip_address', str),
@@ -136,7 +136,7 @@ class SampleResource(BaseResource):
                     description: No sample with the specified id has been found.
         """
         try:
-            sample = self.queryset().get(id=kwargs['id'])
+            sample = self.schema.model.objects.get(id=kwargs['id'])
             schema = SchemaMapping.get_schema_for_model_class(sample.__class__.__name__)
             data = schema().dump(sample).data
             return jsonify(data)

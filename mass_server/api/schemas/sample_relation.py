@@ -15,8 +15,8 @@ from .base import ForeignReferenceField
 
 class SampleRelationSchema(BaseSchema):
     url = URLFor('.sample_relation_detail', id='<id>', _external=True)
-    sample = ForeignReferenceField(endpoint='.sample_detail', queryset=Sample.objects(), query_parameter='id')
-    other = ForeignReferenceField(endpoint='.sample_detail', queryset=Sample.objects(), query_parameter='id')
+    sample = ForeignReferenceField(endpoint='.sample_detail', model_class=Sample, query_parameter='id')
+    other = ForeignReferenceField(endpoint='.sample_detail', model_class=Sample, query_parameter='id')
 
     class Meta(BaseSchema.Meta):
         model = SampleRelation

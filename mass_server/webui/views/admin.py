@@ -6,7 +6,7 @@ from mongoengine import DoesNotExist
 
 from mass_server.core import models
 from mass_server.core.models import AnalysisSystem, AnalysisSystemInstance, InstanceAPIKey, User
-from mass_server.config.app import db
+from mass_server import db
 from mass_server.webui.config import webui_blueprint
 
 

@@ -5,7 +5,7 @@ from flask_modular_auth import AbstractAuthEntity
 from mongoengine import StringField, DateTimeField, ReferenceField
 
 from mass_server.core.utils import TimeFunctions
-from mass_server.config.app import db
+from mass_server import db
 from .analysis_system import AnalysisSystem
 from .tlp_level import TLPLevelField
 

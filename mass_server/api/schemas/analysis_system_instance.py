@@ -8,7 +8,7 @@ from mass_server.api.schemas import BaseSchema, ForeignReferenceField
 
 class AnalysisSystemInstanceSchema(BaseSchema):
     url = URLFor('.analysis_system_instance_detail', uuid='<uuid>', _external=True)
-    analysis_system = ForeignReferenceField(endpoint='.analysis_system_detail', queryset=AnalysisSystem.objects(), query_parameter='identifier_name')
+    analysis_system = ForeignReferenceField(endpoint='.analysis_system_detail', model_class=AnalysisSystem, query_parameter='identifier_name')
     is_online = Boolean()
     scheduled_analyses_count = Method("get_scheduled_analyses_count")
 

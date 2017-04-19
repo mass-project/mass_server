@@ -10,10 +10,10 @@ from .base import BaseResource
 
 import logging
 
+
 class ScheduledAnalysisResource(BaseResource):
     schema = ScheduledAnalysisSchema()
     pagination_schema = get_pagination_compatible_schema(ScheduledAnalysisSchema)
-    queryset = ScheduledAnalysis.objects
     query_key_field = 'id'
     filter_parameters = []
 

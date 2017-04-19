@@ -1,9 +1,7 @@
 from unittest import TestCase
-
 from mongoengine import connection
 
-from mass_server.config.bootstrap import bootstrap_mass_flask
-from mass_server.config.app import app
+from mass_server import get_testing_app
 
 
 class FlaskTestCase(TestCase):
@@ -19,11 +17,10 @@ class FlaskTestCase(TestCase):
         self._post_tearDown()
 
     def _pre_setup(self):
-        bootstrap_mass_flask()
-        if not 'MASS_TESTING' in app.config or app.config['MASS_TESTING'] is False:
+        self.app = get_testing_app()
+        if 'TESTING' not in self.app.config or self.app.config['TESTING'] is False:
             raise RuntimeError('Running unit test without TESTING=True in configuration. Aborting.')
-        self.app = app
-        self.client = app.test_client()
+        self.client = self.app.test_client()
         self._ctx = self.app.test_request_context()
         self._ctx.push()
 

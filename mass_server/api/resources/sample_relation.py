@@ -14,7 +14,6 @@ from .base import BaseResource
 class SampleRelationResource(BaseResource):
     schema = SampleRelationSchema()
     pagination_schema = get_pagination_compatible_schema(SampleRelationSchema)
-    queryset = SampleRelation.objects
     query_key_field = 'id'
     filter_parameters = []
 
@@ -58,7 +57,7 @@ class SampleRelationResource(BaseResource):
                     description: No sample relation with the specified id has been found.
         """
         try:
-            sample_relation = self.queryset.get(id=kwargs['id'])
+            sample_relation = self.schema.model.objects.get(id=kwargs['id'])
             schema = SchemaMapping.get_schema_for_model_class(sample_relation.__class__.__name__)
             return jsonify(schema().dump(sample_relation).data)
         except DoesNotExist:
