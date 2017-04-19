@@ -91,6 +91,7 @@ def get_testing_app():
     return _init_app(TestingConfig)
 
 
-
-
-
+def get_production_app():
+    from mass_server.config.config_production import ProductionConfig
+    from mass_server.config.reverse_proxy import ReverseProxied
+    return ReverseProxied(_init_app(ProductionConfig))
