@@ -53,5 +53,9 @@ setup(
     ],
     entry_points={
         'console_scripts': ['mass_server=mass_server.bin.mass_server:main']
-    }
+    },
+    package_data={'mass_server': [
+        'webui/templates/*',
+        'webui/static/*'
+    ]}
 )
