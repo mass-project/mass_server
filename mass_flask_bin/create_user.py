@@ -1,10 +1,10 @@
 from getpass import getpass
 
-from mass_server.core import User, UserLevel
-from mass_server.config.app import app
+from mass_server.core.models import User, UserLevel
+from mass_server import get_production_app
 
 if __name__ == '__main__':
-    print('mass-server-flask version' + app.version)
+    app = get_production_app()
     username = input('Please enter username to create: ')
     password = getpass(prompt='Please enter the password for the new user: ')
     password_verify = getpass(prompt='Enter password again to verify: ')
