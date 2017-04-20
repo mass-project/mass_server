@@ -28,16 +28,7 @@ class SampleRelationResource(BaseResource):
                     description: A list of sample relations is returned.
                     schema: SampleRelationSchema
         """
-        serialized_sample_relations = []
-        paginated_sample_relations = self._get_list()
-        for sample_relation in paginated_sample_relations['results']:
-            schema = SchemaMapping.get_schema_for_model_class(sample_relation.__class__.__name__)
-            serialized_sample_relations.append(schema().dump(sample_relation).data)
-        return jsonify({
-            'results': serialized_sample_relations,
-            'next': paginated_sample_relations['next'],
-            'previous': paginated_sample_relations['previous']
-        })
+        return super(SampleRelationResource, self).get_list()
 
     @privilege_required(AuthenticatedPrivilege())
     def get_detail(self, **kwargs):
@@ -56,12 +47,7 @@ class SampleRelationResource(BaseResource):
                 404:
                     description: No sample relation with the specified id has been found.
         """
-        try:
-            sample_relation = self.schema.model.objects.get(id=kwargs['id'])
-            schema = SchemaMapping.get_schema_for_model_class(sample_relation.__class__.__name__)
-            return jsonify(schema().dump(sample_relation).data)
-        except DoesNotExist:
-            return jsonify({'error': 'No object with key \'{}\' found'.format(kwargs['id'])}), 404
+        return super(SampleRelationResource, self).get_detail(**kwargs)
 
     def post(self):
         return jsonify({'error': 'Posting sample relations directly to the sample relation endpoint is not allowed. Instead please use the respective endpoints of each specific relation type.'}), 400

@@ -107,16 +107,7 @@ class SampleResource(BaseResource):
                     description: A list of samples is returned.
                     schema: SampleSchema
         """
-        serialized_samples = []
-        paginated_samples = self._get_list()
-        for sample in paginated_samples['results']:
-            schema = SchemaMapping.get_schema_for_model_class(sample.__class__.__name__)
-            serialized_samples.append(schema().dump(sample).data)
-        return jsonify({
-            'results': serialized_samples,
-            'next': paginated_samples['next'],
-            'previous': paginated_samples['previous']
-        })
+        return super(SampleResource, self).get_list()
 
     @privilege_required(AuthenticatedPrivilege())
     def get_detail(self, **kwargs):
@@ -135,13 +126,7 @@ class SampleResource(BaseResource):
                 404:
                     description: No sample with the specified id has been found.
         """
-        try:
-            sample = self.schema.model.objects.get(id=kwargs['id'])
-            schema = SchemaMapping.get_schema_for_model_class(sample.__class__.__name__)
-            data = schema().dump(sample).data
-            return jsonify(data)
-        except DoesNotExist:
-            return jsonify({'error': 'No object with key \'{}\' found'.format(kwargs['id'])}), 404
+        return super(SampleResource, self).get_detail(**kwargs)
 
     def post(self):
         return jsonify({
@@ -189,7 +174,7 @@ class SampleResource(BaseResource):
                     description: No sample with the specified id has been found.
         """
         try:
-            sample = self.queryset().get(id=kwargs['id'])
+            sample = self.schema.Meta.model.objects.get(id=kwargs['id'])
             if not isinstance(sample, FileSample):
                 return jsonify({'error': 'There is no file available for this sample'}), 400
             else:
@@ -230,7 +215,7 @@ class SampleResource(BaseResource):
             sample.save()
             sample = Sample.objects.get(id=sample.id)
             schema = SchemaMapping.get_schema_for_model_class(sample.__class__.__name__)
-            return jsonify(schema().dump(sample).data), 201
+            return jsonify(schema.dump(sample).data), 201
 
     @privilege_required(AuthenticatedPrivilege())
     def submit_ip(self):
@@ -257,7 +242,7 @@ class SampleResource(BaseResource):
             sample = IPSample.create_or_update(**json_data)
             sample.save()
             schema = SchemaMapping.get_schema_for_model_class(sample.__class__.__name__)
-            return jsonify(schema().dump(sample).data), 201
+            return jsonify(schema.dump(sample).data), 201
 
     @privilege_required(AuthenticatedPrivilege())
     def submit_domain(self):
@@ -284,7 +269,7 @@ class SampleResource(BaseResource):
             sample = DomainSample.create_or_update(**json_data)
             sample.save()
             schema = SchemaMapping.get_schema_for_model_class(sample.__class__.__name__)
-            return jsonify(schema().dump(sample).data), 201
+            return jsonify(schema.dump(sample).data), 201
 
     @privilege_required(AuthenticatedPrivilege())
     def submit_uri(self):
@@ -311,7 +296,7 @@ class SampleResource(BaseResource):
             sample = URISample.create_or_update(**json_data)
             sample.save()
             schema = SchemaMapping.get_schema_for_model_class(sample.__class__.__name__)
-            return jsonify(schema().dump(sample).data), 201
+            return jsonify(schema.dump(sample).data), 201
 
     @privilege_required(AuthenticatedPrivilege())
     def reports(self, **kwargs):
@@ -331,7 +316,7 @@ class SampleResource(BaseResource):
                     description: No sample with the specified id has been found.
         """
         try:
-            sample = self.queryset().get(id=kwargs['id'])
+            sample = self.self.schema.Meta.model.objects.get(id=kwargs['id'])
             reports = Report.objects(sample=sample)
             serialized_result = ReportSchema(many=True).dump(reports)
             return jsonify({
@@ -360,7 +345,7 @@ class SampleResource(BaseResource):
                     description: No sample with the specified id has been found.
         """
         try:
-            sample = self.queryset().get(id=kwargs['id'])
+            sample = self.self.schema.Meta.model.objects.get(id=kwargs['id'])
             if 'depth' in request.args:
                 sample_relations = GraphFunctions.get_relation_graph(sample, int(request.args['depth']))
             else:
@@ -368,7 +353,7 @@ class SampleResource(BaseResource):
             serialized_sample_relations = []
             for sample_relation in sample_relations:
                 schema = SchemaMapping.get_schema_for_model_class(sample_relation.__class__.__name__)
-                serialized_sample_relations.append(schema().dump(sample_relation).data)
+                serialized_sample_relations.append(schema.dump(sample_relation).data)
             return jsonify({
                 'results': serialized_sample_relations
             })

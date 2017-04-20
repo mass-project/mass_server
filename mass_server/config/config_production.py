@@ -5,7 +5,7 @@ class ProductionConfig(BaseConfig):
     DEBUG = False
     MONGODB_SETTINGS = {
         'db': 'mass-flask-production',
-        'host': 'mongodb',
+        'host': 'localhost',
         'port': 27017,
         'tz_aware': True
     }

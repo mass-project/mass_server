@@ -4,6 +4,7 @@ from mongoengine import DoesNotExist
 from datetime import datetime
 
 from mass_server.core.utils import PaginationFunctions
+from mass_server.api.schemas import SchemaMapping
 
 
 class Ref(object):
@@ -57,28 +58,29 @@ class BaseResource(MethodView):
             if parameter in request.args:
                 filter_condition[parameter] = parameter_type(request.args[parameter])
 
-        return self.schema.model.objects.filter(**filter_condition)
+        return self.schema.Meta.model.objects.filter(**filter_condition)
 
     def get_list(self):
         paginated_objects = self._get_list()
+        serialized_objects = []
         for obj in paginated_objects['results']:
             schema = SchemaMapping.get_schema_for_model_class(obj.__class__.__name__)
-            serialized_samples.append(schema().dump(obj).data)
+            serialized_objects.append(schema.dump(obj).data)
         return jsonify({
-            'results': serialized_samples,
-            'next': paginated_samples['next'],
-            'previous': paginated_samples['previous']
+            'results': serialized_objects,
+            'next': paginated_objects['next'],
+            'previous': paginated_objects['previous']
         })
-        result = self.pagination_schema.dump(paginated_objects)
-        return jsonify(result.data)
 
     def get_detail(self, **kwargs):
         query_filter = {
             self.query_key_field: kwargs[self.query_key_field]
         }
         try:
-            obj = self.schema.model.objects.get(**query_filter)
-            result = self.schema.dump(obj)
+            obj = self.schema.Meta.model.objects.get(**query_filter)
+            print(obj)
+            schema = SchemaMapping.get_schema_for_model_class(obj.__class__.__name__)
+            result = schema.dump(obj)
             return jsonify(result.data)
         except DoesNotExist:
             return jsonify({'error': 'No object with key \'{}\' found'.format(kwargs[self.query_key_field])}), 404
