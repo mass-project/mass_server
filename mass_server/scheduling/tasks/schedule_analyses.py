@@ -1,8 +1,8 @@
 import sys
-
 from flask import current_app
 
 from mass_server.core.models import AnalysisSystemInstance, ScheduledAnalysis, AnalysisRequest
+from mass_server.scheduling.config import scheduler
 
 
 def _prepare_instance_dict():
@@ -52,7 +52,7 @@ def _schedule_analysis_request(request, instance_dict):
 
 
 def schedule_analyses():
-    with current_app.app_context():
+    with scheduler.app.app_context():
         instance_dict = _prepare_instance_dict()
         analysis_requests = AnalysisRequest.objects().no_dereference()
         requests_scheduled = 0
