@@ -113,7 +113,7 @@ class ScheduledAnalysisResource(BaseResource):
                     description: No scheduled analysis with the specified id has been found.
         """
         try:
-            scheduled_analysis = self.queryset.get(id=kwargs['id'])
+            scheduled_analysis = self.schema.Meta.model.objects.get(id=kwargs['id'])
 
             if 'metadata' not in request.form:
                 return jsonify({'error': 'JSON metadata missing in POST request.'}), 400
