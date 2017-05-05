@@ -2,10 +2,11 @@ from flask import render_template, jsonify, flash, redirect, url_for
 from mongoengine import DoesNotExist
 
 from flask_modular_auth import current_authenticated_entity
-from mass_flask_core.models import Sample, Report
+from mass_flask_core.models import Sample, Report, ScheduledAnalysis, AnalysisSystem
 from mass_flask_core.utils import PaginationFunctions, GraphFunctions, TimeFunctions
 from mass_flask_webui.config import webui_blueprint
 from mass_flask_webui.forms.comment import CommentForm
+from mass_flask_webui.forms.schedule import ScheduleForm
 
 
 @PaginationFunctions.paginate
@@ -30,6 +31,13 @@ def sample_detail(sample_id):
             flash('Your comment has been added', 'success')
             return redirect(url_for('.sample_detail', sample_id=sample.id))
         reports = Report.objects(sample=sample)
+        scheduled_analyses = ScheduledAnalysis.objects(sample=sample)
+        analysis_systems = []
+        for system in AnalysisSystem.objects:
+            analysis_systems.append((system.identifier_name, system.verbose_name))
+
+        schedule_form = ScheduleForm()
+        schedule_form.analysis_system.choices = analysis_systems
         activity = [{
             'class': 'info',
             'glyph': 'fa-paper-plane',
@@ -59,7 +67,9 @@ def sample_detail(sample_id):
                 'content': comment.comment
             })
         sorted_activity = sorted(activity, key=lambda k: k['timestamp'])
-        return render_template('sample_detail.html', sample=sample, reports=reports, activity=sorted_activity, comment_form=comment_form)
+        return render_template('sample_detail.html', sample=sample, reports=reports, activity=sorted_activity,
+                               comment_form=comment_form, scheduled_analyses=scheduled_analyses,
+                               analysis_systems=analysis_systems, schedule_form=schedule_form)
     except DoesNotExist:
         flash('Sample not found or you do not have access to this sample.', 'warning')
         return redirect(url_for('.index'))

@@ -42,6 +42,7 @@ Detail page for sample #{{ sample.id }}
         <li role="presentation"><a href="#metadata" role="tab" data-toggle="tab"><i class="fa fa-info-circle"></i> Metadata</a></li>
         <li role="presentation"><a href="#reports" role="tab" data-toggle="tab"><i class="fa fa-search" aria-hidden="true"></i> Reports</a></li>
         <li role="presentation"><a href="#graph" role="tab" data-toggle="tab"><i class="fa fa-link"></i> Relation Graph</a></li>
+        <li role="presentation"><a href="#schedule" role="tab" data-toggle="tab"><i class="fa fa-calendar"></i> Schedule</a></li>
     </ul>
 
     {% block scripts %}
@@ -334,6 +335,27 @@ Detail page for sample #{{ sample.id }}
                             xhr.send();
                         }
                     </script>
+                </div>
+            </div>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="schedule">
+            <div class="row">
+                <div class="col-md-12">
+                    <h2>Manually schedule analysis</h2>
+                    <p>
+                        {% if current_authenticated_entity.is_authenticated %}
+                            {{ wtf.quick_form(schedule_form) }}
+                        {% else %}
+                            <em>Please login in order to manually schedule this sample.</em>
+                        {% endif %}
+                    </p>
+
+                    <h2>Scheduled Analysis</h2>
+                    {% for analysis in scheduled_analyses %}
+                        Priority: {{ analysis.priority }}<br />
+                        Scheduled: {{ analysis.analysis_scheduled }}<br />
+                        Analysis System: {{ analysis.analysis_system_instance.analysis_system.verbose_name }}
+                    {% endfor %}
                 </div>
             </div>
         </div>
