@@ -50,6 +50,7 @@ def sample_detail(sample_id):
             request.save()
 
         requested_analyses = AnalysisRequest.objects(sample=sample)
+        scheduled_analyses = ScheduledAnalysis.objects(sample=sample)
 
         activity = [{
             'class': 'info',
@@ -83,7 +84,8 @@ def sample_detail(sample_id):
 
         return render_template('sample_detail.html', sample=sample, reports=reports, activity=sorted_activity,
                                comment_form=comment_form, requested_analyses=requested_analyses,
-                               analysis_systems=analysis_systems, schedule_form=request_form)
+                               scheduled_analyses=scheduled_analyses, analysis_systems=analysis_systems,
+                               request_form=request_form)
     except DoesNotExist:
         flash('Sample not found or you do not have access to this sample.', 'warning')
         return redirect(url_for('.index'))

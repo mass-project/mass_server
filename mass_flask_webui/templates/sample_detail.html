@@ -344,7 +344,7 @@ Detail page for sample #{{ sample.id }}
                     <h2>Manually request analysis</h2>
                     <p>
                         {% if current_authenticated_entity.is_authenticated %}
-                            {{ wtf.quick_form(schedule_form) }}
+                            {{ wtf.quick_form(request_form) }}
                         {% else %}
                             <em>Please login in order to request analysis of this sample.</em>
                         {% endif %}
@@ -356,14 +356,36 @@ Detail page for sample #{{ sample.id }}
                             <th>Analysis system</th>
                             <th>Priority</th>
                             <th>Requested</th>
-                            <th>Scheduled</th>
                         </tr>
                         {% for request in requested_analyses %}
                             <tr>
                                 <td>{{ request.analysis_system.verbose_name }}</td>
                                 <td>{{ request.priority }}</td>
                                 <td>{{ request.analysis_requested }}</td>
-                                <td>Not yet implemented</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+
+                    <h2>Scheduled analyses</h2>
+                    <table class="table table-striped table-hover">
+                        <tr>
+                            <th>Analysis system</th>
+                            <th>Priority</th>
+                            <th>Scheduled</th>
+                            <th>Instance</th>
+                            <th>Instance Status</th>
+                        </tr>
+                        {% for analysis in scheduled_analyses %}
+                            <tr>
+                                <td>{{ analysis.analysis_system_instance.analysis_system.verbose_name }}</td>
+                                <td>{{ analysis.priority }}</td>
+                                <td>{{ analysis.analysis_scheduled }}</td>
+                                <td>{{ analysis.analysis_system_instance.uuid }}</td>
+                                {% if analysis.analysis_system_instance.is_online %}
+                                    <td><span class="label label-success">Online</span></td>
+                                {% else %}
+                                    <td><span class="label label-danger">Offline</span> Last seen: {{ analysis.analysis_system_instance.last_seen }}</td>
+                                {% endif %}
                             </tr>
                         {% endfor %}
                     </table>
