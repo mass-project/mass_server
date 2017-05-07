@@ -6,7 +6,7 @@ from mass_flask_core.models import Sample, Report, ScheduledAnalysis, AnalysisSy
 from mass_flask_core.utils import PaginationFunctions, GraphFunctions, TimeFunctions
 from mass_flask_webui.config import webui_blueprint
 from mass_flask_webui.forms.comment import CommentForm
-from mass_flask_webui.forms.schedule import ScheduleForm
+from mass_flask_webui.forms.request_analysis import RequestAnalysisForm
 
 
 @PaginationFunctions.paginate
@@ -36,12 +36,12 @@ def sample_detail(sample_id):
         for system in AnalysisSystem.objects:
             analysis_systems.append((system.identifier_name, system.verbose_name))
 
-        schedule_form = ScheduleForm()
-        schedule_form.analysis_system.choices = analysis_systems
+        request_form = RequestAnalysisForm()
+        request_form.analysis_system.choices = analysis_systems
 
-        if schedule_form.validate_on_submit():
-            priority = schedule_form.data['priority']
-            analysis_system = AnalysisSystem.objects.get(identifier_name=schedule_form.data['analysis_system'])
+        if request_form.validate_on_submit():
+            priority = request_form.data['priority']
+            analysis_system = AnalysisSystem.objects.get(identifier_name=request_form.data['analysis_system'])
             try:
                 request = AnalysisRequest.objects.get(sample=sample, analysis_system=analysis_system)
                 request.priority = priority
@@ -83,7 +83,7 @@ def sample_detail(sample_id):
 
         return render_template('sample_detail.html', sample=sample, reports=reports, activity=sorted_activity,
                                comment_form=comment_form, requested_analyses=requested_analyses,
-                               analysis_systems=analysis_systems, schedule_form=schedule_form)
+                               analysis_systems=analysis_systems, schedule_form=request_form)
     except DoesNotExist:
         flash('Sample not found or you do not have access to this sample.', 'warning')
         return redirect(url_for('.index'))
