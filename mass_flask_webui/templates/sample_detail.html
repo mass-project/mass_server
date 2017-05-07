@@ -363,6 +363,10 @@ Detail page for sample #{{ sample.id }}
                                 <td>{{ request.priority }}</td>
                                 <td>{{ request.analysis_requested }}</td>
                             </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="3" class="text-center"><em>There are no requested analyses for this sample.</em></td>
+                            </tr>
                         {% endfor %}
                     </table>
 
@@ -386,6 +390,10 @@ Detail page for sample #{{ sample.id }}
                                 {% else %}
                                     <td><span class="label label-danger">Offline</span> Last seen: {{ analysis.analysis_system_instance.last_seen }}</td>
                                 {% endif %}
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="5" class="text-center"><em>There are no scheduled analyses for this sample.</em></td>
                             </tr>
                         {% endfor %}
                     </table>
