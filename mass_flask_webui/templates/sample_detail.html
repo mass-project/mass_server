@@ -350,12 +350,23 @@ Detail page for sample #{{ sample.id }}
                         {% endif %}
                     </p>
 
-                    <h2>Requested analysis</h2>
-                    {% for request in requested_analyses %}
-                        Priority: {{ request.priority }}<br />
-                        Requested: {{ request.analysis_requested }}<br />
-                        Analysis System: {{ request.analysis_system.verbose_name }}<br /><br />
-                    {% endfor %}
+                    <h2>Requested analyses</h2>
+                    <table class="table table-striped table-hover">
+                        <tr>
+                            <th>Analysis system</th>
+                            <th>Priority</th>
+                            <th>Requested</th>
+                            <th>Scheduled</th>
+                        </tr>
+                        {% for request in requested_analyses %}
+                            <tr>
+                                <td>{{ request.analysis_system.verbose_name }}</td>
+                                <td>{{ request.priority }}</td>
+                                <td>{{ request.analysis_requested }}</td>
+                                <td>Not yet implemented</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
                 </div>
             </div>
         </div>
