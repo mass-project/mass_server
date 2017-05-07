@@ -341,20 +341,20 @@ Detail page for sample #{{ sample.id }}
         <div role="tabpanel" class="tab-pane" id="schedule">
             <div class="row">
                 <div class="col-md-12">
-                    <h2>Manually schedule analysis</h2>
+                    <h2>Manually request analysis</h2>
                     <p>
                         {% if current_authenticated_entity.is_authenticated %}
                             {{ wtf.quick_form(schedule_form) }}
                         {% else %}
-                            <em>Please login in order to manually schedule this sample.</em>
+                            <em>Please login in order to request analysis of this sample.</em>
                         {% endif %}
                     </p>
 
-                    <h2>Scheduled Analysis</h2>
-                    {% for analysis in scheduled_analyses %}
-                        Priority: {{ analysis.priority }}<br />
-                        Scheduled: {{ analysis.analysis_scheduled }}<br />
-                        Analysis System: {{ analysis.analysis_system_instance.analysis_system.verbose_name }}
+                    <h2>Requested analysis</h2>
+                    {% for request in requested_analyses %}
+                        Priority: {{ request.priority }}<br />
+                        Requested: {{ request.analysis_requested }}<br />
+                        Analysis System: {{ request.analysis_system.verbose_name }}<br /><br />
                     {% endfor %}
                 </div>
             </div>
