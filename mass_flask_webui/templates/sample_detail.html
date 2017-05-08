@@ -42,7 +42,8 @@ Detail page for sample #{{ sample.id }}
         <li role="presentation"><a href="#metadata" role="tab" data-toggle="tab"><i class="fa fa-info-circle"></i> Metadata</a></li>
         <li role="presentation"><a href="#reports" role="tab" data-toggle="tab"><i class="fa fa-search" aria-hidden="true"></i> Reports</a></li>
         <li role="presentation"><a href="#graph" role="tab" data-toggle="tab"><i class="fa fa-link"></i> Relation Graph</a></li>
-        <li role="presentation"><a href="#schedule" role="tab" data-toggle="tab"><i class="fa fa-calendar"></i> Schedule</a></li>
+        <li role="presentation"><a href="#analysis_progress" role="tab" data-toggle="tab"><i class="fa fa-tasks"></i> Analysis progress</a></li>
+        <li role="presentation"><a href="#request_analysis" role="tab" data-toggle="tab"><i class="fa fa-calendar"></i> Request analysis</a></li>
     </ul>
 
     {% block scripts %}
@@ -338,18 +339,9 @@ Detail page for sample #{{ sample.id }}
                 </div>
             </div>
         </div>
-        <div role="tabpanel" class="tab-pane" id="schedule">
+        <div role="tabpanel" class="tab-pane" id="analysis_progress">
             <div class="row">
                 <div class="col-md-12">
-                    <h2>Manually request analysis</h2>
-                    <p>
-                        {% if current_authenticated_entity.is_authenticated %}
-                            {{ wtf.quick_form(request_form) }}
-                        {% else %}
-                            <em>Please login in order to request analysis of this sample.</em>
-                        {% endif %}
-                    </p>
-
                     <h2>Requested analyses</h2>
                     <table class="table table-striped table-hover">
                         <tr>
@@ -397,6 +389,20 @@ Detail page for sample #{{ sample.id }}
                             </tr>
                         {% endfor %}
                     </table>
+                </div>
+            </div>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="request_analysis">
+            <div class="row">
+                <div class="col-md-12">
+                    <h2>Manually request analysis</h2>
+                    <p>
+                        {% if current_authenticated_entity.is_authenticated %}
+                            {{ wtf.quick_form(request_form) }}
+                        {% else %}
+                            <em>Please login in order to request analysis of this sample.</em>
+                        {% endif %}
+                    </p>
                 </div>
             </div>
         </div>
