@@ -17,25 +17,17 @@ def _match_sample_and_system(sample, system):
     sample.save()
 
 
-def _find_matching_systems_for_sample(sample):
-    for system in AnalysisSystem.objects():
-        _match_sample_and_system(sample, system)
-
-
-def _find_matching_samples_for_system(system):
-    for sample in Sample.objects():
-        _match_sample_and_system(sample, system)
-
-
 def update_dispatch_request_for_new_sample(sender, document, **kwargs):
     if not issubclass(sender, Sample):
         return
     if kwargs.get('created') is True:
-        _find_matching_systems_for_sample(document)
+        for system in AnalysisSystem.objects():
+            _match_sample_and_system(document, system)
 
 
 def create_requests_for_new_analysis_system(sender, document, **kwargs):
     if not issubclass(sender, AnalysisSystem):
         return
     if kwargs.get('created') is True:
-        _find_matching_samples_for_system(document)
+        for sample in Sample.objects():
+            _match_sample_and_system(sample, document)
