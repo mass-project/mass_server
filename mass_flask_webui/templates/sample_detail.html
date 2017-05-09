@@ -42,6 +42,8 @@ Detail page for sample #{{ sample.id }}
         <li role="presentation"><a href="#metadata" role="tab" data-toggle="tab"><i class="fa fa-info-circle"></i> Metadata</a></li>
         <li role="presentation"><a href="#reports" role="tab" data-toggle="tab"><i class="fa fa-search" aria-hidden="true"></i> Reports</a></li>
         <li role="presentation"><a href="#graph" role="tab" data-toggle="tab"><i class="fa fa-link"></i> Relation Graph</a></li>
+        <li role="presentation"><a href="#analysis_progress" role="tab" data-toggle="tab"><i class="fa fa-tasks"></i> Analysis progress</a></li>
+        <li role="presentation"><a href="#request_analysis" role="tab" data-toggle="tab"><i class="fa fa-calendar"></i> Request analysis</a></li>
     </ul>
 
     {% block scripts %}
@@ -334,6 +336,73 @@ Detail page for sample #{{ sample.id }}
                             xhr.send();
                         }
                     </script>
+                </div>
+            </div>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="analysis_progress">
+            <div class="row">
+                <div class="col-md-12">
+                    <h2>Requested analyses</h2>
+                    <table class="table table-striped table-hover">
+                        <tr>
+                            <th>Analysis system</th>
+                            <th>Priority</th>
+                            <th>Requested</th>
+                        </tr>
+                        {% for request in requested_analyses %}
+                            <tr>
+                                <td>{{ request.analysis_system.verbose_name }}</td>
+                                <td>{{ request.priority }}</td>
+                                <td>{{ request.analysis_requested }}</td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="3" class="text-center"><em>There are no requested analyses for this sample.</em></td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+
+                    <h2>Scheduled analyses</h2>
+                    <table class="table table-striped table-hover">
+                        <tr>
+                            <th>Analysis system</th>
+                            <th>Priority</th>
+                            <th>Scheduled</th>
+                            <th>Instance</th>
+                            <th>Instance Status</th>
+                        </tr>
+                        {% for analysis in scheduled_analyses %}
+                            <tr>
+                                <td>{{ analysis.analysis_system_instance.analysis_system.verbose_name }}</td>
+                                <td>{{ analysis.priority }}</td>
+                                <td>{{ analysis.analysis_scheduled }}</td>
+                                <td>{{ analysis.analysis_system_instance.uuid }}</td>
+                                {% if analysis.analysis_system_instance.is_online %}
+                                    <td><span class="label label-success">Online</span></td>
+                                {% else %}
+                                    <td><span class="label label-danger">Offline</span> Last seen: {{ analysis.analysis_system_instance.last_seen }}</td>
+                                {% endif %}
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="5" class="text-center"><em>There are no scheduled analyses for this sample.</em></td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="request_analysis">
+            <div class="row">
+                <div class="col-md-12">
+                    <h2>Manually request analysis</h2>
+                    <p>
+                        {% if current_authenticated_entity.is_authenticated %}
+                            {{ wtf.quick_form(request_form) }}
+                        {% else %}
+                            <em>Please login in order to request analysis of this sample.</em>
+                        {% endif %}
+                    </p>
                 </div>
             </div>
         </div>

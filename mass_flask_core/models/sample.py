@@ -21,7 +21,7 @@ class SampleQuerySet(BaseQuerySet):
 class Sample(db.Document, CommentsMixin):
     delivery_date = DateTimeField(default=TimeFunctions.get_timestamp, required=True)
     first_seen = DateTimeField(default=TimeFunctions.get_timestamp, required=True)
-    tags = ListField(StringField(regex=r'^[\w:\-\_\/\+]+$'))
+    tags = ListField(StringField(regex=r'^[\w:\-\_\/\+\.]+$'))
     dispatched_to = ListField(ReferenceField(AnalysisSystem))
     created_by = GenericReferenceField()
     tlp_level = TLPLevelField(verbose_name='TLP Level', help_text='Privacy level of this sample', required=True)
