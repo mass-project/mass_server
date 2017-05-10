@@ -7,7 +7,7 @@ codecov==2.0.9
 coverage==4.4
 docopt==0.6.2
 dominate==2.3.1
-Faker==0.7.11
+Faker==0.7.12
 Flask==0.12.1
 Flask-APScheduler==1.7.0
 Flask-Bootstrap==3.3.7.1
@@ -34,7 +34,7 @@ python-dateutil==2.6.0
 python-magic==0.4.13
 pytz==2017.2
 PyYAML==3.12
-requests==2.14.1
+requests==2.14.2
 six==1.10.0
 ssdeep==3.2
 tzlocal==1.4
