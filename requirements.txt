@@ -1,4 +1,4 @@
-apispec==0.21.0
+apispec==0.22.0
 APScheduler==3.3.1
 blinker==1.4
 cffi==1.10.0
