@@ -7,7 +7,7 @@ codecov==2.0.9
 coverage==4.4.1
 docopt==0.6.2
 dominate==2.3.1
-Faker==0.7.14
+Faker==0.7.15
 Flask==0.12.2
 Flask-APScheduler==1.7.0
 Flask-Bootstrap==3.3.7.1
