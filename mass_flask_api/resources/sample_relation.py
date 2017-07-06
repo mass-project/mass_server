@@ -171,7 +171,23 @@ class SampleRelationResource(BaseResource):
             return jsonify({'error': 'No object with key \'{}\' found'.format(kwargs['id'])}), 404
 
     def post(self):
-        return jsonify({'error': 'Posting sample relations directly to the sample relation endpoint is not allowed. Instead please use the respective endpoints of each specific relation type.'}), 400
+        """
+        ---
+        post:
+            description: Submit a sample relation between two samples to the MASS server
+            parameters:
+                - in: body
+                  name: body
+                  type: SampleRelationSchema
+            responses:
+                201:
+                    description: The relation has been uploaded to the MASS server. The metadata of the sample is returned.
+                    schema: SampleRelationSchema
+                400:
+                    description: The request is malformed.
+        """
+        return super(SampleRelationResource, self).post()
+
 
     def put(self, **kwargs):
         return jsonify({'error': 'Updating relation objects via the API is not supported yet.'}), 400
