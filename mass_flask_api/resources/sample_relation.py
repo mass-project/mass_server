@@ -4,12 +4,118 @@ from mongoengine import DoesNotExist
 from flask_modular_auth import privilege_required, AuthenticatedPrivilege, RolePrivilege
 
 from mass_flask_api.config import api_blueprint
-from mass_flask_api.schemas import SampleRelationSchema, DroppedBySampleRelationSchema, ResolvedBySampleRelationSchema, ContactedBySampleRelationSchema, RetrievedBySampleRelationSchema, SsdeepSampleRelationSchema
+from mass_flask_api.schemas import SampleRelationSchema, DroppedBySampleRelationSchema, ResolvedBySampleRelationSchema, ContactedBySampleRelationSchema, RetrievedBySampleRelationSchema, SsdeepSampleRelationSchema, SampleRelationTypeSchema
 from mass_flask_api.schemas import SchemaMapping
 from mass_flask_api.utils import get_pagination_compatible_schema, register_api_endpoint
-from mass_flask_core.models import SampleRelation
+from mass_flask_core.models import SampleRelation, SampleRelationType
 from .base import BaseResource
 
+class SampleRelationTypeResource(BaseResource):
+    schema = SampleRelationTypeSchema()
+    pagination_schema = get_pagination_compatible_schema(SampleRelationTypeSchema)
+    queryset = SampleRelationType.objects
+    query_key_field = 'name'
+    filter_parameters = []
+
+    @privilege_required(AuthenticatedPrivilege())
+    def get_list(self):
+        """
+        ---
+        get:
+            description: Get a list of all sample relation types.
+            responses:
+                200:
+                    description: A list of sample relation types is returned.
+                    schema: SampleRelationTypeSchema
+        """
+        return super(SampleRelationTypeResource, self).get_list()
+
+    @privilege_required(AuthenticatedPrivilege())
+    def get_detail(self, **kwargs):
+        """
+        ---
+        get:
+            description: Get a single sample relation type object
+            parameters:
+                - in: path
+                  name: name
+                  type: string
+            responses:
+                200:
+                    description: The sample relation type is returned.
+                    schema: SampleRelationTypeSchema
+                404:
+                    description: No sample relation type with the specified name has been found.
+        """
+        return super(SampleRelationTypeResource, self).get_detail(**kwargs)
+
+    @privilege_required(RolePrivilege('admin'))
+    def post(self):
+        """
+        ---
+        post:
+            description: Create a new sample relation type
+            parameters:
+                - in: body
+                  name: name
+                  directed: directed
+                  schema: SampleRelationTypeSchema
+            responses:
+                201:
+                    description: The object has been created. The reply contains the newly created object.
+                    schema: SampleRelationTypeSchema
+                400:
+                    description: The server was not able to create an object based on the request data.
+        """
+        return super(SampleRelationTypeResource, self).post()
+
+    @privilege_required(RolePrivilege('admin'))
+    def put(self, **kwargs):
+        """
+        ---
+        put:
+            description: Update an existing sample relation type object
+            parameters:
+                - in: path
+                  name: name
+                  directed: directed
+                  type: string
+                - in: body
+                  name: body
+                  schema: SampleRelationTypeSchema
+            responses:
+                200:
+                    description: The object has been updated. The reply contains the updated object.
+                    schema: SampleRelationTypeSchema
+                400:
+                    description: The server was not able to update an object based on the request data.
+                404:
+                    description: No sample relation type with the specified name has been found.
+        """
+        return super(SampleRelationTypeResource, self).put(**kwargs)
+
+    @privilege_required(RolePrivilege('admin'))
+    def delete(self, **kwargs):
+        """
+        ---
+        delete:
+            description: Delete an existing sample relation type object
+            parameters:
+                - in: path
+                  name: name
+                  type: string
+            responses:
+                204:
+                    description: The object has been deleted.
+                400:
+                    description: The server was not able to delete an object based on the request data.
+                404:
+                    description: No sample relation type with the specified name has been found.
+        """
+        return super(SampleRelationTypeResource, self).delete(**kwargs)
+
+
+register_api_endpoint('sample_relation_type', SampleRelationTypeResource)
 
 class SampleRelationResource(BaseResource):
     schema = SampleRelationSchema()
@@ -209,7 +315,6 @@ class SampleRelationResource(BaseResource):
 
 
 register_api_endpoint('sample_relation', SampleRelationResource)
-
 
 api_blueprint.add_url_rule('/sample_relation/submit_dropped_by/', view_func=SampleRelationResource().submit_dropped_by_sample_relation, methods=['POST'])
 api_blueprint.apispec.add_path(path='/sample_relation/submit_dropped_by/', view=SampleRelationResource.submit_dropped_by_sample_relation)

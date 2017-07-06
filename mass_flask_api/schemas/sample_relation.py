@@ -1,5 +1,6 @@
 from flask_marshmallow.fields import URLFor
 from mass_flask_core.models import SampleRelation
+from mass_flask_core.models import SampleRelationType
 from mass_flask_core.models import DroppedBySampleRelation
 from mass_flask_core.models import ResolvedBySampleRelation
 from mass_flask_core.models import ContactedBySampleRelation
@@ -10,6 +11,15 @@ from mass_flask_api.config import api_blueprint
 from .base import BaseSchema
 from .base import ForeignReferenceField
 from marshmallow.fields import Float
+
+
+class SampleRelationTypeSchema(BaseSchema):
+    url = URLFor('.sample_relation_type_detail', name='<name>', _external=True)
+
+    class Meta(BaseSchema.Meta):
+        model = SampleRelationType
+
+api_blueprint.apispec.definition('SampleRelationType', schema=SampleRelationTypeSchema)
 
 
 class SampleRelationSchema(BaseSchema):

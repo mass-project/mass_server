@@ -4,7 +4,7 @@ from .analysis_system_instance import AnalysisSystemInstanceSchema
 from .report import ReportSchema
 from .sample import SampleSchema, FileSampleSchema, ExecutableBinarySampleSchema, IPSampleSchema, DomainSampleSchema, URISampleSchema
 from .scheduled_analysis import ScheduledAnalysisSchema
-from .sample_relation import SampleRelationSchema, DroppedBySampleRelationSchema, ResolvedBySampleRelationSchema, ContactedBySampleRelationSchema, RetrievedBySampleRelationSchema, SsdeepSampleRelationSchema
+from .sample_relation import SampleRelationSchema, DroppedBySampleRelationSchema, ResolvedBySampleRelationSchema, ContactedBySampleRelationSchema, RetrievedBySampleRelationSchema, SsdeepSampleRelationSchema, SampleRelationTypeSchema
 from .schema_mapping import SchemaMapping
 
 __all__ = [
@@ -14,6 +14,7 @@ __all__ = [
     'ReportSchema',
     'SampleSchema',
     'SampleRelationSchema',
+    'SampleRelationTypeSchema',
     'DroppedBySampleRelationSchema',
     'ResolvedBySampleRelationSchema',
     'ContactedBySampleRelationSchema',

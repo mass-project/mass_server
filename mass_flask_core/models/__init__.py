@@ -1,6 +1,6 @@
 from .sample import Sample, FileSample, ExecutableBinarySample, IPSample, DomainSample, URISample
 from .tlp_level import TLPLevelField
-from .sample_relation import SampleRelation, DroppedBySampleRelation, ResolvedBySampleRelation, ContactedBySampleRelation, RetrievedBySampleRelation
+from .sample_relation import SampleRelation, DroppedBySampleRelation, ResolvedBySampleRelation, ContactedBySampleRelation, RetrievedBySampleRelation, SampleRelationType
 from .sample_relation import SsdeepSampleRelation
 from .analysis_system import AnalysisSystem
 from .analysis_system_instance import AnalysisSystemInstance
@@ -19,6 +19,7 @@ __all__ = [
     "DomainSample",
     "URISample",
     "SampleRelation",
+    "SampleRelationType",
     "DroppedBySampleRelation",
     "ResolvedBySampleRelation",
     "ContactedBySampleRelation",

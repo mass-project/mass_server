@@ -1,4 +1,6 @@
 from mongoengine import FloatField
+from mongoengine import StringField
+from mongoengine import BooleanField
 from mongoengine import ReferenceField
 from mongoengine import ValidationError
 from mass_flask_config.app import db
@@ -8,6 +10,23 @@ import logging
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger()
+
+class SampleRelationType(db.Document):
+    name = StringField(min_length=3, max_length=64, unique=True, required=True)
+    directed = BooleanField(required=True)
+    description = StringField(default='')
+
+    meta = {
+            'ordering': ['name'],
+            'indexes': ['name'],
+            }
+
+    def __repr__(self):
+        repr_string = '[{}] {} ({})'
+        return repr_string.format(self.__class__.__name__, self.name, self.directed)
+
+    def __str__(self):
+        return self.__repr__()
 
 
 class SampleRelation(db.Document):
