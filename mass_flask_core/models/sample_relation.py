@@ -2,6 +2,8 @@ from mongoengine import FloatField
 from mongoengine import StringField
 from mongoengine import BooleanField
 from mongoengine import ReferenceField
+from mongoengine import DictField
+from mongoengine import ListField
 from mongoengine import ValidationError
 from mass_flask_config.app import db
 from .sample import Sample
@@ -33,6 +35,8 @@ class SampleRelation(db.Document):
     sample = ReferenceField(Sample, required=True)
     other = ReferenceField(Sample, required=True)
     relation_type = ReferenceField(SampleRelationType, required=True)
+    tags = ListField(StringField())
+    additional_metadata = DictField()
     meta = {
         'allow_inheritance': True,
     }
