@@ -14,7 +14,7 @@ from marshmallow.fields import Float
 
 
 class SampleRelationTypeSchema(BaseSchema):
-    url = URLFor('.sample_relation_type_detail', name='<name>', _external=True)
+    url = URLFor('.sample_relation_type_detail', id='<id>', _external=True)
 
     class Meta(BaseSchema.Meta):
         model = SampleRelationType

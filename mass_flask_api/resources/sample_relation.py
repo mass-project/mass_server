@@ -14,7 +14,7 @@ class SampleRelationTypeResource(BaseResource):
     schema = SampleRelationTypeSchema()
     pagination_schema = get_pagination_compatible_schema(SampleRelationTypeSchema)
     queryset = SampleRelationType.objects
-    query_key_field = 'name'
+    query_key_field = 'id'
     filter_parameters = []
 
     @privilege_required(AuthenticatedPrivilege())

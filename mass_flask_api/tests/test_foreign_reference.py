@@ -1,8 +1,8 @@
 from flask import url_for
 from mixer.backend.mongoengine import mixer
 
-from mass_flask_api.schemas import AnalysisSystemInstanceSchema, SampleRelationSchema
-from mass_flask_core.models import AnalysisSystem, Sample
+from mass_flask_api.schemas import AnalysisSystemInstanceSchema, SampleRelationSchema, SampleRelationTypeSchema
+from mass_flask_core.models import AnalysisSystem, Sample, SampleRelationType
 from mass_flask_core.tests import FlaskTestCase
 
 
@@ -27,10 +27,16 @@ class SchemaTestCase(FlaskTestCase):
         sample1.save()
         sample2 = mixer.blend(Sample)
         sample2.save()
+        sample_relation_type1 = mixer.blend(SampleRelationType, name='test', directed=False)
+        sample_relation_type1.save()
         input_data = {
             'sample': url_for('mass_flask_api.sample_detail', id=sample1.id, _external=True),
-            'other': url_for('mass_flask_api.sample_detail', id=sample2.id, _external=True)
+            'other': url_for('mass_flask_api.sample_detail', id=sample2.id, _external=True),
+            'relation_type': url_for('mass_flask_api.sample_relation_type_detail', id=sample_relation_type1.id, _external=True),
         }
+        print('*' * 28)
+        print('Input Data: {}'.format(input_data))
+        print('*' * 28)
         with self.app.test_request_context(url_for('mass_flask_api.sample_relation')):
             schema = SampleRelationSchema().load(input_data)
             if schema.errors:
