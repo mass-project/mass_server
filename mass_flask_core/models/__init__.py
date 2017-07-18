@@ -9,6 +9,7 @@ from .scheduled_analysis import ScheduledAnalysis
 from .report import Report
 from .user import User, AnonymousUser, UserLevel
 from .api_key import APIKey, UserAPIKey, InstanceAPIKey
+from .database_version import DBSchemaVersion
 
 
 __all__ = [
@@ -35,5 +36,6 @@ __all__ = [
     "UserLevel",
     "APIKey",
     "UserAPIKey",
-    "InstanceAPIKey"
+    "InstanceAPIKey",
+    "DBSchemaVersion",
 ]
