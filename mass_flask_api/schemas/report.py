@@ -2,6 +2,7 @@ from mass_flask_api.config import api_blueprint
 from .base import ForeignReferenceField, BaseSchema, FileMapField
 from mass_flask_core.models import AnalysisSystem, Sample, Report
 from flask_marshmallow.fields import URLFor
+from marshmallow.decorators import pre_dump
 
 
 class ReportSchema(BaseSchema):
@@ -19,5 +20,11 @@ class ReportSchema(BaseSchema):
             'upload_date',
             'status'
         ]
+
+    @pre_dump
+    def _clean_analysis_date(self, data):
+        if data.analysis_date:
+            data.analysis_date = data.analysis_date.replace(microsecond=0)
+        return data
 
 api_blueprint.apispec.definition('Report', schema=ReportSchema)
