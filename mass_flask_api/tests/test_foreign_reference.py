@@ -32,7 +32,7 @@ class SchemaTestCase(FlaskTestCase):
         input_data = {
             'sample': url_for('mass_flask_api.sample_detail', id=sample1.id, _external=True),
             'other': url_for('mass_flask_api.sample_detail', id=sample2.id, _external=True),
-            'relation_type': url_for('mass_flask_api.sample_relation_type_detail', id=sample_relation_type1.id, _external=True),
+            'relation_type': url_for('mass_flask_api.sample_relation_type_detail', name=sample_relation_type1.name, _external=True),
         }
         print('*' * 28)
         print('Input Data: {}'.format(input_data))
