@@ -1,7 +1,7 @@
 from mass_flask_config.app import db
 from .analysis_system import AnalysisSystem
 from .sample import Sample
-from mongoengine import DateTimeField, ReferenceField, IntField, DictField
+from mongoengine import DateTimeField, ReferenceField, IntField
 from mass_flask_core.utils import TimeFunctions
 
 
@@ -10,7 +10,6 @@ class AnalysisRequest(db.Document):
     sample = ReferenceField(Sample, required=True)
     analysis_requested = DateTimeField(default=TimeFunctions.get_timestamp, required=True)
     priority = IntField(default=0, required=True)
-    parameters = DictField()
 
     meta = {
         'ordering': ['-analysis_requested'],
