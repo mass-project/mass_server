@@ -10,11 +10,12 @@ from mass_flask_api.utils import get_pagination_compatible_schema, register_api_
 from mass_flask_core.models import SampleRelation, SampleRelationType
 from .base import BaseResource
 
+
 class SampleRelationTypeResource(BaseResource):
     schema = SampleRelationTypeSchema()
     pagination_schema = get_pagination_compatible_schema(SampleRelationTypeSchema)
     queryset = SampleRelationType.objects
-    query_key_field = 'id'
+    query_key_field = 'name'
     filter_parameters = []
 
     @privilege_required(AuthenticatedPrivilege())
