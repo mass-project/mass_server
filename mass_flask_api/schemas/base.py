@@ -28,6 +28,8 @@ class ForeignReferenceField(mm_fields.Field):
         if isinstance(value, DBRef):
             if self._query_parameter == 'id':
                 query_parameter_value = value.id
+            elif self._query_parameter == 'name':
+                query_parameter_value = self.name
             else:
                 raise ValueError('Passed value is a DBRef and the query parameter is not the ObjectID!')
         else:
