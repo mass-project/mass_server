@@ -61,3 +61,5 @@ auth_manager = AuthManager(app, unauthorized_callback=unauthorized_callback)
 
 # Set the version number. For the future we should probably read it from a file.
 app.version = '1.0-alpha1'
+# Set the schema version number. For the future we should probably read it from a file too.
+app.schema_version = '1.0'
