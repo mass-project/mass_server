@@ -11,7 +11,7 @@ class GraphFunctions:
 
         while current_depth < depth:
             from mass_flask_core.models import SampleRelation
-            relations_at_current_depth = SampleRelation.objects(Q(sample__in=samples_at_current_depth) | Q(other__in=samples_at_current_depth)).no_dereference()
+            relations_at_current_depth = SampleRelation.objects(Q(sample__in=samples_at_current_depth) | Q(other__in=samples_at_current_depth)).no_dereference().select_related()
             all_queried_samples.extend(samples_at_current_depth)
             samples_at_next_depth = []
             for relation in relations_at_current_depth:
