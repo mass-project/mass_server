@@ -15,3 +15,10 @@ class TLPLevelField(IntField):
             TLPLevelField.TLP_LEVEL_RED
         ]
         super(TLPLevelField, self).__init__(*args, **kwargs)
+
+class TLPLevelMixin:
+    tlp_level = TLPLevelField(default=TLPLevelField.TLP_LEVEL_WHITE, required=True)
+
+    def _update_tlp_level(self, **kwargs):
+        if 'tlp_level' in kwargs:
+            self.tlp_level = kwargs['tlp_level']

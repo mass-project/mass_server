@@ -17,11 +17,10 @@
     <div class="collapse navbar-collapse" id="mass_navbar">
        <ul class="nav navbar-nav">
            <li><a href="{{ url_for('webui.index') }}"><i class="fa fa-server"></i> Home</a></li>
-           <li><a href="{{ url_for('webui.submit_file') }}"><i class="fa fa-paper-plane"></i> Submit a sample</a></li>
+           <li><a href="{{ url_for('webui.submit') }}"><i class="fa fa-paper-plane"></i> Submit a sample</a></li>
            <li><a href="{{ url_for('webui.sample_list') }}"><i class="fa fa-list"></i> Sample list</a></li>
            <li><a href="{{ url_for('webui.sample_search') }}"><i class="fa fa-search"></i> Sample search</a></li>
-           <li><a href="{{ url_for('webui.apidocs') }}"><i class="fa fa-question-circle"></i> API Documentation</a></li>
-           <li><a href="{{ url_for('webui.cli_scripts') }}"><i class="fa fa-keyboard-o"></i> CLI Scripts</a></li>
+           <li><a href="{{ url_for('webui.docs') }}"><i class="fa fa-question-circle"></i> Documentation</a></li>
        </ul>
 
         <ul class="nav navbar-nav navbar-right">

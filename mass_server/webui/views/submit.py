@@ -1,41 +1,28 @@
-from flask import url_for, render_template, redirect
+from flask import url_for, render_template, redirect, flash
 
-from mass_server.core.models import FileSample, IPSample, DomainSample, URISample
+from mass_server.core.models import Sample
 from mass_server.webui.config import webui_blueprint
-from mass_server.webui.forms import FileSampleSubmitForm, IPSampleSubmitForm, DomainSampleSubmitForm, URISampleSubmitForm
+from mass_server.webui.forms import SampleSubmitForm
 
 
-@webui_blueprint.route('/submit/file/', methods=['GET', 'POST'])
-def submit_file():
-    form = FileSampleSubmitForm()
+@webui_blueprint.route('/submit/', methods=['GET', 'POST'])
+def submit():
+    form = SampleSubmitForm()
     if form.validate_on_submit():
-        sample = FileSample.create_or_update(file=form.data['file'], tlp_level=form.data['tlp_level'])
+        unique_features = {}
+        if form.data['file']:
+            unique_features['file'] = form.data['file']
+        if form.data['ipv4']:
+            unique_features['ipv4'] = form.data['ipv4']
+        if form.data['ipv6']:
+            unique_features['ipv6'] = form.data['ipv6']
+        if form.data['port']:
+            unique_features['port'] = form.data['port']
+        if form.data['domain']:
+            unique_features['domain'] = form.data['domain']
+        if form.data['uri']:
+            unique_features['uri'] = form.data['uri']
+        sample = Sample.create_or_update(unique_features=unique_features, tlp_level=form.data['tlp_level'])
+        flash('Your sample has been submitted', 'success')
         return redirect(url_for('webui.sample_detail', sample_id=sample.id))
-    return render_template('submit.html', form=form, submit_mode="file")
-
-
-@webui_blueprint.route('/submit/ip/', methods=['GET', 'POST'])
-def submit_ip():
-    form = IPSampleSubmitForm()
-    if form.validate_on_submit():
-        sample = IPSample.create_or_update(ip_address=form.data['ip_address'], tlp_level=form.data['tlp_level'])
-        return redirect(url_for('webui.sample_detail', sample_id=sample.id))
-    return render_template('submit.html', form=form, submit_mode="ip")
-
-
-@webui_blueprint.route('/submit/domain/', methods=['GET', 'POST'])
-def submit_domain():
-    form = DomainSampleSubmitForm()
-    if form.validate_on_submit():
-        sample = DomainSample.create_or_update(domain=form.data['domain'], tlp_level=form.data['tlp_level'])
-        return redirect(url_for('webui.sample_detail', sample_id=sample.id))
-    return render_template('submit.html', form=form, submit_mode="domain")
-
-
-@webui_blueprint.route('/submit/uri/', methods=['GET', 'POST'])
-def submit_uri():
-    form = URISampleSubmitForm()
-    if form.validate_on_submit():
-        sample = URISample.create_or_update(uri=form.data['uri'], tlp_level=form.data['tlp_level'])
-        return redirect(url_for('webui.sample_detail', sample_id=sample.id))
-    return render_template('submit.html', form=form, submit_mode="uri")
+    return render_template('submit.html', form=form)

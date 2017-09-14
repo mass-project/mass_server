@@ -1,0 +1,28 @@
+{% macro sample_unique_features(sample) -%}
+    {% if sample.unique_features.file %} <i class="fa fa-file"></i> {{ sample.unique_features.file.file_names[0] }} {% endif %}
+    {% if sample.unique_features.ipv4 %} <i class="fa fa-desktop"></i> {{ sample.unique_features.ipv4 }} {% endif %}
+    {% if sample.unique_features.ipv6 %} <i class="fa fa-desktop"></i> {{ sample.unique_features.ipv6 }} {% endif %}
+    {% if sample.unique_features.domain %} <i class="fa fa-globe"></i> {{ sample.unique_features.domain }} {% endif %}
+    {% if sample.unique_features.uri %} <i class="fa fa-at"></i> {{ sample.unique_features.uri }} {% endif %}
+    {% if sample.unique_features.port %} <i class="fa fa-arrow-right"></i> :{{ sample.unique_features.port }} {% endif %}
+    {% if sample.unique_features.custom_unique_feature %} <i class="fa fa-question"></i> {{ sample.unique_features.custom_unique_feature }} {% endif %}
+{%- endmacro %}
+
+{% macro sample_list(samples) -%}
+    <table class="table table-striped table-hover">
+        <tr><th width="25%">#ID</th><th width="50%">Features</th><th width="25%">First seen</th></tr>
+        {% for sample in samples %}
+            <tr>
+                <td>
+                    <a href="{{ url_for('webui.sample_detail', sample_id=sample.id) }}">{{ sample.id }}</a>
+                </td>
+                <td>
+                    <span class="text-muted">
+                        {{ sample_unique_features(sample) }}
+                    </span>
+                </td>
+                <td>{{ sample.first_seen }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{%- endmacro %}

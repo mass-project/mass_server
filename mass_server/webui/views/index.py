@@ -13,7 +13,7 @@ def _get_sample_statistics():
     for i in range(0,14):
         start = now - datetime.timedelta(days=i)
         end = now - datetime.timedelta(days=i-1)
-        number = Sample.objects(delivery_date__gte=start, delivery_date__lt=end).count()
+        number = Sample.objects(delivery_dates__gte=start, delivery_dates__lt=end).count()
         result.append((start, number))
     return result
 

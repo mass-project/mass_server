@@ -11,12 +11,10 @@
     <div class="page-header">
         <h1><i class="fa fa-paper-plane"></i> Sample submission</h1>
     </div>
-    <ul class="nav nav-tabs submit-tabs">
-        <li class="{% if submit_mode == 'file' %}active{% endif %}"><a href="{{ url_for('webui.submit_file') }}"><i class="fa fa-file"></i> File</a></li>
-        <li class="{% if submit_mode == 'ip' %}active{% endif %}"><a href="{{ url_for('webui.submit_ip') }}"><i class="fa fa-desktop"></i> IP address</a></li>
-        <li class="{% if submit_mode == 'domain' %}active{% endif %}"><a href="{{ url_for('webui.submit_domain') }}"><i class="fa fa-globe"></i> Domain</a></li>
-        <li class="{% if submit_mode == 'uri' %}active{% endif %}"><a href="{{ url_for('webui.submit_uri') }}"><i class="fa fa-at"></i> URI</a></li>
-    </ul>
+
+    <div class="alert alert-info">
+        <b>Please note:</b> MASS compares your submitted sample to other existing samples in order to avoid duplicate submissions. Samples are uniquely characterized by their <strong>unique sample features</strong>, such as a provided file, an IP address or a domain name. When you submit a sample, please provide at least one of the features given below. You may also freely choose any combination of features, such as an IP address and a port number. In this case, MASS will check for uniqueness by <strong>combining all of the provided features</strong>.
+    </div>
 
     {{ wtf.quick_form(form) }}
 {% endblock %}

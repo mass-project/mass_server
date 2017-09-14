@@ -19,10 +19,15 @@ from mass_server.webui.config import webui_blueprint
 def _load_or_generate_secret_key(app):
     secret_file_name = 'secret.txt'
     try:
-        app.secret_key = app.open_instance_resource(secret_file_name).read().strip()
+        app.secret_key = app.open_instance_resource(
+            secret_file_name).read().strip()
     except IOError:
         try:
-            app.secret_key = ''.join([random.SystemRandom().choice('abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)') for i in range(50)])
+            app.secret_key = ''.join([
+                random.SystemRandom().choice(
+                    'abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)')
+                for i in range(50)
+            ])
             secret = app.open_instance_resource(secret_file_name, 'w')
             secret.write(app.secret_key)
             secret.close()

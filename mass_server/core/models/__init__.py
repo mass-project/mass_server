@@ -1,4 +1,4 @@
-from .sample import Sample, FileSample, ExecutableBinarySample, IPSample, DomainSample, URISample
+from .sample import Sample
 from .tlp_level import TLPLevelField
 from .sample_relation import SampleRelation, DroppedBySampleRelation, ResolvedBySampleRelation, ContactedBySampleRelation, RetrievedBySampleRelation
 from .sample_relation import SsdeepSampleRelation
@@ -13,11 +13,6 @@ from .api_key import APIKey, UserAPIKey, InstanceAPIKey
 
 __all__ = [
     "Sample",
-    "FileSample",
-    "ExecutableBinarySample",
-    "IPSample",
-    "DomainSample",
-    "URISample",
     "SampleRelation",
     "DroppedBySampleRelation",
     "ResolvedBySampleRelation",

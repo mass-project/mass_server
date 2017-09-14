@@ -3,7 +3,7 @@ from .analysis_system_instance import AnalysisSystemInstanceSchema
 from .analysis_system import AnalysisSystemSchema
 from .report import ReportSchema
 from .sample_relation import SampleRelationSchema, DroppedBySampleRelationSchema, ResolvedBySampleRelationSchema, ContactedBySampleRelationSchema, RetrievedBySampleRelationSchema, SsdeepSampleRelationSchema
-from .sample import SampleSchema, FileSampleSchema, ExecutableBinarySampleSchema, IPSampleSchema, DomainSampleSchema, URISampleSchema
+from .sample import SampleSchema
 from .scheduled_analysis import ScheduledAnalysisSchema
 
 class SchemaMapping:
@@ -15,11 +15,6 @@ class SchemaMapping:
                 'AnalysisSystem': AnalysisSystemSchema(),
                 'Report': ReportSchema(),
                 'Sample': SampleSchema(),
-                'FileSample': FileSampleSchema(),
-                'ExecutableBinarySample': ExecutableBinarySampleSchema(),
-                'IPSample': IPSampleSchema(),
-                'DomainSample': DomainSampleSchema(),
-                'URISample': URISampleSchema(),
                 'SampleRelation': SampleRelationSchema(),
                 'DroppedBySampleRelation': DroppedBySampleRelationSchema(),
                 'ResolvedBySampleRelation': ResolvedBySampleRelationSchema(),

@@ -6,7 +6,7 @@ from mass_server import db
 class AnalysisSystem(db.Document):
     identifier_name = StringField(min_length=3, max_length=50, unique=True, required=True)
     verbose_name = StringField(max_length=200, required=True)
-    information_text = StringField()
+    information_text = StringField(required=False)
     tag_filter_expression = StringField(max_length=400, required=True, default='')
 
     meta = {

@@ -44,7 +44,7 @@ setup(
         'tzlocal==1.3',
         'uWSGI==2.0.14',
         'visitor==0.1.3',
-        'Werkzeug==0.12.1',
+        'Werkzeug==0.12.2',
         'WTForms==2.1'
     ],
     dependency_links=[

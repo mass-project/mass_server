@@ -1,30 +1,12 @@
 from flask import current_app, render_template, url_for
 from markupsafe import Markup
 
-from mass_server.core.models import FileSample, IPSample, DomainSample, URISample, ExecutableBinarySample, UserLevel
+from mass_server.core.models import UserLevel
 from mass_server.webui.config import webui_blueprint
 
 
 @webui_blueprint.context_processor
 def sample_processors():
-    def sample_icon(sample):
-        if isinstance(sample, FileSample):
-            return Markup('<i class="fa fa-file"></i>')
-        elif isinstance(sample, IPSample):
-            return Markup('<i class="fa fa-desktop"></i>')
-        elif isinstance(sample, DomainSample):
-            return Markup('<i class="fa fa-globe"></i>')
-        elif isinstance(sample, URISample):
-            return Markup('<i class="fa fa-at"></i>')
-        else:
-            return Markup('<i class="fa fa-question"></i>')
-
-    def is_file_sample(sample):
-        return isinstance(sample, FileSample)
-
-    def is_executable_binary_sample(sample):
-        return isinstance(sample, ExecutableBinarySample)
-
     def tag_search_link(tag):
         kwargs = {
             'common-tags': tag,
@@ -33,9 +15,6 @@ def sample_processors():
         return url_for('.sample_search', **kwargs)
 
     return dict(
-        sample_icon=sample_icon,
-        is_file_sample=is_file_sample,
-        is_executable_binary_sample=is_executable_binary_sample,
         tag_search_link=tag_search_link
     )
 

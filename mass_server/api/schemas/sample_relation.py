@@ -8,7 +8,6 @@ from mass_server.core.models import RetrievedBySampleRelation
 from mass_server.core.models import Sample
 from mass_server.core.models import SampleRelation
 from mass_server.core.models import SsdeepSampleRelation
-from mass_server.api.config import api_blueprint
 from .base import BaseSchema
 from .base import ForeignReferenceField
 
@@ -25,15 +24,10 @@ class SampleRelationSchema(BaseSchema):
                 '_cls'
                 ]
 
-api_blueprint.apispec.definition('SampleRelation', schema=SampleRelationSchema)
-
-
 class DroppedBySampleRelationSchema(SampleRelationSchema):
     class Meta(BaseSchema.Meta):
         model = DroppedBySampleRelation
         dump_only = SampleRelationSchema.Meta.dump_only
-
-api_blueprint.apispec.definition('DroppedBySampleRelation', schema=DroppedBySampleRelationSchema)
 
 
 class ResolvedBySampleRelationSchema(SampleRelationSchema):
@@ -41,23 +35,17 @@ class ResolvedBySampleRelationSchema(SampleRelationSchema):
         model = ResolvedBySampleRelation
         dump_only = SampleRelationSchema.Meta.dump_only
 
-api_blueprint.apispec.definition('ResolvedBySampleRelation', schema=ResolvedBySampleRelationSchema)
-
 
 class ContactedBySampleRelationSchema(SampleRelationSchema):
     class Meta(BaseSchema.Meta):
         model = ContactedBySampleRelation
         dump_only = SampleRelationSchema.Meta.dump_only
 
-api_blueprint.apispec.definition('ContactedBySampleRelation', schema=ContactedBySampleRelationSchema)
-
 
 class RetrievedBySampleRelationSchema(SampleRelationSchema):
     class Meta(BaseSchema.Meta):
         model = RetrievedBySampleRelation
         dump_only = SampleRelationSchema.Meta.dump_only
-
-api_blueprint.apispec.definition('RetrievedBySampleRelation', schema=RetrievedBySampleRelationSchema)
 
 
 class SsdeepSampleRelationSchema(SampleRelationSchema):
@@ -66,5 +54,3 @@ class SsdeepSampleRelationSchema(SampleRelationSchema):
     class Meta(BaseSchema.Meta):
         model = SsdeepSampleRelation
         dump_only = SampleRelationSchema.Meta.dump_only
-
-api_blueprint.apispec.definition('SsdeepSampleRelation', schema=SsdeepSampleRelationSchema)
