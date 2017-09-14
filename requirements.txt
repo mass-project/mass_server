@@ -15,7 +15,7 @@ Flask-Login==0.4.0
 flask-marshmallow==0.8.0
 git+https://github.com/fabian-rump/flask_modular_auth.git
 flask-mongoengine==0.9.3
-flask-slimrest
+flask-slimrest==0.1.1
 Flask-WTF==0.14.2
 future==0.16.0
 itsdangerous==0.24
