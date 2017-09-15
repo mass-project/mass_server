@@ -1,8 +1,8 @@
 from flask import Blueprint, jsonify, url_for, _request_ctx_stack
-from flask_simplerest import SimpleRest
+from flask_slimrest import SlimRest
 
 api_blueprint = Blueprint('api', __name__)
-api = SimpleRest(api_blueprint)
+api = SlimRest(api_blueprint)
 
 
 def api_unauthorized_callback():
