@@ -48,7 +48,7 @@ requirements = [
     'mongoengine==0.13.0',
     'nose==1.3.7',
     'nose-exclude==0.5.0',
-    'pefile==2016.3.28',
+    'pefile==2017.9.3',
     'pycparser==2.17',
     'pymongo==3.4.0',
     'pyparsing==2.2.0',
