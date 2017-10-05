@@ -78,8 +78,8 @@ def _bootstrap_app(app):
         return redirect(url_for('webui.index'))
 
 
-def _init_app(config_object):
-    app = Flask(__name__)
+def _init_app(config_object, instance_path=None):
+    app = Flask(__name__, instance_path=instance_path)
     _load_or_generate_secret_key(app)
     _load_config(app, config_object)
     _bootstrap_app(app)
@@ -96,7 +96,7 @@ def get_testing_app():
     return _init_app(TestingConfig)
 
 
-def get_production_app():
+def get_production_app(instance_path=None):
     from mass_server.config.config_production import ProductionConfig
     from mass_server.config.reverse_proxy import ReverseProxied
-    return ReverseProxied(_init_app(ProductionConfig))
+    return ReverseProxied(_init_app(ProductionConfig, instance_path))

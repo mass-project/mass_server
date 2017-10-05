@@ -1,0 +1,20 @@
+version: '3.2'
+
+volumes:
+  mass-home:
+
+services:
+  mongodb:
+    image: bitnami/mongodb
+    volumes:
+      - type: tmpfs
+        target: /bitnami/mongodb
+  
+  mass_server:
+    image: mass_server:latest
+    build: .
+    ports:
+      - 8000:8000
+    volumes:
+      - ./demo_state.py:/demo_state.py:ro
+      - mass-home:/home/mass

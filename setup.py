@@ -75,6 +75,7 @@ setup(
     author_email='marquard@cs.uni-bonn.de',
     description='Malware Analysis and Storage System server',
     packages=find_packages(exclude=['tests']),
+    include_package_data=True,
     classifiers=[
         'Framework :: Flask',
         'Programming Language :: Python :: 3',
