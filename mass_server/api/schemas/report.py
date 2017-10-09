@@ -18,10 +18,10 @@ class ReportSchema(BaseSchema):
         query_parameter='identifier_name')
 
     json_report_objects = FileMapField(
-        endpoint='.json_report_object', file_url_key='object_name')
+        endpoint='api.report_namespace_json_report_object', file_url_key='object_name')
 
     raw_report_objects = FileMapField(
-        endpoint='.raw_report_object', file_url_key='object_name')
+        endpoint='api.report_namespace_raw_report_object', file_url_key='object_name')
 
     class Meta(BaseSchema.Meta):
         model = Report

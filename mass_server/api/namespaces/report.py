@@ -39,3 +39,23 @@ class ReportNamespace:
         obj = Report.objects.get(id=id)
         obj.delete()
         return '', 204
+
+    @privilege_required(AuthenticatedPrivilege())
+    @add_endpoint('/<id>/json_report_object/<object_name>/')
+    @catch(Report.DoesNotExist, 'No report with the specified id found.', 404)
+    @catch(ValueError, 'No report object with the specified name found.', 404)
+    def json_report_object(self, id, object_name):
+        report =  Report.objects.get(id=id)
+        if object_name not in report.json_report_objects:
+            raise ValueError('Report object not found.')
+        return report.json_report_objects[object_name].read(), 200,  {'Content-Type': 'application/json'}
+
+    @privilege_required(AuthenticatedPrivilege())
+    @add_endpoint('/<id>/raw_report_object/<object_name>/')
+    @catch(Report.DoesNotExist, 'No report with the specified id found.', 404)
+    @catch(ValueError, 'No report object with the specified name found.', 404)
+    def raw_report_object(self, id, object_name):
+        report =  Report.objects.get(id=id)
+        if object_name not in raw.json_report_objects:
+            raise ValueError('Report object not found.')
+        return report.raw_report_objects[object_name].read(), 200,  {'Content-Type': 'application/octet-stream'}
