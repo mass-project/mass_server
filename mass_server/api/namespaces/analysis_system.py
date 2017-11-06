@@ -1,10 +1,10 @@
 from flask_modular_auth import privilege_required, AuthenticatedPrivilege, RolePrivilege
-from flask_slimrest.decorators import add_endpoint, dump, load, load_json, catch, paginate
+from flask_slimrest.decorators import add_endpoint, dump, load, load_json, catch, paginate, filter_results
 from flask_slimrest.utils import make_api_error_response
 
 from mass_server.api.config import api
 from mass_server.api.schemas import AnalysisSystemSchema
-from mass_server.api.utils import pagination_helper
+from mass_server.api.utils import pagination_helper, filter_queryset
 from mass_server.core.models import AnalysisSystem
 
 
@@ -14,6 +14,12 @@ class AnalysisSystemNamespace:
     @add_endpoint('/')
     @dump(AnalysisSystemSchema(), paginated=True)
     @paginate(pagination_helper)
+    @filter_results(filter_queryset, [
+        'identifier_name',
+        'verbose_name',
+        'identifier_name__contains',
+        'verbose_name__contains'
+    ])
     def collection_get(self):
         return AnalysisSystem.objects
 
@@ -45,8 +51,9 @@ class AnalysisSystemNamespace:
         result = AnalysisSystemSchema().update(obj, data)
         if result.errors:
             return make_api_error_response(
-                'Validation of the patched data has failed.', 400,
-                {'errors': result.errors})
+                'Validation of the patched data has failed.', 400, {
+                    'errors': result.errors
+                })
         else:
             obj.save()
             return obj

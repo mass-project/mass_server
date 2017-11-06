@@ -11,8 +11,19 @@ from mass_server.core.models import AnonymousUser, User, APIKey
 
 from mass_server.core.signals import connect_signals
 from mass_server.api.config import api_blueprint
-from mass_server.scheduling.config import scheduling_blueprint
 from mass_server.webui.config import webui_blueprint
+
+
+# Default configuration settings
+class DefaultConfig(object):
+    DEBUG = False
+    TESTING = False
+    LOGGER_NAME = 'mass_server_flask'
+    BOOTSTRAP_SERVE_LOCAL = True
+    BOOTSTRAP_USE_MINIFIED = True
+    OBJECTS_PER_PAGE = 100
+    MAX_SCHEDULE_THRESHOLD = 100
+    SCHEDULE_ANALYSES_INTERVAL = 30
 
 
 # Generate or load secret key
@@ -37,10 +48,16 @@ def _load_or_generate_secret_key(app):
 
 
 # Load config
-def _load_config(app, config_object, load_instance_config=False):
-    app.config.from_object(config_object)
-    if load_instance_config:
+def _load_config(app, debug=False, testing=False):
+    app.config.from_object(DefaultConfig)
+    if testing == True:
+        app.config['TESTING'] = True
+    if debug == True:
+        app.config['DEBUG'] = True
+    if testing == False:
         app.config.from_pyfile('application.cfg')
+    else:
+        app.config.from_pyfile('testing.cfg')
 
 
 # Bootstrap app
@@ -66,7 +83,6 @@ def _bootstrap_app(app):
     connect_signals()
     app.register_blueprint(api_blueprint, url_prefix='/api')
     app.register_blueprint(webui_blueprint, url_prefix='/webui')
-    app.register_blueprint(scheduling_blueprint, url_prefix='/scheduling')
 
     # Add generic views
     @app.route('/version/', methods=['GET'])
@@ -78,25 +94,9 @@ def _bootstrap_app(app):
         return redirect(url_for('webui.index'))
 
 
-def _init_app(config_object, instance_path=None):
-    app = Flask(__name__, instance_path=instance_path)
+def get_app(instance_path=None, testing=False, debug=False):
+    app = Flask(__name__, instance_path=instance_path, instance_relative_config=True)
     _load_or_generate_secret_key(app)
-    _load_config(app, config_object)
+    _load_config(app, debug=debug, testing=testing)
     _bootstrap_app(app)
     return app
-
-
-def get_development_app():
-    from mass_server.config.config_development import DevelopmentConfig
-    return _init_app(DevelopmentConfig)
-
-
-def get_testing_app():
-    from mass_server.config.config_testing import TestingConfig
-    return _init_app(TestingConfig)
-
-
-def get_production_app(instance_path=None):
-    from mass_server.config.config_production import ProductionConfig
-    from mass_server.config.reverse_proxy import ReverseProxied
-    return ReverseProxied(_init_app(ProductionConfig, instance_path))

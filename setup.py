@@ -36,7 +36,7 @@ requirements = [
     'flask-marshmallow==0.8.0',
     'flask-modular-auth==0.2',
     'flask-mongoengine==0.9.3',
-    'flask-slimrest==0.1.1',
+    'flask-slimrest==0.1.2',
     'Flask-WTF==0.14.2',
     'future==0.16.0',
     'itsdangerous==0.24',
@@ -89,6 +89,9 @@ setup(
     install_requires=requirements,
     tests_require=['nose', 'coverage'],
     entry_points={
-        'console_scripts': ['mass_server=mass_server.bin.mass_server:main']
+        'console_scripts': [
+            'mass_server=mass_server.bin.mass_server:main',
+            'mass_scheduler=mass_server.bin.mass_scheduler:main'
+        ]
     }
 )

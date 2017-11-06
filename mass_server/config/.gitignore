@@ -1,8 +1,0 @@
-.project
-.pydevproject
-__pycache__
-.pyc
-.log
-.coverage
-.idea
-venv*

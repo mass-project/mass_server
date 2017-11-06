@@ -1,7 +1,7 @@
 from unittest import TestCase
 from mongoengine import connection
 
-from mass_server import get_testing_app
+from mass_server import get_app
 
 
 class FlaskTestCase(TestCase):
@@ -17,7 +17,7 @@ class FlaskTestCase(TestCase):
         self._post_tearDown()
 
     def _pre_setup(self):
-        self.app = get_testing_app()
+        self.app = get_app(debug=True, testing=True)
         if 'TESTING' not in self.app.config or self.app.config['TESTING'] is False:
             raise RuntimeError('Running unit test without TESTING=True in configuration. Aborting.')
         self.client = self.app.test_client()
