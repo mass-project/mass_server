@@ -5,7 +5,7 @@ from flask_slimrest.utils import make_api_error_response
 from mass_server.api.config import api
 from mass_server.api.schemas import AnalysisSystemInstanceSchema, ScheduledAnalysisSchema
 from mass_server.api.utils import pagination_helper
-from mass_server.core.models import AnalysisSystemInstance, ScheduledAnalysis
+from mass_server.core.models import AnalysisSystemInstance, ScheduledAnalysis, AnalysisRequest
 
 
 @api.add_namespace('/analysis_system_instance')
@@ -52,5 +52,10 @@ class AnalysisSystemInstanceNamespace:
            'No analysis system instance with the specified uuid found.', 404)
     def element_delete(self, uuid):
         obj = AnalysisSystemInstance.objects.get(uuid=uuid)
+        scheduled_analyses = ScheduledAnalysis.objects(analysis_system_instance=obj)
+        for analysis in scheduled_analyses:
+            r = AnalysisRequest(analysis_system=obj.analysis_system, sample=analysis.sample)
+            r.save()
+            analysis.delete()
         obj.delete()
         return '', 204
