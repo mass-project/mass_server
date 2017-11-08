@@ -11,12 +11,14 @@ user.save()
 
 a1 = AnalysisSystem()
 a1.identifier_name = 'packerdetection'
+a1.tag_filter_expression = 'filetype:windows-binary'
 a1.verbose_name = 'Packer Detection'
 a1.save()
 
 a2 = AnalysisSystem()
 a2.identifier_name = 'unzip'
 a2.verbose_name = 'Archive Unpacker'
+a2.tag_filter_expression = 'filetype:archive'
 a2.save()
 
 a3 = AnalysisSystem()
@@ -27,5 +29,6 @@ a3.save()
 a4 = AnalysisSystem()
 a4.identifier_name = 'upxunpacker'
 a4.verbose_name = 'UPX Unpacker'
+a4.tag_filter_expression = 'packerfamily:upx'
 a4.save()
 
