@@ -18,7 +18,7 @@ flask-mongoengine==0.9.3
 Flask-WTF==0.14.2
 future==0.16.0
 itsdangerous==0.24
-Jinja2==2.9.6
+Jinja2==2.10
 MarkupSafe==1.0
 marshmallow==2.14.0
 marshmallow-mongoengine==0.9.1
