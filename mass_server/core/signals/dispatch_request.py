@@ -1,4 +1,4 @@
-from mass_server.core.models import Sample, AnalysisSystem, AnalysisRequest
+from mass_server.core.models import Sample, AnalysisSystem, AnalysisRequest, AnalysisSystemInstance, ScheduledAnalysis
 from mass_server.core.utils.tag_parser import TagParser
 
 
@@ -28,3 +28,11 @@ def create_requests_for_new_analysis_system(sender, document, **kwargs):
     if kwargs.get('created') is True:
         for sample in Sample.objects():
             _match_sample_and_system(sample, document)
+
+
+def create_requests_for_deleted_analysis_system_instance(sender, document, **kwargs):
+    scheduled_analyses = ScheduledAnalysis.objects(analysis_system_instance=document)
+    for analysis in scheduled_analyses:
+        r = AnalysisRequest(analysis_system=document.analysis_system, sample=analysis.sample)
+        r.save()
+        analysis.delete()

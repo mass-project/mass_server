@@ -52,10 +52,5 @@ class AnalysisSystemInstanceNamespace:
            'No analysis system instance with the specified uuid found.', 404)
     def element_delete(self, uuid):
         obj = AnalysisSystemInstance.objects.get(uuid=uuid)
-        scheduled_analyses = ScheduledAnalysis.objects(analysis_system_instance=obj)
-        for analysis in scheduled_analyses:
-            r = AnalysisRequest(analysis_system=obj.analysis_system, sample=analysis.sample)
-            r.save()
-            analysis.delete()
         obj.delete()
         return '', 204
