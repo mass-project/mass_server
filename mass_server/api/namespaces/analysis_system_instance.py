@@ -5,7 +5,7 @@ from flask_slimrest.utils import make_api_error_response
 from mass_server.api.config import api
 from mass_server.api.schemas import AnalysisSystemInstanceSchema, ScheduledAnalysisSchema
 from mass_server.api.utils import pagination_helper
-from mass_server.core.models import AnalysisSystemInstance, ScheduledAnalysis
+from mass_server.core.models import AnalysisSystemInstance, ScheduledAnalysis, AnalysisRequest
 
 
 @api.add_namespace('/analysis_system_instance')
