@@ -5,8 +5,8 @@ from .analysis_system_instance import AnalysisSystemInstanceSchema
 from .report import ReportSchema
 from .sample import SampleSchema
 from .scheduled_analysis import ScheduledAnalysisSchema
-from .sample_relation import SampleRelationSchema, DroppedBySampleRelationSchema, ResolvedBySampleRelationSchema, ContactedBySampleRelationSchema, RetrievedBySampleRelationSchema, SsdeepSampleRelationSchema
-from .schema_mapping import SchemaMapping
+from .sample_relation import SampleRelationSchema
+from .sample_relation_type import SampleRelationTypeSchema
 
 __all__ = [
     'BaseSchema',
@@ -17,11 +17,6 @@ __all__ = [
     'ReportSchema',
     'SampleSchema',
     'SampleRelationSchema',
-    'DroppedBySampleRelationSchema',
-    'ResolvedBySampleRelationSchema',
-    'ContactedBySampleRelationSchema',
-    'RetrievedBySampleRelationSchema',
-    'SsdeepSampleRelationSchema',
-    'ScheduledAnalysisSchema',
-    'SchemaMapping'
+    'SampleRelationTypeSchema',
+    'ScheduledAnalysisSchema'
 ]

@@ -1,7 +1,7 @@
 from .sample import Sample
 from .tlp_level import TLPLevelField
-from .sample_relation import SampleRelation, DroppedBySampleRelation, ResolvedBySampleRelation, ContactedBySampleRelation, RetrievedBySampleRelation
-from .sample_relation import SsdeepSampleRelation
+from .sample_relation import SampleRelation
+from .sample_relation_type import SampleRelationType
 from .analysis_system import AnalysisSystem
 from .analysis_system_instance import AnalysisSystemInstance
 from .analysis_request import AnalysisRequest
@@ -14,11 +14,7 @@ from .api_key import APIKey, UserAPIKey, InstanceAPIKey
 __all__ = [
     "Sample",
     "SampleRelation",
-    "DroppedBySampleRelation",
-    "ResolvedBySampleRelation",
-    "ContactedBySampleRelation",
-    "RetrievedBySampleRelation",
-    "SsdeepSampleRelation",
+    "SampleRelationType",
     "AnalysisSystem",
     "AnalysisSystemInstance",
     "AnalysisRequest",
