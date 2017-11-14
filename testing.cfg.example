@@ -1,0 +1,4 @@
+MONGODB_SETTINGS = {
+    'host': 'mongodb://localhost:27017/mass-testing',
+    'tz_aware': True
+}

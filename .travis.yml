@@ -17,6 +17,9 @@ services:
 install:
   - "BUILD_LIB=1 pip install -r requirements.txt" # Install requirements, add BUILD_LIB=1 for ssdeep
   - "mongod --version" # Check if current MongoDB version is correctly installed
+before_script:
+  - "mkdir ./instance"
+  - "cp testing.cfg.example ./instance/testing.cfg"
 script:
   - "CONFIG_PATH=mass_server.config.config_testing.TestingConfig nosetests"
 after_success:
