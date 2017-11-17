@@ -36,18 +36,20 @@ def filter_queryset(queryset, **kwargs):
     return queryset.filter(**kwargs)
 
 
-def apply_mapped_filters(filter_args={}):
-    def real_decorator(function):
-        @wraps(function)
-        def wrapper(self, *args, **kwargs):
-            passed_args = {}
-            for arg in request.args:
-                if arg in filter_args:
-                    if filter_args[arg]:
-                        arg_name = filter_args[arg]
-                    else:
-                        arg_name = arg
-                    passed_args[arg_name] = request.args[arg]
-            return filter_queryset(function(self, *args, **kwargs), **passed_args)
-        return wrapper
-    return real_decorator
+class MappedQuerysetFilter:
+    def __init__(self, mapping):
+        self.mapping = mapping
+
+    def __call__(self, queryset, **kwargs):
+        passed_args = {}
+        for arg, value in kwargs.items():
+            if arg not in self.mapping:
+                raise ValueError('Passed argument "{}" is not in the parameter mapping.'.format(arg))
+
+            if self.mapping[arg]:
+                passed_args[self.mapping[arg]] = value
+            else:
+                passed_args[arg] = value
+
+        return filter_queryset(queryset, **passed_args)
+

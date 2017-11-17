@@ -8,7 +8,7 @@ from mongoengine import ValidationError
 
 from mass_server.api.config import api
 from mass_server.api.schemas import SampleSchema
-from mass_server.api.utils import pagination_helper, filter_queryset, apply_mapped_filters
+from mass_server.api.utils import pagination_helper, MappedQuerysetFilter
 from mass_server.core.models import Sample
 
 
@@ -18,7 +18,7 @@ class SampleNamespace:
     @add_endpoint('/')
     @dump(SampleSchema(), paginated=True)
     @paginate(pagination_helper)
-    @apply_mapped_filters(Sample.filter_parameters)
+    @filter_results(MappedQuerysetFilter(Sample.filter_parameters), Sample.filter_parameters.keys())
     def collection_get(self):
         return Sample.objects
 
