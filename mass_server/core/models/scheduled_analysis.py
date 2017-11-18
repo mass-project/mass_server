@@ -12,6 +12,14 @@ class ScheduledAnalysis(db.Document):
     analysis_scheduled = DateTimeField(default=TimeFunctions.get_timestamp, required=True)
     priority = IntField(default=0, required=True)
 
+    filter_parameters = {
+        'analysis_scheduled__lte': None,
+        'analysis_scheduled__gte': None,
+        'priority__lte': None,
+        'priority__gte': None,
+        'priority': None
+    }
+
     meta = {
         'ordering': ['-analysis_scheduled'],
         'indexes': ['analysis_scheduled']

@@ -12,6 +12,14 @@ class AnalysisRequest(db.Document):
     analysis_requested = DateTimeField(default=TimeFunctions.get_timestamp, required=True)
     priority = IntField(default=0, required=True)
 
+    filter_parameters = {
+        'analysis_requested__lte': None,
+        'analysis_requested__gte': None,
+        'priority__lte': None,
+        'priority__gte': None,
+        'priority': None
+    }
+
     meta = {
         'ordering': ['-analysis_requested'],
         'indexes': ['analysis_requested']

@@ -30,6 +30,11 @@ class AnalysisSystemInstance(db.Document, AbstractAuthEntity):
     uuid = StringField(max_length=36, required=True, unique=True, default=_gen_uuid)
     last_seen = DateTimeField()
 
+    filter_parameters = {
+        'last_seen__lte': None,
+        'last_seen__gte': None
+    }
+
     meta = {
         'ordering': ['analysis_system', 'uuid'],
         'indexes': [('analysis_system', 'uuid')]

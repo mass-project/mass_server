@@ -2,11 +2,11 @@ import json
 
 from flask import request, jsonify
 from flask_modular_auth import privilege_required, AuthenticatedPrivilege, RolePrivilege
-from flask_slimrest.decorators import add_endpoint, dump, load, catch, paginate
+from flask_slimrest.decorators import add_endpoint, dump, load, catch, paginate, filter_results
 
 from mass_server.api.config import api
 from mass_server.api.schemas import ScheduledAnalysisSchema, ReportSchema
-from mass_server.api.utils import pagination_helper
+from mass_server.api.utils import pagination_helper, MappedQuerysetFilter
 from mass_server.core.models import ScheduledAnalysis
 
 
@@ -16,6 +16,7 @@ class ScheduledAnalysisNamespace:
     @add_endpoint('/')
     @dump(ScheduledAnalysisSchema(), paginated=True)
     @paginate(pagination_helper)
+    @filter_results(MappedQuerysetFilter(ScheduledAnalysis.filter_parameters), ScheduledAnalysis.filter_parameters.keys())
     def collection_get(self):
         return ScheduledAnalysis.objects
 
