@@ -31,6 +31,7 @@ class AnalysisSystemInstance(db.Document, AbstractAuthEntity):
     last_seen = DateTimeField()
 
     filter_parameters = {
+        'analysis_system': None,
         'last_seen__lte': None,
         'last_seen__gte': None
     }

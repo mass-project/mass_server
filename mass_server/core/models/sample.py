@@ -56,8 +56,6 @@ class Sample(db.Document, CommentsMixin, TagsMixin, TLPLevelMixin):
     unique_features = EmbeddedDocumentField(UniqueSampleFeaturesDocument)
 
     filter_parameters = {
-        'delivery_date__lte': None,
-        'delivery_date__gte': None,
         'first_seen__lte': None,
         'first_seen__gte': None,
         'tags__all': None,

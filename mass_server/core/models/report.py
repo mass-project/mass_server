@@ -46,6 +46,8 @@ class Report(db.Document):
     raw_report_objects = MapField(field=FileField())
 
     filter_parameters = {
+        'analysis_system': None,
+        'sample': None,
         'analysis_date__lte': None,
         'analysis_date__gte': None,
         'upload_date__lte': None,

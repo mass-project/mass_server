@@ -13,6 +13,8 @@ class ScheduledAnalysis(db.Document):
     priority = IntField(default=0, required=True)
 
     filter_parameters = {
+        'analysis_system_instance': None,
+        'sample': None,
         'analysis_scheduled__lte': None,
         'analysis_scheduled__gte': None,
         'priority__lte': None,

@@ -13,6 +13,8 @@ class AnalysisRequest(db.Document):
     priority = IntField(default=0, required=True)
 
     filter_parameters = {
+        'analysis_system': None,
+        'sample': None,
         'analysis_requested__lte': None,
         'analysis_requested__gte': None,
         'priority__lte': None,
