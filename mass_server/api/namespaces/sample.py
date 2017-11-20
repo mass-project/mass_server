@@ -70,4 +70,6 @@ class SampleNamespace:
             sample_relations = GraphFunctions.get_relation_graph(sample, int(request.args['depth']))
         else:
             sample_relations = GraphFunctions.get_relation_graph(sample)
-        return sample_relations
+
+        relation_ids = [x.id for x in sample_relations]
+        return SampleRelation.objects(id__in=relation_ids)
