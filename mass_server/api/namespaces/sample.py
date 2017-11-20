@@ -72,4 +72,4 @@ class SampleNamespace:
             sample_relations = GraphFunctions.get_relation_graph(sample)
 
         relation_ids = [x.id for x in sample_relations]
-        return SampleRelation.objects(id__in=relation_ids)
+        return SampleRelation.objects(id__in=relation_ids).no_dereference()
