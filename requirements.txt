@@ -11,7 +11,7 @@ Faker==0.8.7
 Flask==0.12.2
 Flask-APScheduler==1.7.1
 Flask-Bootstrap==3.3.7.1
-Flask-Login==0.4.0
+Flask-Login==0.4.1
 flask-marshmallow==0.8.0
 git+https://github.com/fabian-rump/flask_modular_auth.git
 flask-mongoengine==0.9.3
