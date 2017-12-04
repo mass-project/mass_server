@@ -31,7 +31,7 @@ pycparser==2.18
 pymongo==3.5.1
 pyparsing==2.2.0
 python-dateutil==2.6.1
-python-magic==0.4.13
+python-magic==0.4.15
 pytz==2017.3
 PyYAML==3.12
 requests==2.18.4
