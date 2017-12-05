@@ -45,6 +45,18 @@ class Report(db.Document):
     json_report_objects = MapField(field=FileField())
     raw_report_objects = MapField(field=FileField())
 
+    filter_parameters = {
+        'analysis_system': None,
+        'sample': None,
+        'analysis_date__lte': None,
+        'analysis_date__gte': None,
+        'upload_date__lte': None,
+        'upload_date__gte': None,
+        'status': None,
+        'error_message__contains': None,
+        'tags__all': None
+    }
+
     meta = {
         'ordering': ['-upload_date'],
         'indexes': ['upload_date']

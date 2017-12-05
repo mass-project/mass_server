@@ -1,9 +1,9 @@
 from flask_modular_auth import privilege_required, AuthenticatedPrivilege, RolePrivilege
-from flask_slimrest.decorators import add_endpoint, dump, load, catch, paginate
+from flask_slimrest.decorators import add_endpoint, dump, load, catch, paginate, filter_results
 
 from mass_server.api.config import api
 from mass_server.api.schemas import AnalysisRequestSchema
-from mass_server.api.utils import pagination_helper
+from mass_server.api.utils import pagination_helper, MappedQuerysetFilter
 from mass_server.core.models import AnalysisRequest
 
 
@@ -13,6 +13,7 @@ class AnalysisRequestNamespace:
     @add_endpoint('/')
     @dump(AnalysisRequestSchema(), paginated=True)
     @paginate(pagination_helper)
+    @filter_results(MappedQuerysetFilter(AnalysisRequest.filter_parameters), AnalysisRequest.filter_parameters.keys())
     def collection_get(self):
         return AnalysisRequest.objects
 

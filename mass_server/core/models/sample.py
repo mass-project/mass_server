@@ -55,6 +55,43 @@ class Sample(db.Document, CommentsMixin, TagsMixin, TLPLevelMixin):
     created_by = GenericReferenceField()
     unique_features = EmbeddedDocumentField(UniqueSampleFeaturesDocument)
 
+    filter_parameters = {
+        'first_seen__lte': None,
+        'first_seen__gte': None,
+        'tags__all': None,
+        'has_file': 'unique_features__file__exists',
+        'has_ipv4': 'unique_features__ipv4__exists',
+        'has_ipv6': 'unique_features__ipv6__exists',
+        'has_port': 'unique_features__port__exists',
+        'has_domain': 'unique_features__domain__exists',
+        'has_uri': 'unique_features__uri__exists',
+        'has_custom_unique_feature': 'unique_features__custom_unique_feature__exists',
+        'domain': 'unique_features__domain',
+        'domain_contains': 'unique_features__domain__contains',
+        'domain_startswith': 'unique_features__domain__startswith',
+        'domain_endswith': 'unique_features__domain__endswith',
+        'file_md5sum': 'unique_features__file__md5sum__iexact',
+        'file_sha1sum': 'unique_features__file__sha1sum__iexact',
+        'file_sha256sum': 'unique_features__file__sha256sum__iexact',
+        'file_sha512sum': 'unique_features__file__sha512sum__iexact',
+        'file_mime_type': 'unique_features__file__mime_type',
+        'file_names': 'unique_features__file__file_names',
+        'file_size__lte': 'unique_features__file__file_size__lte',
+        'file_size__gte': 'unique_features__file__file_size__gte',
+        'file_shannon_entropy__lte': 'unique_features__file__shannon_entropy__lte',
+        'file_shannon_entropy__gte': 'unique_features__file__shannon_entropy__gte',
+        'ipv4': 'unique_features__ipv4',
+        'ipv4_startswith': 'unique_features__ipv4__startswith',
+        'ipv6': 'unique_features__ipv6',
+        'ipv6_startswith': 'unique_features__ipv6__startswith',
+        'port': 'unique_features__port',
+        'uri': 'unique_features__uri',
+        'uri_contains': 'unique_features__uri__contains',
+        'uri_startswith': 'unique_features__uri__startswith',
+        'uri_endswith': 'unique_features__uri__endswith',
+        'custom_unique_feature': 'unique_features__custom_unique_feature'
+    }
+
     meta = {
         'ordering': ['-first_seen'],
         'indexes': ['first_seen'],

@@ -1,4 +1,4 @@
-from mongoengine import DateTimeField, ReferenceField, IntField
+from mongoengine import DateTimeField, ReferenceField, IntField, DictField
 
 from mass_server.core.utils import TimeFunctions
 from mass_server import db
@@ -11,6 +11,17 @@ class AnalysisRequest(db.Document):
     sample = ReferenceField(Sample, required=True)
     analysis_requested = DateTimeField(default=TimeFunctions.get_timestamp, required=True)
     priority = IntField(default=0, required=True)
+    parameters = DictField()
+
+    filter_parameters = {
+        'analysis_system': None,
+        'sample': None,
+        'analysis_requested__lte': None,
+        'analysis_requested__gte': None,
+        'priority__lte': None,
+        'priority__gte': None,
+        'priority': None
+    }
 
     meta = {
         'ordering': ['-analysis_requested'],

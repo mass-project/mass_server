@@ -33,6 +33,6 @@ def create_requests_for_new_analysis_system(sender, document, **kwargs):
 def create_requests_for_deleted_analysis_system_instance(sender, document, **kwargs):
     scheduled_analyses = ScheduledAnalysis.objects(analysis_system_instance=document)
     for analysis in scheduled_analyses:
-        r = AnalysisRequest(analysis_system=document.analysis_system, sample=analysis.sample)
+        r = AnalysisRequest(analysis_system=document.analysis_system, sample=analysis.sample, parameters=analysis.parameters)
         r.save()
         analysis.delete()

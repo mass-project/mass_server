@@ -9,6 +9,13 @@ class AnalysisSystem(db.Document):
     information_text = StringField(required=False)
     tag_filter_expression = StringField(max_length=400, required=True, default='')
 
+    filter_parameters = {
+        'identifier_name': None,
+        'verbose_name': None,
+        'identifier_name__contains': None,
+        'verbose_name__contains': None
+    }
+
     meta = {
         'ordering': ['identifier_name'],
         'indexes': ['identifier_name']
