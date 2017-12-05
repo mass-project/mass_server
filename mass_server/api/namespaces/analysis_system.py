@@ -4,7 +4,7 @@ from flask_slimrest.utils import make_api_error_response
 
 from mass_server.api.config import api
 from mass_server.api.schemas import AnalysisSystemSchema
-from mass_server.api.utils import pagination_helper, filter_queryset
+from mass_server.api.utils import pagination_helper, MappedQuerysetFilter
 from mass_server.core.models import AnalysisSystem
 
 
@@ -14,12 +14,7 @@ class AnalysisSystemNamespace:
     @add_endpoint('/')
     @dump(AnalysisSystemSchema(), paginated=True)
     @paginate(pagination_helper)
-    @filter_results(filter_queryset, [
-        'identifier_name',
-        'verbose_name',
-        'identifier_name__contains',
-        'verbose_name__contains'
-    ])
+    @filter_results(MappedQuerysetFilter(AnalysisSystem.filter_parameters), AnalysisSystem.filter_parameters.keys())
     def collection_get(self):
         return AnalysisSystem.objects
 

@@ -1,9 +1,9 @@
 from flask_modular_auth import privilege_required, AuthenticatedPrivilege, RolePrivilege
-from flask_slimrest.decorators import add_endpoint, dump, load, catch, paginate
+from flask_slimrest.decorators import add_endpoint, dump, load, catch, paginate, filter_results
 
 from mass_server.api.config import api
 from mass_server.api.schemas import ReportSchema
-from mass_server.api.utils import pagination_helper
+from mass_server.api.utils import pagination_helper, MappedQuerysetFilter
 from mass_server.core.models import Report
 
 
@@ -13,6 +13,7 @@ class ReportNamespace:
     @add_endpoint('/')
     @dump(ReportSchema(), paginated=True)
     @paginate(pagination_helper)
+    @filter_results(MappedQuerysetFilter(Report.filter_parameters), Report.filter_parameters.keys())
     def collection_get(self):
         return Report.objects
 

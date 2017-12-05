@@ -13,6 +13,16 @@ class ScheduledAnalysis(db.Document):
     priority = IntField(default=0, required=True)
     parameters = DictField()
 
+    filter_parameters = {
+        'analysis_system_instance': None,
+        'sample': None,
+        'analysis_scheduled__lte': None,
+        'analysis_scheduled__gte': None,
+        'priority__lte': None,
+        'priority__gte': None,
+        'priority': None
+    }
+
     meta = {
         'ordering': ['-analysis_scheduled'],
         'indexes': ['analysis_scheduled']

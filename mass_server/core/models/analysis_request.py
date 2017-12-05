@@ -13,6 +13,16 @@ class AnalysisRequest(db.Document):
     priority = IntField(default=0, required=True)
     parameters = DictField()
 
+    filter_parameters = {
+        'analysis_system': None,
+        'sample': None,
+        'analysis_requested__lte': None,
+        'analysis_requested__gte': None,
+        'priority__lte': None,
+        'priority__gte': None,
+        'priority': None
+    }
+
     meta = {
         'ordering': ['-analysis_requested'],
         'indexes': ['analysis_requested']

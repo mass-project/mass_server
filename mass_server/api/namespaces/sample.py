@@ -2,13 +2,13 @@ import json
 
 from flask import request
 from flask_modular_auth import privilege_required, AuthenticatedPrivilege, RolePrivilege
-from flask_slimrest.decorators import add_endpoint, dump, load, load_json, catch, paginate
+from flask_slimrest.decorators import add_endpoint, dump, load, load_json, catch, paginate, filter_results
 from flask_slimrest.utils import make_api_error_response
 from mongoengine import ValidationError
 
 from mass_server.api.config import api
 from mass_server.api.schemas import SampleSchema
-from mass_server.api.utils import pagination_helper
+from mass_server.api.utils import pagination_helper, MappedQuerysetFilter
 from mass_server.core.models import Sample
 
 
@@ -18,6 +18,7 @@ class SampleNamespace:
     @add_endpoint('/')
     @dump(SampleSchema(), paginated=True)
     @paginate(pagination_helper)
+    @filter_results(MappedQuerysetFilter(Sample.filter_parameters), Sample.filter_parameters.keys())
     def collection_get(self):
         return Sample.objects
 
@@ -53,7 +54,7 @@ class SampleNamespace:
     @catch(Sample.DoesNotExist, 'No sample with the specified id found.', 404)
     @catch(ValueError, 'This sample contains no file.', 400)
     def download(self, id):
-        sample =  Sample.objects.get(id=id)
+        sample = Sample.objects.get(id=id)
         if not sample.unique_features.file:
             raise ValueError('Sample has no file.')
-        return sample.unique_features.file.file.read(), 200,  {'Content-Type': 'application/octet-stream'}
+        return sample.unique_features.file.file.read(), 200, {'Content-Type': 'application/octet-stream'}
