@@ -7,9 +7,11 @@ from flask_slimrest.utils import make_api_error_response
 from mongoengine import ValidationError
 
 from mass_server.api.config import api
-from mass_server.api.schemas import SampleSchema
+
+from mass_server.api.schemas import SampleSchema, SampleRelationSchema
 from mass_server.api.utils import pagination_helper, MappedQuerysetFilter
-from mass_server.core.models import Sample
+from mass_server.core.models import Sample, SampleRelation
+from mass_server.core.utils import GraphFunctions
 
 
 @api.add_namespace('/sample')
@@ -58,3 +60,19 @@ class SampleNamespace:
         if not sample.unique_features.file:
             raise ValueError('Sample has no file.')
         return sample.unique_features.file.file.read(), 200, {'Content-Type': 'application/octet-stream'}
+
+
+    @privilege_required(AuthenticatedPrivilege())
+    @add_endpoint('/<id>/relation_graph/')
+    @catch(Sample.DoesNotExist, 'No sample with the specified id found.', 404)
+    @dump(SampleRelationSchema(), paginated=True)
+    @paginate(pagination_helper)
+    def relation_graph(self, id):
+        sample = Sample.objects.get(id=id)
+        if 'depth' in request.args:
+            sample_relations = GraphFunctions.get_relation_graph(sample, int(request.args['depth']))
+        else:
+            sample_relations = GraphFunctions.get_relation_graph(sample)
+
+        relation_ids = [x.id for x in sample_relations]
+        return SampleRelation.objects(id__in=relation_ids).no_dereference()
