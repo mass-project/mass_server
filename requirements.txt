@@ -36,7 +36,7 @@ pytz==2017.3
 PyYAML==3.12
 requests==2.18.4
 six==1.11.0
-ssdeep==3.2
+ssdeep==3.3
 tzlocal==1.5.1
 uWSGI==2.0.15
 visitor==0.1.3
