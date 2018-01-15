@@ -1,5 +1,6 @@
 from flask_modular_auth import privilege_required, AuthenticatedPrivilege, RolePrivilege
-from flask_slimrest.decorators import add_endpoint, dump, load, catch, paginate, filter_results
+from flask_slimrest.decorators import add_endpoint, dump, load, load_json, catch, paginate, filter_results
+from flask_slimrest.utils import make_api_error_response
 
 from mass_server.api.config import api
 from mass_server.api.schemas import AnalysisRequestSchema
@@ -33,6 +34,24 @@ class AnalysisRequestNamespace:
     @dump(AnalysisRequestSchema())
     def element_get(self, id):
         return AnalysisRequest.objects.get(id=id)
+
+    @privilege_required(RolePrivilege('admin'))
+    @add_endpoint('/<id>/', methods=['PATCH'])
+    @catch(AnalysisRequest.DoesNotExist,
+           'No analysis requested with the specified id found.', 404)
+    @dump(AnalysisRequestSchema())
+    @load_json
+    def element_patch(self, id, data):
+        obj = AnalysisRequest.objects.get(id=id)
+        result = AnalysisRequestSchema().update(obj, data)
+        if result.errors:
+            return make_api_error_response(
+                'Validation of the patched data has failed.', 400, {
+                    'errors': result.errors
+                })
+        else:
+            obj.save()
+            return obj
 
     @privilege_required(RolePrivilege('admin'))
     @add_endpoint('/<id>/', methods=['DELETE'])

@@ -52,6 +52,20 @@ class SampleNamespace:
         return Sample.objects.get(id=id)
 
     @privilege_required(AuthenticatedPrivilege())
+    @add_endpoint('/<id>/', methods=['PATCH'])
+    @catch(Sample.DoesNotExist, 'No sample with the specified id found.', 404)
+    @dump(SampleSchema())
+    @catch(ValueError, 'The request body is malformed or incomplete.', error_code=400)
+    @catch(ValidationError, 'The request body is malformed or incomplete.', error_code=400)
+    def element_patch(self, id):
+        sample = Sample.objects.get(id=id)
+        json_data = request.get_json()
+        if json_data:
+            sample.update(**json_data)
+            sample.save()
+            return sample
+
+    @privilege_required(AuthenticatedPrivilege())
     @add_endpoint('/<id>/download/')
     @catch(Sample.DoesNotExist, 'No sample with the specified id found.', 404)
     @catch(ValueError, 'This sample contains no file.', 400)
