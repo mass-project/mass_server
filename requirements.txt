@@ -38,7 +38,7 @@ requests==2.18.4
 six==1.11.0
 ssdeep==3.3
 tzlocal==1.5.1
-uWSGI==2.0.16
+uWSGI==2.0.17
 visitor==0.1.3
 Werkzeug==0.14.1
 WTForms==2.1
