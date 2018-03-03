@@ -52,6 +52,13 @@ class SampleNamespace:
         return Sample.objects.get(id=id)
 
     @privilege_required(AuthenticatedPrivilege())
+    @add_endpoint('/<id>/delivery_dates/')
+    @catch(Sample.DoesNotExist, 'No sample with the specified id found.', 404)
+    def delivery_dates(self, id):
+        delivery_dates = Sample.objects.get(id=id).delivery_dates
+        return json.dumps([date.isoformat() for date in delivery_dates]), 200
+
+    @privilege_required(AuthenticatedPrivilege())
     @add_endpoint('/<id>/download/')
     @catch(Sample.DoesNotExist, 'No sample with the specified id found.', 404)
     @catch(ValueError, 'This sample contains no file.', 400)
