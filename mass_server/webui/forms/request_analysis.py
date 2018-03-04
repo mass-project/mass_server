@@ -8,7 +8,7 @@ from datetime import datetime
 class RequestAnalysisForm(Form):
     analysis_system = SelectField('Analysis system', choices=[], validators=[InputRequired()])
     priority = IntegerField('Priority', validators=[InputRequired()], default=0)
-    schedule_after = DateTimeField('Schedule after (YYYY-MM-DD hh:mm:ss)', default=datetime.now())
+    schedule_after = DateTimeField('Schedule after (YYYY-MM-DD hh:mm:ss)', default=datetime.now)
     submit = SubmitField('Request')
 
     def __init__(self):
