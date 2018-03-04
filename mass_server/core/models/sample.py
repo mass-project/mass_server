@@ -128,26 +128,34 @@ class Sample(db.Document, CommentsMixin, TagsMixin, TLPLevelMixin):
             raise ValueError('unique_features parameter is missing.')
         unique_features = kwargs['unique_features']
         unique_filter = {}
+        sampletype_tags = []
         if 'file' in unique_features:
             file = unique_features['file']
             hash_values = HashFunctions.get_hash_values_dictionary(file)
             unique_filter['unique_features__file__sha512sum'] = hash_values[
                 'sha512sum']
+            sampletype_tags.append('sample-type:file')
         if 'ipv4' in unique_features:
             unique_filter['unique_features__ipv4'] = unique_features['ipv4']
+            sampletype_tags.append('sample-type:ipv4')
         if 'ipv6' in unique_features:
             unique_filter['unique_features__ipv6'] = unique_features['ipv6']
+            sampletype_tags.append('sample-type:ipv6')
         if 'port' in unique_features:
             unique_filter['unique_features__port'] = unique_features['port']
+            sampletype_tags.append('sample-type:port')
         if 'domain' in unique_features:
             unique_filter['unique_features__domain'] = unique_features[
                 'domain']
+            sampletype_tags.append('sample-type:domain')
         if 'uri' in unique_features:
             unique_filter['unique_features__uri'] = unique_features['uri']
+            sampletype_tags.append('sample-type:uri')
         if 'custom_unique_feature' in unique_features:
             unique_filter[
                 'unique_features__custom_unique_feature'] = unique_features[
                     'custom_unique_feature']
+            sampletype_tags.append('sample-type:custom')
 
         if len(unique_filter) == 0:
             raise ValidationError('No unique features provided.')
@@ -157,6 +165,7 @@ class Sample(db.Document, CommentsMixin, TagsMixin, TLPLevelMixin):
         except DoesNotExist:
             sample = Sample.create(unique_features)
         sample.update(**kwargs)
+        sample.add_tags(sampletype_tags)
         sample.save()
         return sample
 
