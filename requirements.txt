@@ -9,7 +9,7 @@ docopt==0.6.2
 dominate==2.3.1
 Faker==0.8.12
 Flask==0.12.2
-Flask-APScheduler==1.7.1
+Flask-APScheduler==1.8.0
 Flask-Bootstrap==3.3.7.1
 Flask-Login==0.4.1
 flask-marshmallow==0.8.0
