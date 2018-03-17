@@ -1,0 +1,3 @@
+FROM mass_server:latest
+
+ENTRYPOINT mass_scheduler
