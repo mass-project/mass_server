@@ -28,6 +28,13 @@ class DefaultConfig(object):
 
 # Generate or load secret key
 def _load_or_generate_secret_key(app):
+    # Check if the secret is set in the environment variables
+    env_secret = os.getenv('FLASK_SECRET', None)
+    if env_secret:
+        app.secret_key = env_secret
+        return
+
+    # If not try to read it from file
     secret_file_name = 'secret.txt'
     try:
         app.secret_key = app.open_instance_resource(
