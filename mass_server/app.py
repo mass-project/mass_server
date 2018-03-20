@@ -61,10 +61,21 @@ def _load_config(app, debug=False, testing=False):
         app.config['TESTING'] = True
     if debug == True:
         app.config['DEBUG'] = True
-    if testing == False:
-        app.config.from_pyfile('application.cfg')
-    else:
-        app.config.from_pyfile('testing.cfg')
+
+    mongo_host = os.getenv('MONGO_HOST', None)
+    if mongo_host:
+        app.config['MONGODB_SETTINGS'] = {
+            'host': mongo_host,
+            'tz_aware': True
+        }
+
+    try:
+        if testing == False:
+            app.config.from_pyfile('application.cfg')
+        else:
+            app.config.from_pyfile('testing.cfg')
+    except FileNotFoundError:
+        print('Could not load config file. Using default config.')
 
 
 # Bootstrap app
