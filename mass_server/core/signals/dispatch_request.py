@@ -1,5 +1,6 @@
-from mass_server.core.models import Sample, AnalysisSystem, AnalysisRequest, AnalysisSystemInstance, ScheduledAnalysis
+from mass_server.core.models import Sample, AnalysisSystem, AnalysisRequest, ScheduledAnalysis
 from mass_server.core.utils.tag_parser import TagParser
+from datetime import datetime, timedelta
 
 
 def _filter_matches_tags(tags, tag_filter):
@@ -11,8 +12,12 @@ def _match_sample_and_system(sample, system):
         return
     if not _filter_matches_tags(sample.tags, system.tag_filter_expression):
         return
-    analysis_request = AnalysisRequest(sample=sample, analysis_system=system)
-    analysis_request.save()
+
+    for time_offset in system.time_schedule:
+        schedule_after = datetime.now() + timedelta(minutes=time_offset)
+        analysis_request = AnalysisRequest(sample=sample, analysis_system=system, schedule_after=schedule_after)
+        analysis_request.save()
+
     sample.dispatched_to.append(system)
     sample.save()
 
