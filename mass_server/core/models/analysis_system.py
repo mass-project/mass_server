@@ -9,6 +9,8 @@ class AnalysisSystem(db.Document):
     information_text = StringField(required=False)
     tag_filter_expression = StringField(max_length=400, required=True, default='')
     time_schedule = ListField(IntField(), default=[0])
+    number_retries = IntField(min_value=0, default=0)
+    minutes_before_retry = IntField(min_value=0, default=0)
 
     filter_parameters = {
         'identifier_name': None,

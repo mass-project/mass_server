@@ -7,7 +7,7 @@ from flask_slimrest.decorators import add_endpoint, dump, load, catch, paginate,
 from mass_server.api.config import api
 from mass_server.api.schemas import ScheduledAnalysisSchema, ReportSchema
 from mass_server.api.utils import pagination_helper, MappedQuerysetFilter
-from mass_server.core.models import ScheduledAnalysis
+from mass_server.core.models import AnalysisRequest, Report, ScheduledAnalysis
 
 
 @api.add_namespace('/scheduled_analysis')
@@ -52,6 +52,7 @@ class ScheduledAnalysisNamespace:
         if parsed_report.errors:
             return jsonify(parsed_report.errors), 400
         report = parsed_report.data
+        report.status = data['status']
 
         report.sample = scheduled_analysis.sample
         report.analysis_system = scheduled_analysis.analysis_system_instance.analysis_system
@@ -63,6 +64,10 @@ class ScheduledAnalysisNamespace:
                 report.add_raw_report_object(f)
 
         report.save()
+
+        if report.status == Report.REPORT_STATUS_CODE_FAILURE:
+            AnalysisRequest.create_from_scheduled_analysis(scheduled_analysis, caused_by_failure=True)
+
         scheduled_analysis.delete()
         return report
 
