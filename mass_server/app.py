@@ -13,6 +13,8 @@ from mass_server.core.signals import connect_signals
 from mass_server.api.config import api_blueprint
 from mass_server.webui.config import webui_blueprint
 
+from raven.contrib.flask import Sentry
+
 
 # Default configuration settings
 class DefaultConfig(object):
@@ -52,6 +54,14 @@ def _load_or_generate_secret_key(app):
         except IOError:
             Exception('Please create a %s file with random characters \
             to generate your secret key!' % secret_file_name)
+
+
+# Init Sentry
+def _init_sentry(app):
+    sentry_dsn = os.getenv('SENTRY_DSN', None)
+    if sentry_dsn:
+        sentry = Sentry(dsn=sentry_dsn)
+        sentry.init_app(app)
 
 
 # Load config
@@ -114,6 +124,7 @@ def _bootstrap_app(app):
 
 def get_app(instance_path=None, testing=False, debug=False):
     app = Flask(__name__, instance_path=instance_path, instance_relative_config=True)
+    _init_sentry(app)
     _load_or_generate_secret_key(app)
     _load_config(app, debug=debug, testing=testing)
     _bootstrap_app(app)
