@@ -43,7 +43,7 @@ class AnalysisRequest(db.Document):
     def create_from_scheduled_analysis(cls, scheduled_analysis, caused_by_failure=False):
         analysis_system = scheduled_analysis.analysis_system_instance.analysis_system
 
-        if scheduled_analysis.num_retry + 1 >= analysis_system.number_retries:
+        if scheduled_analysis.num_retry + 1 >= analysis_system.number_retries and caused_by_failure:
             return None
 
         r = cls(analysis_system=analysis_system, sample=scheduled_analysis.sample,
