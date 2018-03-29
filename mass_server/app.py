@@ -14,6 +14,7 @@ from mass_server.api.config import api_blueprint
 from mass_server.webui.config import webui_blueprint
 
 from raven.contrib.flask import Sentry
+from raven.transport.requests import RequestsHTTPTransport
 
 
 # Default configuration settings
@@ -60,7 +61,11 @@ def _load_or_generate_secret_key(app):
 def _init_sentry(app):
     sentry_dsn = os.getenv('SENTRY_DSN', None)
     if sentry_dsn:
-        sentry = Sentry(dsn=sentry_dsn)
+        sentry = Sentry()
+        app.config['RAVEN_CONFIG'] = {
+            'dsn': sentry_dsn,
+            'transport': RequestsHTTPTransport
+        }
         sentry.init_app(app)
 
 
