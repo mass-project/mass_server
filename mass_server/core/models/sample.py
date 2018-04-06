@@ -94,7 +94,7 @@ class Sample(db.Document, CommentsMixin, TagsMixin, TLPLevelMixin):
 
     meta = {
         'ordering': ['-first_seen'],
-        'indexes': ['first_seen'],
+        'indexes': ['first_seen', 'delivery_dates'],
         'queryset_class': SampleQuerySet
     }
 
