@@ -58,7 +58,7 @@ class Sample(db.Document, CommentsMixin, TagsMixin, TLPLevelMixin):
     filter_parameters = {
         'first_seen__lte': None,
         'first_seen__gte': None,
-        'tags__all': None,
+        'tags__contains': None,
         'has_file': 'unique_features__file__exists',
         'has_ipv4': 'unique_features__ipv4__exists',
         'has_ipv6': 'unique_features__ipv6__exists',
