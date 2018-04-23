@@ -1,6 +1,7 @@
 import sys
 import time
 import warnings
+from datetime import datetime
 from multiprocessing import Pool
 
 from mass_server import get_app
@@ -73,13 +74,15 @@ def schedule_analyses():
     with app.app_context():
         InstanceDict.update_instance_dict()
         analysis_requests = AnalysisRequest.objects().no_dereference()
+        due_analysis_requests = analysis_requests.filter(schedule_after__lte=datetime.now())
+        undue_requests = len(analysis_requests) - len(due_analysis_requests)
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
             with Pool() as p:
-                scheduled_list = p.map(_schedule_analysis_request, analysis_requests)
+                scheduled_list = p.map(_schedule_analysis_request, due_analysis_requests)
         requests_scheduled = sum(scheduled_list)
         request_not_scheduled = len(scheduled_list) - requests_scheduled
-        print('Scheduled: ', requests_scheduled, 'Not scheduled: ', request_not_scheduled)
+        print('Scheduled: ', requests_scheduled, 'Not scheduled: ', request_not_scheduled, 'Undue: ', undue_requests)
 
 
 def main():

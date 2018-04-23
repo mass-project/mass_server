@@ -103,15 +103,12 @@ def _process_request_form(form, sample):
         priority = form.data['priority']
         analysis_system = AnalysisSystem.objects.get(
             identifier_name=form.data['analysis_system'])
-        try:
-            request = AnalysisRequest.objects.get(
-                sample=sample, analysis_system=analysis_system)
-            request.priority = priority
-        except DoesNotExist:
-            request = AnalysisRequest(
-                sample=sample,
-                analysis_system=analysis_system,
-                priority=priority)
+        request = AnalysisRequest(
+            sample=sample,
+            analysis_system=analysis_system,
+            schedule_after=form.data['schedule_after'],
+            priority=priority)
+
         request.save()
         flash('Your request has been saved', 'success')
 

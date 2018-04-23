@@ -10,6 +10,7 @@ class AnalysisRequest(db.Document):
     analysis_system = ReferenceField(AnalysisSystem, required=True)
     sample = ReferenceField(Sample, required=True)
     analysis_requested = DateTimeField(default=TimeFunctions.get_timestamp, required=True)
+    schedule_after = DateTimeField(default=TimeFunctions.get_timestamp)
     priority = IntField(default=0, required=True)
     parameters = DictField()
 
@@ -18,6 +19,8 @@ class AnalysisRequest(db.Document):
         'sample': None,
         'analysis_requested__lte': None,
         'analysis_requested__gte': None,
+        'schedule_after__lte': None,
+        'schedule_after__gte': None,
         'priority__lte': None,
         'priority__gte': None,
         'priority': None

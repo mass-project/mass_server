@@ -338,16 +338,18 @@ Detail page for sample #{{ sample.id }}
                             <th>Analysis system</th>
                             <th>Priority</th>
                             <th>Requested</th>
+                            <th>Schedule after</th>
                         </tr>
                         {% for request in requested_analyses %}
                             <tr>
                                 <td>{{ request.analysis_system.verbose_name }}</td>
                                 <td>{{ request.priority }}</td>
                                 <td>{{ request.analysis_requested }}</td>
+                                <td>{{ request.schedule_after }}</td>
                             </tr>
                         {% else %}
                             <tr>
-                                <td colspan="3" class="text-center"><em>There are no requested analyses for this sample.</em></td>
+                                <td colspan="4" class="text-center"><em>There are no requested analyses for this sample.</em></td>
                             </tr>
                         {% endfor %}
                     </table>
