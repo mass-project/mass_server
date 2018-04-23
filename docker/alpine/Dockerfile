@@ -7,7 +7,7 @@ RUN apk --no-cache add python3 python3-dev libffi libffi-dev libmagic tzdata git
 RUN cp /usr/share/zoneinfo/UTC /etc/localtime && echo "UTC" > /etc/timezone
 
 # Install MASS server
-RUN BUILD_LIB=1 pip3 install git+https://github.com/mass-project/mass_server.git@0.2-rc1
+RUN BUILD_LIB=1 pip3 install git+https://github.com/mass-project/mass_server.git@0.2-rc1_temporary-merge
 # Create MASS user
 RUN adduser -D mass
 USER mass

@@ -59,6 +59,7 @@ class Sample(db.Document, CommentsMixin, TagsMixin, TLPLevelMixin):
         'first_seen__lte': None,
         'first_seen__gte': None,
         'tags__contains': None,
+        'tags': None,
         'has_file': 'unique_features__file__exists',
         'has_ipv4': 'unique_features__ipv4__exists',
         'has_ipv6': 'unique_features__ipv6__exists',
@@ -94,7 +95,7 @@ class Sample(db.Document, CommentsMixin, TagsMixin, TLPLevelMixin):
 
     meta = {
         'ordering': ['-first_seen'],
-        'indexes': ['first_seen'],
+        'indexes': ['first_seen', 'delivery_dates', 'tags'],
         'queryset_class': SampleQuerySet
     }
 

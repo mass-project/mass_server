@@ -7,7 +7,6 @@ from multiprocessing import Pool
 from mass_server import get_app
 from mass_server.core.models import ScheduledAnalysis, AnalysisRequest, AnalysisSystemInstance
 
-
 app = get_app()
 
 
@@ -61,7 +60,8 @@ def _schedule_analysis_request(request):
     min_instance = InstanceDict.get_instance_with_minimum_count(instances)
     if not InstanceDict.check_id(system_id):
         return False
-    s = ScheduledAnalysis(analysis_system_instance=min_instance, sample=request.sample, parameters=request.parameters)
+    s = ScheduledAnalysis(analysis_system_instance=min_instance, sample=request.sample, parameters=request.parameters,
+                          num_retry=request.num_retry)
     s.save()
     min_instance.analyses_count += 1
     InstanceDict.remove_if_threshold_reached(min_instance, system_id)

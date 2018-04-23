@@ -63,7 +63,8 @@ requirements = [
     'uWSGI==2.0.15',
     'visitor==0.1.3',
     'Werkzeug==0.12.2',
-    'WTForms==2.1'
+    'WTForms==2.1',
+    'raven==6.6.0'
 ]
 
 setup(

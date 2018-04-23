@@ -2,11 +2,10 @@ from flask import url_for, request
 from math import ceil
 from flask_slimrest.pagination import PaginationResult
 from flask_slimrest.utils import make_api_response
-from functools import wraps
 
 
-def _get_page_link(page_number):
-    return url_for(request.url_rule.endpoint, page=page_number, _external=True)
+def _get_page_link(page_number, per_page):
+    return url_for(request.url_rule.endpoint, page=page_number, per_page=per_page, _external=True, **request.view_args)
 
 
 def pagination_helper(queryset, per_page=100):
@@ -14,6 +13,9 @@ def pagination_helper(queryset, per_page=100):
 
     if 'count' in request.args:
         return make_api_response({'count': item_count})
+
+    if 'per_page' in request.args:
+        per_page = int(request.args['per_page'])
 
     if 'page' in request.args:
         page = int(request.args['page'])
@@ -27,8 +29,8 @@ def pagination_helper(queryset, per_page=100):
         paginated_queryset.items,
         page,
         page_count,
-        _get_page_link(paginated_queryset.next_num) if paginated_queryset.has_next else None,
-        _get_page_link(paginated_queryset.prev_num) if paginated_queryset.has_prev else None
+        _get_page_link(paginated_queryset.next_num, per_page) if paginated_queryset.has_next else None,
+        _get_page_link(paginated_queryset.prev_num, per_page) if paginated_queryset.has_prev else None
     )
 
 

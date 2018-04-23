@@ -28,10 +28,12 @@ class Report(db.Document):
 
     REPORT_STATUS_CODE_OK = 0
     REPORT_STATUS_CODE_FAILURE = 1
+    REPORT_STATUS_CODE_UNRECOVERABLE_FAIL = 2
 
     REPORT_STATUS_CODES = (
         (REPORT_STATUS_CODE_OK, 'OK'),
         (REPORT_STATUS_CODE_FAILURE, 'FAIL'),
+        (REPORT_STATUS_CODE_UNRECOVERABLE_FAIL, 'UNRECV_FAIL'),
     )
 
     analysis_system = ReferenceField(AnalysisSystem, required=True)
@@ -59,7 +61,7 @@ class Report(db.Document):
 
     meta = {
         'ordering': ['-upload_date'],
-        'indexes': ['upload_date']
+        'indexes': ['upload_date', 'sample']
     }
 
     def __repr__(self):

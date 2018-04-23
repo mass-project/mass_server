@@ -12,6 +12,7 @@ class ScheduledAnalysis(db.Document):
     analysis_scheduled = DateTimeField(default=TimeFunctions.get_timestamp, required=True)
     priority = IntField(default=0, required=True)
     parameters = DictField()
+    num_retry = IntField(min_value=0, default=0)
 
     filter_parameters = {
         'analysis_system_instance': None,
