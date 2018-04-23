@@ -7,6 +7,7 @@ from .base import BaseSchema, ForeignReferenceField
 
 class SampleSchema(BaseSchema):
     url = URLFor('api.sample_namespace_element_get', id='<id>', _external=True)
+    delivery_dates = URLFor('api.sample_namespace_delivery_dates', id='<id>', _external=True)
     dispatched_to = List(
         ForeignReferenceField(
             endpoint='api.analysis_system_namespace_element_get',
