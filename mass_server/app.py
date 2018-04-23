@@ -28,6 +28,13 @@ class DefaultConfig(object):
 
 # Generate or load secret key
 def _load_or_generate_secret_key(app):
+    # Check if the secret is set in the environment variables
+    env_secret = os.getenv('FLASK_SECRET', None)
+    if env_secret:
+        app.secret_key = env_secret
+        return
+
+    # If not try to read it from file
     secret_file_name = 'secret.txt'
     try:
         app.secret_key = app.open_instance_resource(
@@ -54,10 +61,21 @@ def _load_config(app, debug=False, testing=False):
         app.config['TESTING'] = True
     if debug == True:
         app.config['DEBUG'] = True
-    if testing == False:
-        app.config.from_pyfile('application.cfg')
-    else:
-        app.config.from_pyfile('testing.cfg')
+
+    mongo_host = os.getenv('MONGO_HOST', None)
+    if mongo_host:
+        app.config['MONGODB_SETTINGS'] = {
+            'host': mongo_host,
+            'tz_aware': True
+        }
+
+    try:
+        if testing == False:
+            app.config.from_pyfile('application.cfg')
+        else:
+            app.config.from_pyfile('testing.cfg')
+    except FileNotFoundError:
+        print('Could not load config file. Using default config.')
 
 
 # Bootstrap app

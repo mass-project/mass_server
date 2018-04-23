@@ -46,7 +46,7 @@ class ReportNamespace:
     @catch(Report.DoesNotExist, 'No report with the specified id found.', 404)
     @catch(ValueError, 'No report object with the specified name found.', 404)
     def json_report_object(self, id, object_name):
-        report =  Report.objects.get(id=id)
+        report = Report.objects.get(id=id)
         if object_name not in report.json_report_objects:
             raise ValueError('Report object not found.')
         return report.json_report_objects[object_name].read(), 200,  {'Content-Type': 'application/json'}
@@ -56,7 +56,7 @@ class ReportNamespace:
     @catch(Report.DoesNotExist, 'No report with the specified id found.', 404)
     @catch(ValueError, 'No report object with the specified name found.', 404)
     def raw_report_object(self, id, object_name):
-        report =  Report.objects.get(id=id)
-        if object_name not in raw.json_report_objects:
+        report = Report.objects.get(id=id)
+        if object_name not in report.raw_report_objects:
             raise ValueError('Report object not found.')
         return report.raw_report_objects[object_name].read(), 200,  {'Content-Type': 'application/octet-stream'}

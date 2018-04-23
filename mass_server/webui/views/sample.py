@@ -103,15 +103,12 @@ def _process_request_form(form, sample):
         priority = form.data['priority']
         analysis_system = AnalysisSystem.objects.get(
             identifier_name=form.data['analysis_system'])
-        try:
-            request = AnalysisRequest.objects.get(
-                sample=sample, analysis_system=analysis_system)
-            request.priority = priority
-        except DoesNotExist:
-            request = AnalysisRequest(
-                sample=sample,
-                analysis_system=analysis_system,
-                priority=priority)
+        request = AnalysisRequest(
+            sample=sample,
+            analysis_system=analysis_system,
+            schedule_after=form.data['schedule_after'],
+            priority=priority)
+
         request.save()
         flash('Your request has been saved', 'success')
 
@@ -135,7 +132,7 @@ def sample_graph(sample_id):
             id__in=node_ids)
         nodes = []
         for node in samples:
-            nodes.append({'id': str(node.id), 'label': node.title})
+            nodes.append({'id': str(node.id), 'label': str(node.id)})
         response = jsonify({'edges': edges, 'nodes': nodes})
         return response, 200, {'Content-Type': 'application/json'}
     except DoesNotExist:
