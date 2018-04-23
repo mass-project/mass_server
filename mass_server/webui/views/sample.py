@@ -135,7 +135,7 @@ def sample_graph(sample_id):
             id__in=node_ids)
         nodes = []
         for node in samples:
-            nodes.append({'id': str(node.id), 'label': node.title})
+            nodes.append({'id': str(node.id), 'label': str(node.id)})
         response = jsonify({'edges': edges, 'nodes': nodes})
         return response, 200, {'Content-Type': 'application/json'}
     except DoesNotExist:
