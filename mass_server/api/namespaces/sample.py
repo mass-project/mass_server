@@ -8,9 +8,9 @@ from mongoengine import ValidationError
 
 from mass_server.api.config import api
 
-from mass_server.api.schemas import SampleSchema, SampleRelationSchema
+from mass_server.api.schemas import ReportSchema, SampleSchema, SampleRelationSchema
 from mass_server.api.utils import pagination_helper, MappedQuerysetFilter
-from mass_server.core.models import Sample, SampleRelation
+from mass_server.core.models import Report, Sample, SampleRelation
 from mass_server.core.utils import GraphFunctions
 
 
@@ -75,7 +75,6 @@ class SampleNamespace:
             raise ValueError('Sample has no file.')
         return sample.unique_features.file.file.read(), 200, {'Content-Type': 'application/octet-stream'}
 
-
     @privilege_required(AuthenticatedPrivilege())
     @add_endpoint('/<id>/relation_graph/')
     @catch(Sample.DoesNotExist, 'No sample with the specified id found.', 404)
@@ -90,3 +89,12 @@ class SampleNamespace:
 
         relation_ids = [x.id for x in sample_relations]
         return SampleRelation.objects(id__in=relation_ids).no_dereference()
+
+    @privilege_required(AuthenticatedPrivilege())
+    @add_endpoint('/<id>/reports/')
+    @catch(Sample.DoesNotExist, 'No sample with the specified id found.', 404)
+    @dump(ReportSchema(), paginated=True)
+    @paginate(pagination_helper)
+    def reports(self, id):
+        sample = Sample.objects.get(id=id)
+        return Report.objects(sample=sample)
