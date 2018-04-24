@@ -98,12 +98,9 @@ class Sample(db.Document, CommentsMixin, TagsMixin, TLPLevelMixin):
         'ordering': ['-first_seen'],
         'indexes': [
             'first_seen', 'delivery_dates', 'tags',
-            {
-                'name': 'unique_features',
-                'fields': ['unique_features.file.sha512sum', 'unique_features.ipv4', 'unique_features.ipv6',
-                           'unique_features.port', 'unique_features.domain', 'unique_features.uri',
-                           'unique_features.custom_unique_feature']
-            }
+            'unique_features.file.sha512sum', 'unique_features.ipv4', 'unique_features.ipv6',
+            'unique_features.port', 'unique_features.domain', 'unique_features.uri',
+            'unique_features.custom_unique_feature'
         ],
         'queryset_class': SampleQuerySet
     }
@@ -137,8 +134,7 @@ class Sample(db.Document, CommentsMixin, TagsMixin, TLPLevelMixin):
         if 'unique_features' not in kwargs:
             raise ValueError('unique_features parameter is missing.')
         unique_features = kwargs['unique_features']
-        unique_filter = {'unique_features__{}'.format(k): None for k in
-                         ['file', 'ipv4', 'ipv6', 'port', 'domain', 'uri', 'custom_unique_feature']}
+        unique_filter = {}
         sampletype_tags = []
         if 'file' in unique_features:
             file = unique_features['file']
