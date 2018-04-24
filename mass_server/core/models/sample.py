@@ -1,6 +1,7 @@
 from flask_modular_auth import current_authenticated_entity
 from flask_mongoengine import BaseQuerySet
-from mongoengine import StringField, DateTimeField, ListField, ReferenceField, EmbeddedDocumentField, FileField, IntField, FloatField, EmbeddedDocument, ValidationError, DoesNotExist, Q, GenericReferenceField
+from mongoengine import StringField, DateTimeField, ListField, ReferenceField, EmbeddedDocumentField, FileField, \
+    IntField, FloatField, EmbeddedDocument, ValidationError, DoesNotExist, Q, GenericReferenceField
 
 from mass_server.core.utils import TimeFunctions, HashFunctions, FileFunctions, ListFunctions, StringFunctions
 from mass_server import db
@@ -95,7 +96,13 @@ class Sample(db.Document, CommentsMixin, TagsMixin, TLPLevelMixin):
 
     meta = {
         'ordering': ['-first_seen'],
-        'indexes': ['first_seen', 'delivery_dates', 'tags'],
+        'indexes': [
+            'first_seen', 'delivery_dates', 'tags',
+            {
+                'name': 'unique_features',
+                'fields': ['unique_features.file.sha512sum', 'unique_features.ipv4', 'unique_features.ipv6', 'unique_features.port', 'unique_features.domain', 'unique_features.uri', 'unique_features.custom_unique_feature']
+            }
+        ],
         'queryset_class': SampleQuerySet
     }
 
@@ -154,8 +161,7 @@ class Sample(db.Document, CommentsMixin, TagsMixin, TLPLevelMixin):
             sampletype_tags.append('sample-type:uri')
         if 'custom_unique_feature' in unique_features:
             unique_filter[
-                'unique_features__custom_unique_feature'] = unique_features[
-                    'custom_unique_feature']
+                'unique_features__custom_unique_feature'] = unique_features['custom_unique_feature']
             sampletype_tags.append('sample-type:custom')
 
         if len(unique_filter) == 0:
