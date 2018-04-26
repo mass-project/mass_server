@@ -20,7 +20,7 @@ future==0.16.0
 itsdangerous==0.24
 Jinja2==2.10
 MarkupSafe==1.0
-marshmallow==2.15.0
+marshmallow==2.15.1
 marshmallow-mongoengine==0.9.1
 mixer==6.0.1
 mongoengine==0.15.0
