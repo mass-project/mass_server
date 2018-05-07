@@ -30,7 +30,7 @@ class AnalysisRequest(db.Document):
 
     meta = {
         'ordering': ['-analysis_requested'],
-        'indexes': ['analysis_requested']
+        'indexes': ['analysis_requested', 'schedule_after']
     }
 
     def __repr__(self):
