@@ -134,7 +134,15 @@ class Sample(db.Document, CommentsMixin, TagsMixin, TLPLevelMixin):
         if 'unique_features' not in kwargs:
             raise ValueError('unique_features parameter is missing.')
         unique_features = kwargs['unique_features']
-        unique_filter = {}
+        unique_filter = {
+            'unique_features__file__sha512sum': None,
+            'unique_features__ipv4': None,
+            'unique_features__ipv6': None,
+            'unique_features__port': None,
+            'unique_features__domain': None,
+            'unique_features__uri': None,
+            'unique_features__custom_unique_feature': None
+        }
         sampletype_tags = []
         if 'file' in unique_features:
             file = unique_features['file']
