@@ -146,9 +146,7 @@ class Sample(db.Document, CommentsMixin, TagsMixin, TLPLevelMixin):
         sampletype_tags = []
         if 'file' in unique_features:
             file = unique_features['file']
-            hash_values = HashFunctions.get_hash_values_dictionary(file)
-            unique_filter['unique_features__file__sha512sum'] = hash_values[
-                'sha512sum']
+            unique_filter['unique_features__file__sha512sum'] = HashFunctions.sha512_hash(file)
             sampletype_tags.append('sample-type:file')
         if 'ipv4' in unique_features:
             unique_filter['unique_features__ipv4'] = unique_features['ipv4']
@@ -195,23 +193,17 @@ class Sample(db.Document, CommentsMixin, TagsMixin, TLPLevelMixin):
 
         if 'file' in unique_features:
             file = unique_features['file']
+            hash_values = HashFunctions.get_hash_values_dictionary(file)
             sample.unique_features.file = FileFeatureDocument()
-            sample.unique_features.file.md5sum = HashFunctions.md5_hash(file)
-            sample.unique_features.file.sha1sum = HashFunctions.sha1_hash(file)
-            sample.unique_features.file.sha256sum = HashFunctions.sha256_hash(
-                file)
-            sample.unique_features.file.sha512sum = HashFunctions.sha512_hash(
-                file)
-            sample.unique_features.file.ssdeep_hash = HashFunctions.ssdeep_hash(
-                file)
-            sample.unique_features.file.shannon_entropy = HashFunctions.shannon_entropy(
-                file)
-            sample.unique_features.file.file_size = FileFunctions.get_file_size(
-                file)
-            sample.unique_features.file.mime_type = FileFunctions.get_mime_type_from_file(
-                file)
-            sample.unique_features.file.magic_string = FileFunctions.get_magic_string_from_file(
-                file)
+            sample.unique_features.file.md5sum = hash_values['md5sum']
+            sample.unique_features.file.sha1sum = hash_values['sha1sum']
+            sample.unique_features.file.sha256sum = hash_values['sha256sum']
+            sample.unique_features.file.sha512sum = hash_values['sha512sum']
+            sample.unique_features.file.ssdeep_hash = hash_values['ssdeep_hash']
+            sample.unique_features.file.shannon_entropy = hash_values['shannon_entropy']
+            sample.unique_features.file.file_size = FileFunctions.get_file_size(file)
+            sample.unique_features.file.mime_type = FileFunctions.get_mime_type_from_file(file)
+            sample.unique_features.file.magic_string = FileFunctions.get_magic_string_from_file(file)
             file_name = FileFunctions.get_file_name(file)
             sample.unique_features.file.file.put(
                 file,
