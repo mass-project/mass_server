@@ -97,7 +97,7 @@ class Sample(db.Document, CommentsMixin, TagsMixin, TLPLevelMixin):
     meta = {
         'ordering': ['-first_seen'],
         'indexes': [
-            'first_seen', 'delivery_dates', 'tags',
+            'first_seen', 'delivery_dates', 'tags', 'tlp_level',
             'unique_features.file.sha512sum', 'unique_features.ipv4', 'unique_features.ipv6',
             'unique_features.port', 'unique_features.domain', 'unique_features.uri',
             'unique_features.custom_unique_feature'
