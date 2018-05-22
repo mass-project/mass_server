@@ -10,7 +10,7 @@ from mass_server.webui.forms import CommentForm, RequestAnalysisForm
 
 @PaginationFunctions.paginate
 def _get_samples_paginated():
-    return Sample.objects.get_with_tlp_level_filter()
+    return Sample.objects
 
 
 @webui_blueprint.route('/sample/')
