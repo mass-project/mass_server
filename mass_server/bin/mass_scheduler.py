@@ -56,6 +56,11 @@ class InstanceDict:
 
 def _schedule_analysis_request(request):
     system_id = request.analysis_system.id
+
+    if system_id not in InstanceDict._dict:
+        print('No instance for this analysis system in InstanceDict.')
+        return False
+
     instances = InstanceDict._dict[system_id]
     min_instance = InstanceDict.get_instance_with_minimum_count(instances)
     if not InstanceDict.check_id(system_id):
