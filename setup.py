@@ -86,13 +86,14 @@ setup(
         'License :: OSI Approved :: MIT License',
     ],
     platforms='any',
-    test_suite = 'nose.collector',
+    test_suite='nose.collector',
     install_requires=requirements,
     tests_require=['nose', 'coverage'],
     entry_points={
         'console_scripts': [
             'mass_server=mass_server.bin.mass_server:main',
-            'mass_scheduler=mass_server.bin.mass_scheduler:main'
+            'mass_scheduler=mass_server.bin.mass_scheduler:main',
+            'mass_worker=mass_server.bin.mass_worker:main'
         ]
     }
 )

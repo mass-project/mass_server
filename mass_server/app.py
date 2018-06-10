@@ -84,6 +84,9 @@ def _load_config(app, debug=False, testing=False):
             'tz_aware': True
         }
 
+    amqp_url = os.getenv('AMQP_URL', None)
+    app.config['AMQP_URL'] = amqp_url if amqp_url else 'amqp://guest:guest@localhost:5672/'
+
     try:
         if testing == False:
             app.config.from_pyfile('application.cfg')
