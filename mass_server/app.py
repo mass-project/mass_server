@@ -6,6 +6,7 @@ from flask import Flask, redirect, url_for
 from flask_bootstrap import Bootstrap
 from flask_modular_auth import SessionBasedAuthProvider, KeyBasedAuthProvider
 
+from mass_server.__version__ import __version__
 from mass_server import db, auth
 from mass_server.core.models import AnonymousUser, User, APIKey
 
@@ -112,8 +113,8 @@ def _bootstrap_app(app):
     app.key_based_provider = KeyBasedAuthProvider(APIKey.api_key_loader)
     auth.register_auth_provider(app.key_based_provider)
 
-    # Set the version number. For the future we should probably read it from a file.
-    app.version = '1.0-alpha1'
+    # Set the version number.
+    app.version = __version__
 
     # Init blueprints and signals.
     connect_signals()
