@@ -21,7 +21,7 @@ def schedule_analyses():
     with app.app_context():
         for system in AnalysisSystem.objects():
             queue_name = '{}_analysis-requests'.format(system.identifier_name)
-            queue_channel.queue_declare(queue=queue_name, durable=True)
+            queue_context.ensure_queue(queue=queue_name, durable=True)
 
         due_analysis_requests = AnalysisRequest.objects().filter(schedule_after__lte=datetime.now(), enqueued=False)
 

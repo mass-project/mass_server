@@ -6,6 +6,7 @@ from mass_server.webui.config import webui_blueprint
 from mass_server.core.utils import PaginationFunctions, GraphFunctions, TimeFunctions
 from mass_server.core.models import Sample, Report, ScheduledAnalysis, AnalysisSystem, AnalysisRequest
 from mass_server.webui.forms import CommentForm, RequestAnalysisForm
+from mass_server.queue.utils import enqueue_analysis_request
 
 
 @PaginationFunctions.paginate
@@ -110,6 +111,7 @@ def _process_request_form(form, sample):
             priority=priority)
 
         request.save()
+        enqueue_analysis_request(request)
         flash('Your request has been saved', 'success')
 
 

@@ -1,5 +1,6 @@
 from mass_server.core.models import Sample, AnalysisSystem, AnalysisRequest, ScheduledAnalysis
 from mass_server.core.utils.tag_parser import TagParser
+from mass_server.queue.utils import enqueue_analysis_request
 from datetime import datetime, timedelta
 
 
@@ -17,6 +18,8 @@ def _match_sample_and_system(sample, system):
         schedule_after = datetime.now() + timedelta(minutes=time_offset)
         analysis_request = AnalysisRequest(sample=sample, analysis_system=system, schedule_after=schedule_after)
         analysis_request.save()
+        if time_offset == 0:
+            enqueue_analysis_request(analysis_request)
 
     sample.dispatched_to.append(system)
     sample.save()

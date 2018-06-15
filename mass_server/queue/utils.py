@@ -11,6 +11,7 @@ def enqueue_analysis_request(request):
     }
 
     queue_name = '{}_analysis-requests'.format(request.analysis_system.identifier_name)
+    queue_context.ensure_queue(queue_name, durable=True)
     queue_context.channel.basic_publish(exchange='',
                                         routing_key=queue_name,
                                         body=json.dumps(message_body))
