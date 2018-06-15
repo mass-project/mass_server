@@ -1,4 +1,4 @@
-from mongoengine import DateTimeField, ReferenceField, IntField, DictField
+from mongoengine import DateTimeField, ReferenceField, IntField, DictField, BooleanField
 from datetime import datetime, timedelta
 
 from mass_server.core.utils import TimeFunctions
@@ -13,6 +13,7 @@ class AnalysisRequest(db.Document):
     analysis_requested = DateTimeField(default=TimeFunctions.get_timestamp, required=True)
     schedule_after = DateTimeField(default=TimeFunctions.get_timestamp)
     priority = IntField(default=0, required=True)
+    enqueued = BooleanField(default=False, required=True)
     parameters = DictField()
     num_retry = IntField(min_value=0, default=0)
 
@@ -30,7 +31,7 @@ class AnalysisRequest(db.Document):
 
     meta = {
         'ordering': ['-analysis_requested'],
-        'indexes': ['analysis_requested', 'schedule_after']
+        'indexes': ['analysis_requested', 'schedule_after', 'enqueued']
     }
 
     def __repr__(self):

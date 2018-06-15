@@ -27,7 +27,7 @@ class DefaultConfig(object):
     BOOTSTRAP_USE_MINIFIED = True
     OBJECTS_PER_PAGE = 100
     MAX_SCHEDULE_THRESHOLD = 100
-    SCHEDULE_ANALYSES_INTERVAL = 30
+    SCHEDULE_ANALYSES_INTERVAL = 5
 
 
 # Generate or load secret key
@@ -77,6 +77,10 @@ def _load_config(app, debug=False, testing=False):
         app.config['TESTING'] = True
     if debug == True:
         app.config['DEBUG'] = True
+
+    server_name = os.getenv('SERVER_NAME', None)
+    if server_name:
+        app.config['SERVER_NAME'] = server_name
 
     mongo_host = os.getenv('MONGO_HOST', None)
     if mongo_host:
