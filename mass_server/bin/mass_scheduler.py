@@ -40,6 +40,7 @@ def main():
 
     while True:
         schedule_analyses()
+        queue_context.connection.process_data_events()
         time.sleep(app.config['SCHEDULE_ANALYSES_INTERVAL'])
 
 
