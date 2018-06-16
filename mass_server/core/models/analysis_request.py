@@ -40,6 +40,17 @@ class AnalysisRequest(db.Document):
     def __str__(self):
         return self.__repr__()
 
+    def increment_failure(self):
+        analysis_system = self.analysis_system
+        self.num_retry += 1
+        self.enqueued = False
+        self.schedule_after = datetime.now() + timedelta(minutes=analysis_system.minutes_before_retry)
+
+        if self.num_retry >= analysis_system.number_retries:
+            self.delete()
+        else:
+            self.save()
+
     @classmethod
     def create_from_scheduled_analysis(cls, scheduled_analysis, caused_by_failure=False):
         analysis_system = scheduled_analysis.analysis_system_instance.analysis_system

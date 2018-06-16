@@ -4,7 +4,7 @@ from mongoengine import DoesNotExist
 
 from mass_server.webui.config import webui_blueprint
 from mass_server.core.utils import PaginationFunctions, GraphFunctions, TimeFunctions
-from mass_server.core.models import Sample, Report, ScheduledAnalysis, AnalysisSystem, AnalysisRequest
+from mass_server.core.models import Sample, Report, AnalysisSystem, AnalysisRequest
 from mass_server.webui.forms import CommentForm, RequestAnalysisForm
 from mass_server.queue.utils import enqueue_analysis_request
 
@@ -31,7 +31,7 @@ def sample_detail(sample_id):
         _process_request_form(request_form, sample)
 
         requested_analyses = AnalysisRequest.objects(sample=sample)
-        scheduled_analyses = ScheduledAnalysis.objects(sample=sample)
+        scheduled_analyses = []
 
         reports = Report.objects(sample=sample)
         activity = [{

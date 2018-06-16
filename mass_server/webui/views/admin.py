@@ -5,7 +5,7 @@ from flask_modular_auth import privilege_required, RolePrivilege
 from mongoengine import DoesNotExist
 
 from mass_server.core import models
-from mass_server.core.models import AnalysisSystem, AnalysisSystemInstance, InstanceAPIKey, User
+from mass_server.core.models import AnalysisSystem, User
 from mass_server import db
 from mass_server.webui.config import webui_blueprint
 
@@ -32,9 +32,10 @@ def admin_analysis_systems():
         _process_analysis_system_action()
     analysis_systems = AnalysisSystem.objects()
     for system in analysis_systems:
-        system.instances = AnalysisSystemInstance.objects(analysis_system=system.id)
+        pass
+        """system.instances = AnalysisSystemInstance.objects(analysis_system=system.id)
         for instance in system.instances:
-            instance.api_key = InstanceAPIKey.get_or_create(instance).generate_auth_token()
+            instance.api_key = InstanceAPIKey.get_or_create(instance).generate_auth_token()"""
     return render_template('admin/analysis_systems.html', analysis_systems=analysis_systems)
 
 
@@ -58,7 +59,7 @@ def _process_analysis_system_action():
     else:
         flash('Unknown operation requested.', 'danger')
 
-
+"""
 def _delete_instance():
     instance = AnalysisSystemInstance.objects(uuid=request.form['uuid']).first()
     if instance:
@@ -89,6 +90,7 @@ def _regenerate_api_key():
         flash('Old API key deleted! New key will be automatically generated.', 'success')
     else:
         flash('Could not find the old API key associated to this instance UUID!', 'danger')
+"""
 
 
 def _process_user_action():

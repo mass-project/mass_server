@@ -2,7 +2,7 @@ from flask import current_app
 from itsdangerous import URLSafeSerializer as Serializer, BadSignature
 from mongoengine import DateTimeField, ListField, StringField, ReferenceField
 
-from mass_server.core.models import User, AnalysisSystemInstance
+from mass_server.core.models import User
 from mass_server.core.utils.time_functions import TimeFunctions
 from mass_server import db
 
@@ -67,18 +67,3 @@ class UserAPIKey(APIKey):
     def referenced_entity(self):
         return self.user
 
-
-class InstanceAPIKey(APIKey):
-    instance = ReferenceField(AnalysisSystemInstance, required=True)
-
-    @staticmethod
-    def get_or_create(instance):
-        api_key = InstanceAPIKey.objects(instance=instance.id).first()
-        if not api_key:
-            api_key = InstanceAPIKey(instance=instance.id)
-            api_key.save()
-        return api_key
-
-    @property
-    def referenced_entity(self):
-        return self.instance
