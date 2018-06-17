@@ -71,7 +71,7 @@ class AnalysisSystemNamespace:
         # TODO: Replace dummy implementation
         obj = AnalysisSystem.objects.get(identifier_name=identifier_name)
         info = {
-            'queue': '/queue/{}_analysis-requests'.format(identifier_name),
+            'queue': '{}_analysis-requests'.format(identifier_name),
             'user': 'guest',
             'password': 'guest',
             'websocket': 'ws://localhost:15674/ws/'
