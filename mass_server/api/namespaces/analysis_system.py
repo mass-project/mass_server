@@ -1,3 +1,4 @@
+from flask import jsonify
 from flask_modular_auth import privilege_required, AuthenticatedPrivilege, RolePrivilege
 from flask_slimrest.decorators import add_endpoint, dump, load, load_json, catch, paginate, filter_results
 from flask_slimrest.utils import make_api_error_response
@@ -61,3 +62,19 @@ class AnalysisSystemNamespace:
         obj = AnalysisSystem.objects.get(identifier_name=identifier_name)
         obj.delete()
         return '', 204
+
+    @privilege_required(AuthenticatedPrivilege())
+    @add_endpoint('/<identifier_name>/request_queue/')
+    @catch(AnalysisSystem.DoesNotExist,
+           'No analysis system with the specified identifier_name found.', 404)
+    def element_queue(self, identifier_name):
+        # TODO: Replace dummy implementation
+        obj = AnalysisSystem.objects.get(identifier_name=identifier_name)
+        info = {
+            'queue': '/queue/{}_analysis-requests'.format(identifier_name),
+            'user': 'guest',
+            'password': 'guest',
+            'websocket': 'ws://localhost:15674/ws/'
+        }
+
+        return jsonify(info), 200
