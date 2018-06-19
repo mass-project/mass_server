@@ -68,6 +68,8 @@ class AnalysisRequestNamespace:
 
         if report.status == Report.REPORT_STATUS_CODE_FAILURE:
             analysis_request.increment_failure()
+        else:
+            analysis_request.delete()
 
         return report
 
