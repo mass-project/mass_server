@@ -70,13 +70,16 @@ class Report(db.Document):
     def __str__(self):
         return self.__repr__()
 
-    def _add_report_object(self, file, target):
+    def _add_report_object(self, file, target, file_name=None):
         proxy = GridFSProxy()
         proxy.put(file)
-        target[file.name] = proxy
+        if file_name:
+            target[file_name] = proxy
+        else:
+            target[file.name] = proxy
 
-    def add_json_report_object(self, file):
-        self._add_report_object(file, self.json_report_objects)
+    def add_json_report_object(self, file, file_name=None):
+        self._add_report_object(file, self.json_report_objects, file_name)
 
-    def add_raw_report_object(self, file):
-        self._add_report_object(file, self.raw_report_objects)
+    def add_raw_report_object(self, file, file_name=None):
+        self._add_report_object(file, self.raw_report_objects, file_name)

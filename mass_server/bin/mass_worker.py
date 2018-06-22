@@ -3,6 +3,8 @@ from mass_server.queue import queue_context
 from mass_server.core.models import AnalysisSystem, AnalysisRequest, Report
 from mass_server.api.schemas import ReportSchema
 
+from base64 import b64decode
+
 import json
 import logging
 import signal
@@ -42,7 +44,13 @@ def report_callback(ch, method, properties, body):
     report.sample = analysis_request.sample
     report.analysis_system = analysis_request.analysis_system
 
-    # TODO: load files
+    if 'json_report_objects' in data and data['json_report_objects']:
+        for k, v in data['json_report_objects'].items():
+            report.add_json_report_object(json.dumps(v).encode('utf-8'), k)
+
+    if 'raw_report_objects' in data and data['raw_report_objects']:
+        for k, v in data['raw_report_objects'].items():
+            report.add_raw_report_object(b64decode(v), k)
 
     report.save()
 
