@@ -30,7 +30,13 @@ system_report_queues = {}
 
 def report_callback(ch, method, properties, body):
     analysis_system = system_report_queues[method.routing_key]
-    analysis_request = AnalysisRequest.objects.get(id=properties.headers['analysis_request'])
+    try:
+        analysis_request = AnalysisRequest.objects.get(id=properties.headers['analysis_request'])
+    except AnalysisRequest.DoesNotExist:
+        logging.warning('Analysis Request does not exist.')
+        ch.basic_ack(delivery_tag=method.delivery_tag)
+        return
+
     logging.debug('Processing report for {} on {}'.format(analysis_request, analysis_system))
 
     if analysis_request.analysis_system != analysis_system:
@@ -40,6 +46,7 @@ def report_callback(ch, method, properties, body):
     data = json.loads(body)
     parsed_report = ReportSchema().load(data['report'], partial=True)
     report = parsed_report.data
+    report.status = data['report']['status']
 
     report.sample = analysis_request.sample
     report.analysis_system = analysis_request.analysis_system
