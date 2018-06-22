@@ -1,22 +1,37 @@
+from flask import jsonify
 from flask_slimrest.decorators import add_endpoint
+from flask_modular_auth import privilege_required, AuthenticatedPrivilege
 
 from mass_server.api.config import api
 
 
-@api.add_namespace('/rabbit/auth')
+@api.add_namespace('/rabbit')
 class RabbitAuth:
-    @add_endpoint('/user/')
+    @add_endpoint('/auth/user/')
     def user(self):
         return "allow"
 
-    @add_endpoint('/vhost/')
+    @add_endpoint('/auth/vhost/')
     def vhost(self):
         return "allow"
 
-    @add_endpoint('/resource/')
+    @add_endpoint('/auth/resource/')
     def resource(self):
         return "allow"
 
-    @add_endpoint('/topic/')
+    @add_endpoint('/auth/topic/')
     def topic(self):
         return "allow"
+
+    @privilege_required(AuthenticatedPrivilege())
+    @add_endpoint('/stomp_queue/')
+    def element_queue(self):
+        # TODO: Replace dummy implementation
+        info = {
+            'user': 'guest',
+            'password': 'guest',
+            'websocket': 'ws://localhost:15674/ws/'
+        }
+
+        return jsonify(info), 200
+
