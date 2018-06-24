@@ -25,11 +25,10 @@ queue_context.start_connection(app.config['AMQP_URL'])
 queue_connection = queue_context.connection
 queue_channel = queue_context.channel
 
-system_report_queues = {}
-
 
 def report_callback(ch, method, properties, body):
-    analysis_system = system_report_queues[method.routing_key]
+    # TODO: Check api key
+
     try:
         analysis_request = AnalysisRequest.objects.get(id=properties.headers['analysis_request'])
     except AnalysisRequest.DoesNotExist:
@@ -37,11 +36,7 @@ def report_callback(ch, method, properties, body):
         ch.basic_ack(delivery_tag=method.delivery_tag)
         return
 
-    logging.debug('Processing report for {} on {}'.format(analysis_request, analysis_system))
-
-    if analysis_request.analysis_system != analysis_system:
-        ch.basic_ack(delivery_tag=method.delivery_tag)
-        raise ValueError('Mismatch between analysis request and analysis system.')
+    logging.debug('Processing report for {}'.format(analysis_request))
 
     data = json.loads(body)
     parsed_report = ReportSchema().load(data['report'], partial=True)
@@ -69,26 +64,11 @@ def report_callback(ch, method, properties, body):
     ch.basic_ack(delivery_tag=method.delivery_tag)
 
 
-def command_callback(ch, method, properties, body):
-    print(" [{}] {}".format(method.routing_key, body))
-
-
-def initialize_queues_for_system(channel, system):
-    report_queue = '{}_reports'.format(system.identifier_name)
-    channel.queue_declare(queue=report_queue, durable=True)
-    system_report_queues[report_queue] = system
-    channel.basic_consume(report_callback, queue=report_queue, no_ack=False)
-
-
 def main():
     logging.info('Starting worker. Connecting to queue server...')
 
-    # Receive service commands
-    queue_channel.exchange_declare(exchange='service_announcements',
-                             exchange_type='fanout')
-    service_queue = queue_channel.queue_declare(exclusive=True)
-    queue_channel.queue_bind(exchange='service_announcements', queue=service_queue.method.queue)
-    queue_channel.basic_consume(command_callback, service_queue.method.queue, no_ack=True)
+    queue_channel.queue_declare(queue='reports', durable=True)
+    queue_channel.basic_consume(report_callback, queue='reports', no_ack=False)
 
     def shutdown(signum, frame):
         logging.warning('Shutting down. Closing queues and channels...')
@@ -97,9 +77,6 @@ def main():
 
     signal.signal(signal.SIGINT, shutdown)
     signal.signal(signal.SIGTERM, shutdown)
-
-    for system in AnalysisSystem.objects:
-        initialize_queues_for_system(queue_channel, system)
 
     queue_channel.start_consuming()
 
