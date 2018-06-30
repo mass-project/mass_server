@@ -28,39 +28,28 @@ queue_channel = queue_context.channel
 
 def report_callback(ch, method, properties, body):
     # TODO: Check api key
+    logging.debug('Processing report for {}'.format(properties.headers['analysis_request']))
+
+    data = json.loads(body)
+    parsed_report = ReportSchema().load(data['data'], partial=True)
+    report = parsed_report.data
 
     try:
-        analysis_request = AnalysisRequest.objects.get(id=properties.headers['analysis_request'])
+        report.post_deserialization(analysis_request_id=properties.headers['analysis_request'], data=data['data'])
     except AnalysisRequest.DoesNotExist:
         logging.warning('Analysis Request does not exist.')
         ch.basic_ack(delivery_tag=method.delivery_tag)
         return
 
-    logging.debug('Processing report for {}'.format(analysis_request))
-
-    data = json.loads(body)
-    parsed_report = ReportSchema().load(data['report'], partial=True)
-    report = parsed_report.data
-    report.status = data['report']['status']
-
-    report.sample = analysis_request.sample
-    report.analysis_system = analysis_request.analysis_system
-
-    if 'json_report_objects' in data and data['json_report_objects']:
-        for k, v in data['json_report_objects'].items():
+    if 'additional_json_files' in data and data['additional_json_files']:
+        for k, v in data['additional_json_files'].items():
             report.add_json_report_object(json.dumps(v).encode('utf-8'), k)
 
-    if 'raw_report_objects' in data and data['raw_report_objects']:
-        for k, v in data['raw_report_objects'].items():
+    if 'additional_binary_files' in data and data['additional_binary_files']:
+        for k, v in data['additional_binary_files'].items():
             report.add_raw_report_object(b64decode(v), k)
 
     report.save()
-
-    if report.status == Report.REPORT_STATUS_CODE_FAILURE:
-        analysis_request.increment_failure()
-    else:
-        analysis_request.delete()
-
     ch.basic_ack(delivery_tag=method.delivery_tag)
 
 

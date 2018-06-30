@@ -44,7 +44,6 @@ class AnalysisRequestNamespace:
            'No scheduled analysis with the specified id found.', 404)
     @dump(ReportSchema(), return_code=201)
     def element_report(self, id):
-        analysis_request = AnalysisRequest.objects.get(id=id)
         data = json.loads(request.form['metadata'])
         data['json_report_objects'] = {}
         data['raw_report_objects'] = {}
@@ -53,10 +52,7 @@ class AnalysisRequestNamespace:
         if parsed_report.errors:
             return jsonify(parsed_report.errors), 400
         report = parsed_report.data
-        report.status = data['status']
-
-        report.sample = analysis_request.sample
-        report.analysis_system = analysis_request.analysis_system
+        report.post_deserialization(analysis_request_id=id, data=data)
 
         for key, f in request.files.items():
             if f.mimetype == "application/json":
@@ -65,12 +61,6 @@ class AnalysisRequestNamespace:
                 report.add_raw_report_object(f)
 
         report.save()
-
-        if report.status == Report.REPORT_STATUS_CODE_FAILURE:
-            analysis_request.increment_failure()
-        else:
-            analysis_request.delete()
-
         return report
 
     @privilege_required(RolePrivilege('admin'))

@@ -5,6 +5,7 @@ from mongoengine import StringField, DateTimeField, ReferenceField, IntField, Li
 from mass_server.core.utils import TimeFunctions
 from mass_server import db
 from .analysis_system import AnalysisSystem
+from .analysis_request import AnalysisRequest
 from .sample import Sample
 
 
@@ -69,6 +70,18 @@ class Report(db.Document):
 
     def __str__(self):
         return self.__repr__()
+
+    def post_deserialization(self, analysis_request_id, data):
+        analysis_request = AnalysisRequest.objects.get(id=analysis_request_id)
+        self.status = data['status']
+
+        self.sample = analysis_request.sample
+        self.analysis_system = analysis_request.analysis_system
+
+        if self.status == Report.REPORT_STATUS_CODE_FAILURE:
+            analysis_request.increment_failure()
+        else:
+            analysis_request.delete()
 
     def _add_report_object(self, file, target, file_name=None):
         proxy = GridFSProxy()
