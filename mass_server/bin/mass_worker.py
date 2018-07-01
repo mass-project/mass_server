@@ -1,7 +1,7 @@
 from mass_server import get_app
 from mass_server.queue import queue_context
-from mass_server.core.models import AnalysisSystem, AnalysisRequest, Report
-from mass_server.api.schemas import ReportSchema
+from mass_server.core.models import AnalysisRequest
+from mass_server.api.schemas import ReportSchema, SampleRelationSchema
 
 from base64 import b64decode
 
@@ -53,11 +53,31 @@ def report_callback(ch, method, properties, body):
     ch.basic_ack(delivery_tag=method.delivery_tag)
 
 
+def sample_relation_callback(ch, method, properties, body):
+    # TODO: Check api key
+    logging.debug('Processing sample relation')
+
+    data = json.loads(body)
+
+    with app.app_context():
+        parsed_relation = SampleRelationSchema().load(data['data'])
+
+    if parsed_relation.errors:
+        raise ValueError(parsed_relation.errors)
+
+    relation = parsed_relation.data
+    relation.save()
+
+    ch.basic_ack(delivery_tag=method.delivery_tag)
+
+
 def main():
     logging.info('Starting worker. Connecting to queue server...')
 
     queue_channel.queue_declare(queue='reports', durable=True)
+    queue_channel.queue_declare(queue='sample_relations', durable=True)
     queue_channel.basic_consume(report_callback, queue='reports', no_ack=False)
+    queue_channel.basic_consume(sample_relation_callback, queue='sample_relations', no_ack=False)
 
     def shutdown(signum, frame):
         logging.warning('Shutting down. Closing queues and channels...')

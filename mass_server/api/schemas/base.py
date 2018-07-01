@@ -1,5 +1,5 @@
 from bson import DBRef
-from flask import url_for, _request_ctx_stack, request
+from flask import url_for, _request_ctx_stack, request, current_app
 from marshmallow import ValidationError
 from marshmallow_mongoengine import ModelSchema
 import marshmallow.fields as mm_fields
@@ -42,12 +42,13 @@ class ForeignReferenceField(mm_fields.Field):
     def _deserialize(self, value, attr=None, data=None):
         if not value.endswith('/'):
             value += '/'
-        ctx = _request_ctx_stack.top
-        adapter = ctx.url_adapter
+        server_name = current_app.config['SERVER_NAME']
+        adapter = current_app.url_map.bind(server_name)
         if adapter is None:
             raise RuntimeError('Could not find a URL adapter in the current request context.')
 
-        local_url = value.replace(request.url_root, '/', 1)
+        # TODO: Find something more robust! maybe regex?
+        local_url = value.replace('http://{}'.format(server_name), '/', 1)
 
         if local_url == value:
             raise ValidationError('Reference URL for field {} incorrectly specified: Network location of the URL does not match the servers network location.'.format(attr))
@@ -57,8 +58,8 @@ class ForeignReferenceField(mm_fields.Field):
         except NotFound:
             raise ValidationError('Reference URL for field {} incorrectly specified: The path of the URL points to a nonexistent API endpoint.'.format(attr))
 
-        blueprint_name = request.blueprint
         if self._endpoint[:1] == '.':
+            blueprint_name = request.blueprint
             if blueprint_name is not None:
                 full_endpoint = blueprint_name + self._endpoint
             else:
