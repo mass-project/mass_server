@@ -79,8 +79,7 @@ def _load_config(app, debug=False, testing=False):
         app.config['DEBUG'] = True
 
     server_name = os.getenv('SERVER_NAME', None)
-    if server_name:
-        app.config['SERVER_NAME'] = server_name
+    app.config['SERVER_NAME'] = server_name if server_name else '127.0.0.1:8000'
 
     mongo_host = os.getenv('MONGO_HOST', None)
     if mongo_host:
@@ -91,6 +90,9 @@ def _load_config(app, debug=False, testing=False):
 
     amqp_url = os.getenv('AMQP_URL', None)
     app.config['AMQP_URL'] = amqp_url if amqp_url else 'amqp://guest:guest@localhost:5672/'
+
+    webstomp_url = os.getenv('WEBSTOMP_URL', None)
+    app.config['WEBSTOMP_URL'] = webstomp_url if webstomp_url else 'ws://localhost:15674/ws/'
 
     try:
         if testing == False:

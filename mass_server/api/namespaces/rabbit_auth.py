@@ -1,4 +1,5 @@
 from flask import jsonify
+from flask import current_app as app
 from flask_slimrest.decorators import add_endpoint
 from flask_modular_auth import privilege_required, AuthenticatedPrivilege
 
@@ -30,7 +31,7 @@ class RabbitAuth:
         info = {
             'user': 'guest',
             'password': 'guest',
-            'websocket': 'ws://localhost:15674/ws/'
+            'websocket': app.config['WEBSTOMP_URL']
         }
 
         return jsonify(info), 200
