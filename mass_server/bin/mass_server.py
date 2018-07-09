@@ -1,11 +1,9 @@
 import argparse
-import mass_server.queue.queue_context as queue_context
 from mass_server import get_app
 
 
 def run_development(args):
     app = get_app(debug=True)
-    queue_context.start_connection(app.config['AMQP_URL'])
     app.run(host=args.listen, port=args.port)
 
 

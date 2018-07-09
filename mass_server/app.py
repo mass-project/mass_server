@@ -1,5 +1,4 @@
 import os
-import subprocess
 import random
 
 from flask import Flask, redirect, url_for
@@ -13,6 +12,8 @@ from mass_server.core.models import AnonymousUser, User, APIKey
 from mass_server.core.signals import connect_signals
 from mass_server.api.config import api_blueprint
 from mass_server.webui.config import webui_blueprint
+
+import mass_server.queue.queue_context as queue_context
 
 from raven.contrib.flask import Sentry
 from raven.transport.requests import RequestsHTTPTransport
@@ -126,6 +127,9 @@ def _bootstrap_app(app):
     connect_signals()
     app.register_blueprint(api_blueprint, url_prefix='/api')
     app.register_blueprint(webui_blueprint, url_prefix='/webui')
+
+    # Init queue connection
+    queue_context.start_connection(app.config['AMQP_URL'])
 
     # Add generic views
     @app.route('/version/', methods=['GET'])
