@@ -18,7 +18,7 @@ def ensure_connection():
     global connection, channel
     try:
         connection.process_data_events()
-    except ConnectionClosed:
+    except (ConnectionClosed, AttributeError):
         connection = BlockingConnection(_connection_parameters)
         channel = connection.channel()
 
