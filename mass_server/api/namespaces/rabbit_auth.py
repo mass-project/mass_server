@@ -1,16 +1,21 @@
-from flask import jsonify
+from flask import jsonify, request
 from flask import current_app as app
 from flask_slimrest.decorators import add_endpoint
 from flask_modular_auth import privilege_required, AuthenticatedPrivilege
 
 from mass_server.api.config import api
+from mass_server.core.models import APIKey
 
 
 @api.add_namespace('/rabbit')
 class RabbitAuth:
     @add_endpoint('/auth/user/')
     def user(self):
-        return "allow"
+        pw = request.args.get('password')
+        if APIKey.api_key_loader(pw):
+            return "allow"
+        else:
+            return "disallow"
 
     @add_endpoint('/auth/vhost/')
     def vhost(self):
