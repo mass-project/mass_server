@@ -10,7 +10,7 @@ from mass_server.queue.utils import enqueue_analysis_request
 
 logging.getLogger(__name__).addHandler(logging.NullHandler())
 
-app = get_app()
+app = get_app(set_server_name=True)
 queue_context.start_connection(app.config['AMQP_URL'])
 queue_connection = queue_context.connection
 queue_channel = queue_context.channel
