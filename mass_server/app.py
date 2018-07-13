@@ -79,8 +79,8 @@ def _load_config(app, debug=False, testing=False):
     if debug == True:
         app.config['DEBUG'] = True
 
-    server_name = os.getenv('SERVER_NAME', None)
-    app.config['SERVER_NAME'] = server_name if server_name else '127.0.0.1:8000'
+#    server_name = os.getenv('SERVER_NAME', None)
+#    app.config['SERVER_NAME'] = server_name if server_name else '127.0.0.1:8000'
 
     mongo_host = os.getenv('MONGO_HOST', None)
     if mongo_host:
