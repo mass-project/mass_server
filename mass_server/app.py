@@ -79,9 +79,6 @@ def _load_config(app, debug=False, testing=False):
     if debug == True:
         app.config['DEBUG'] = True
 
-#    server_name = os.getenv('SERVER_NAME', None)
-#    app.config['SERVER_NAME'] = server_name if server_name else '127.0.0.1:8000'
-
     mongo_host = os.getenv('MONGO_HOST', None)
     if mongo_host:
         app.config['MONGODB_SETTINGS'] = {
@@ -141,10 +138,15 @@ def _bootstrap_app(app):
         return redirect(url_for('webui.index'))
 
 
-def get_app(instance_path=None, testing=False, debug=False):
+def get_app(instance_path=None, testing=False, debug=False, set_server_name=False):
     app = Flask(__name__, instance_path=instance_path, instance_relative_config=True)
     _init_sentry(app)
     _load_or_generate_secret_key(app)
     _load_config(app, debug=debug, testing=testing)
     _bootstrap_app(app)
+
+    if set_server_name:
+        server_name = os.getenv('SERVER_NAME', None)
+        app.config['SERVER_NAME'] = server_name if server_name else '127.0.0.1:8000'
+
     return app

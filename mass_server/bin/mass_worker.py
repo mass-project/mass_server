@@ -20,7 +20,7 @@ ch.setFormatter(formatter)
 root.addHandler(ch)
 
 logging.getLogger(__name__).addHandler(logging.NullHandler())
-app = get_app()
+app = get_app(set_server_name=True)
 queue_context.start_connection(app.config['AMQP_URL'])
 queue_connection = queue_context.connection
 queue_channel = queue_context.channel
