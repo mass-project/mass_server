@@ -1,6 +1,8 @@
 import time
 import logging
 import signal
+import sys
+
 from datetime import datetime
 
 import mass_server.queue.queue_context as queue_context
@@ -8,7 +10,14 @@ from mass_server import get_app
 from mass_server.core.models import AnalysisRequest, AnalysisSystem
 from mass_server.queue.utils import enqueue_analysis_request
 
-logging.getLogger(__name__).addHandler(logging.NullHandler())
+root = logging.getLogger()
+root.setLevel(logging.DEBUG)
+
+ch = logging.StreamHandler(sys.stdout)
+ch.setLevel(logging.DEBUG)
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+ch.setFormatter(formatter)
+root.addHandler(ch)
 
 app = get_app(set_server_name=True)
 queue_context.start_connection(app.config['AMQP_URL'])
@@ -24,6 +33,7 @@ def schedule_analyses():
             queue_context.ensure_queue(queue=queue_name, durable=True)
 
         due_analysis_requests = AnalysisRequest.objects().filter(schedule_after__lte=datetime.now(), enqueued=False)
+        logging.info('Processing {} due analyses...'.format(len(due_analysis_requests)))
 
         for request in due_analysis_requests:
             enqueue_analysis_request(request)
