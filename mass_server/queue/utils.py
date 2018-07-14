@@ -1,10 +1,15 @@
 import json
 
+from datetime import datetime
+
 import mass_server.queue.queue_context as queue_context
 from mass_server.api.schemas import AnalysisRequestSchema, SampleSchema
 
 
 def enqueue_analysis_request(request):
+    if request.schedule_after > datetime.now():
+        return
+
     message_body = {
         'analysis_request': AnalysisRequestSchema().dump(request)[0],
         'sample': SampleSchema().dump(request.sample)[0]
