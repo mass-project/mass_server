@@ -49,7 +49,9 @@ def report_callback(ch, method, properties, body):
         for k, v in data['additional_binary_files'].items():
             report.add_raw_report_object(b64decode(v), k)
 
-    report.save()
+    with app.app_context():
+        report.save()
+
     ch.basic_ack(delivery_tag=method.delivery_tag)
 
 
