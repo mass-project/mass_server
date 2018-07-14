@@ -33,7 +33,7 @@ pyparsing==2.2.0
 python-dateutil==2.7.3
 python-magic==0.4.15
 pytz==2018.5
-PyYAML==4.1
+PyYAML==3.13
 requests==2.19.1
 six==1.11.0
 ssdeep==3.3
