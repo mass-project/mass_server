@@ -181,9 +181,9 @@ class Sample(db.Document, CommentsMixin, TagsMixin, TLPLevelMixin):
         sample.unique_features = UniqueSampleFeaturesDocument()
         sample.delivery_dates = []
 
-        if current_authenticated_entity.is_authenticated:
-            sample.created_by = current_authenticated_entity._get_current_object(
-            )
+        if hasattr(current_authenticated_entity, 'is_authenticated'):
+            if current_authenticated_entity.is_authenticated:
+                sample.created_by = current_authenticated_entity._get_current_object()
 
         if 'file' in unique_features:
             file = unique_features['file']

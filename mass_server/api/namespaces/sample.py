@@ -3,7 +3,6 @@ import json
 from flask import request
 from flask_modular_auth import privilege_required, AuthenticatedPrivilege, RolePrivilege
 from flask_slimrest.decorators import add_endpoint, dump, load, load_json, catch, paginate, filter_results
-from flask_slimrest.utils import make_api_error_response
 from mongoengine import ValidationError
 
 from mass_server.api.config import api
