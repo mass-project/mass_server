@@ -44,18 +44,32 @@ def load_object_wrapper(schema, partial=False):
     return real_decorator
 
 
+def catch_exception(exception, ack=False, message=None):
+    if not message:
+        message = ''
+
+    def real_decorator(func):
+        def wrapper(ch, method, properties, body):
+            try:
+                func(ch, method, properties, body)
+            except exception:
+                logging.warning(message)
+                if ack:
+                    ch.basic_ack(delivery_tag=method.delivery_tag)
+        return wrapper
+    return real_decorator
+
+
+@catch_exception(AnalysisRequest.DoesNotExist, ack=True, message='Analysis Request does not exist.')
+@catch_exception(Sample.DoesNotExist, ack=True, message='Sample does not exist.')
+@catch_exception(AnalysisSystem.DoesNotExist, ack=True, message='AnalysisSystem does not exist.')
 @load_object_wrapper(ReportSchema(), partial=True)
 def report_callback(ch, method, properties, data, report):
 
     if 'analysis_request' in properties.headers:
         request_id = properties.headers['analysis_request']
         logging.debug('Processing report for analysis request {}'.format(request_id))
-        try:
-            report.post_deserialization(analysis_request_id=request_id, data=data['data'])
-        except AnalysisRequest.DoesNotExist:
-            logging.warning('Analysis Request does not exist.')
-            ch.basic_ack(delivery_tag=method.delivery_tag)
-            return
+        report.post_deserialization(analysis_request_id=request_id, data=data['data'])
     elif 'sample' in properties.headers and 'analysis_system' in properties.headers:
         sample_id = properties.headers['sample']
         system_identifier = properties.headers['analysis_system']
