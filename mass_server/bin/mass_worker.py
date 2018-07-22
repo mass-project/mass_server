@@ -1,6 +1,6 @@
 from mass_server import get_app
 from mass_server.queue import queue_context
-from mass_server.core.models import AnalysisRequest, Sample
+from mass_server.core.models import AnalysisRequest, Sample, AnalysisSystem
 from mass_server.api.schemas import ReportSchema, SampleRelationSchema
 
 from base64 import b64decode
@@ -46,12 +46,25 @@ def load_object_wrapper(schema, partial=False):
 
 @load_object_wrapper(ReportSchema(), partial=True)
 def report_callback(ch, method, properties, data, report):
-    logging.debug('Processing report for {}'.format(properties.headers['analysis_request']))
 
-    try:
-        report.post_deserialization(analysis_request_id=properties.headers['analysis_request'], data=data['data'])
-    except AnalysisRequest.DoesNotExist:
-        logging.warning('Analysis Request does not exist.')
+    if 'analysis_request' in properties.headers:
+        request_id = properties.headers['analysis_request']
+        logging.debug('Processing report for analysis request {}'.format(request_id))
+        try:
+            report.post_deserialization(analysis_request_id=request_id, data=data['data'])
+        except AnalysisRequest.DoesNotExist:
+            logging.warning('Analysis Request does not exist.')
+            ch.basic_ack(delivery_tag=method.delivery_tag)
+            return
+    elif 'sample' in properties.headers and 'analysis_system' in properties.headers:
+        sample_id = properties.headers['sample']
+        system_identifier = properties.headers['analysis_system']
+        logging.debug('Processing report for sample {} on {}'.format(sample_id, system_identifier))
+        report.sample = Sample.objects.get(id=sample_id)
+        report.analysis_system = AnalysisSystem.objects.get(identifier_name=system_identifier)
+        report.status = data['data']['status']
+    else:
+        logging.warning('Malformed report object')
         ch.basic_ack(delivery_tag=method.delivery_tag)
         return
 
