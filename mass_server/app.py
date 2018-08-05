@@ -146,7 +146,6 @@ def get_app(instance_path=None, testing=False, debug=False, set_server_name=Fals
     _bootstrap_app(app)
 
     if set_server_name:
-        server_name = os.getenv('SERVER_NAME', None)
-        app.config['SERVER_NAME'] = server_name if server_name else '127.0.0.1:8000'
+        app.config['SERVER_NAME'] = os.getenv('SERVER_NAME', '127.0.0.1:8000')
 
     return app

@@ -52,7 +52,7 @@ class AnalysisRequestNamespace:
         if parsed_report.errors:
             return jsonify(parsed_report.errors), 400
         report = parsed_report.data
-        report.post_deserialization(analysis_request_id=id, data=data)
+        report.post_deserialization(data=data, analysis_request_id=id)
 
         for key, f in request.files.items():
             if f.mimetype == "application/json":

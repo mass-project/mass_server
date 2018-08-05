@@ -69,18 +69,11 @@ def report_callback(ch, method, properties, data, report):
     if 'analysis_request' in properties.headers:
         request_id = properties.headers['analysis_request']
         logging.debug('Processing report for analysis request {}'.format(request_id))
-        report.post_deserialization(analysis_request_id=request_id, data=data['data'])
-    elif 'sample' in properties.headers and 'analysis_system' in properties.headers:
-        sample_id = properties.headers['sample']
-        system_identifier = properties.headers['analysis_system']
-        logging.debug('Processing report for sample {} on {}'.format(sample_id, system_identifier))
-        report.sample = Sample.objects.get(id=sample_id)
-        report.analysis_system = AnalysisSystem.objects.get(identifier_name=system_identifier)
-        report.status = data['data']['status']
     else:
-        logging.warning('Malformed report object')
-        ch.basic_ack(delivery_tag=method.delivery_tag)
-        return
+        request_id = None
+        logging.debug('Processing report for {} on {}'.format(report.sample, report.analysis_system))
+
+    report.post_deserialization(data=data['data'], analysis_request_id=request_id)
 
     if 'additional_json_files' in data and data['additional_json_files']:
         for k, v in data['additional_json_files'].items():

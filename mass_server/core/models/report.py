@@ -71,10 +71,14 @@ class Report(db.Document):
     def __str__(self):
         return self.__repr__()
 
-    def post_deserialization(self, analysis_request_id, data):
-        analysis_request = AnalysisRequest.objects.get(id=analysis_request_id)
+    def post_deserialization(self, data, analysis_request_id=None):
         self.status = data['status']
 
+        # Check whether we have to pick data from an analysis request
+        if analysis_request_id is None:
+            return
+
+        analysis_request = AnalysisRequest.objects.get(id=analysis_request_id)
         self.sample = analysis_request.sample
         self.analysis_system = analysis_request.analysis_system
 

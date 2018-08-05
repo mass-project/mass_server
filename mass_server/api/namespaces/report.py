@@ -1,3 +1,6 @@
+import json
+
+from flask import request, jsonify
 from flask_modular_auth import privilege_required, AuthenticatedPrivilege, RolePrivilege
 from flask_slimrest.decorators import add_endpoint, dump, load, catch, paginate, filter_results
 
@@ -20,11 +23,25 @@ class ReportNamespace:
     @privilege_required(AuthenticatedPrivilege())
     @add_endpoint('/', methods=['POST'])
     @dump(ReportSchema(), return_code=201)
-    @load(ReportSchema())
-    def collection_post(self, data):
-        obj = data.data
-        obj.save()
-        return obj
+    def collection_post(self):
+        data = json.loads(request.form['metadata'])
+        data['json_report_objects'] = {}
+        data['raw_report_objects'] = {}
+
+        parsed_report = ReportSchema().load(data, partial=True)
+        if parsed_report.errors:
+            return jsonify(parsed_report.errors), 400
+        report = parsed_report.data
+        report.post_deserialization(data=data)
+
+        for key, f in request.files.items():
+            if f.mimetype == "application/json":
+                report.add_json_report_object(f)
+            else:
+                report.add_raw_report_object(f)
+
+        report.save()
+        return report
 
     @privilege_required(AuthenticatedPrivilege())
     @add_endpoint('/<id>/')

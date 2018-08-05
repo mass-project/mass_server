@@ -3,7 +3,7 @@ from mass_server import get_app
 
 
 def run_development(args):
-    app = get_app(debug=True)
+    app = get_app(debug=True, set_server_name=True)
     app.run(host=args.listen, port=args.port)
 
 
