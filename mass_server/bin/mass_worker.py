@@ -3,6 +3,7 @@ from mass_server.queue import queue_context
 from mass_server.core.models import AnalysisRequest, Sample, AnalysisSystem
 from mass_server.api.schemas import ReportSchema, SampleRelationSchema
 
+from mongoengine.errors import ValidationError
 from base64 import b64decode
 
 import json
@@ -88,6 +89,7 @@ def report_callback(ch, method, properties, data, report):
     ch.basic_ack(delivery_tag=method.delivery_tag)
 
 
+@catch_exception(ValidationError, ack=True, message='Could not validate sample.')
 def sample_callback(ch, method, properties, body):
     logging.debug('Creating sample')
 
