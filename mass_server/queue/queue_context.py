@@ -7,11 +7,12 @@ created_queues = set()
 _connection_parameters = None
 
 
-def start_connection(amqp_url):
+def start_connection(amqp_url, prefetch_count):
     global connection, channel, _connection_parameters
     _connection_parameters = URLParameters(amqp_url)
     connection = BlockingConnection(_connection_parameters)
     channel = connection.channel()
+    channel.basic_qos(prefetch_count=prefetch_count)
 
 
 def ensure_connection():

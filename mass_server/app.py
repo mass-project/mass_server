@@ -86,11 +86,9 @@ def _load_config(app, debug=False, testing=False):
             'tz_aware': True
         }
 
-    amqp_url = os.getenv('AMQP_URL', None)
-    app.config['AMQP_URL'] = amqp_url if amqp_url else 'amqp://guest:guest@localhost:5672/'
-
-    webstomp_url = os.getenv('WEBSTOMP_URL', None)
-    app.config['WEBSTOMP_URL'] = webstomp_url if webstomp_url else 'ws://localhost:15674/ws/'
+    app.config['AMQP_URL'] = os.getenv('AMQP_URL', 'amqp://guest:guest@localhost:5672/')
+    app.config['AMQP_PREFETCH_COUNT'] = int(os.getenv('AMQP_PREFETCH_COUNT', '1'))
+    app.config['WEBSTOMP_URL'] = os.getenv('WEBSTOMP_URL', 'ws://localhost:15674/ws/')
 
     try:
         if testing == False:
@@ -126,7 +124,7 @@ def _bootstrap_app(app):
     app.register_blueprint(webui_blueprint, url_prefix='/webui')
 
     # Init queue connection
-    queue_context.start_connection(app.config['AMQP_URL'])
+    queue_context.start_connection(app.config['AMQP_URL'], app.config['AMQP_PREFETCH_COUNT'])
 
     # Add generic views
     @app.route('/version/', methods=['GET'])
