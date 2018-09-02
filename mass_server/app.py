@@ -148,5 +148,6 @@ def get_app(instance_path=None, testing=False, debug=False, set_server_name=Fals
 
     if set_server_name:
         app.config['SERVER_NAME'] = os.getenv('SERVER_NAME', '127.0.0.1:8000')
+        print('Set server name to {}'.format(app.config['SERVER_NAME']))
 
     return app
