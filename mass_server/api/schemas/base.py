@@ -49,6 +49,7 @@ class ForeignReferenceField(mm_fields.Field):
 
         # TODO: Find something more robust! maybe regex?
         local_url = value.replace('http://{}'.format(server_name), '/', 1)
+        local_url = local_url.replace('https://{}'.format(server_name), '/', 1)
 
         if local_url == value:
             raise ValidationError('Reference URL for field {} incorrectly specified: Network location of the URL does not match the servers network location.'.format(attr))
