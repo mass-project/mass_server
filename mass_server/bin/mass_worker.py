@@ -1,4 +1,5 @@
 from mass_server import get_app
+from mass_server.app import sentry
 from mass_server.queue import queue_context
 from mass_server.core.models import AnalysisRequest, Sample, AnalysisSystem
 from mass_server.api.schemas import ReportSchema, SampleRelationSchema
@@ -54,6 +55,8 @@ def catch_exception(exception, ack=False, message=None):
                 func(ch, method, properties, body)
             except exception:
                 logging.warning(message)
+                if sentry:
+                    sentry.captureException()
                 if ack:
                     ch.basic_ack(delivery_tag=method.delivery_tag)
         return wrapper

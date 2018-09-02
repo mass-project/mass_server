@@ -18,6 +18,8 @@ import mass_server.queue.queue_context as queue_context
 from raven.contrib.flask import Sentry
 from raven.transport.requests import RequestsHTTPTransport
 
+sentry = None
+
 
 # Default configuration settings
 class DefaultConfig(object):
@@ -61,6 +63,7 @@ def _load_or_generate_secret_key(app):
 
 # Init Sentry
 def _init_sentry(app):
+    global sentry
     sentry_dsn = os.getenv('SENTRY_DSN', None)
     if sentry_dsn:
         sentry = Sentry()
