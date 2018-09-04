@@ -42,14 +42,18 @@ class ForeignReferenceField(mm_fields.Field):
     def _deserialize(self, value, attr=None, data=None):
         if not value.endswith('/'):
             value += '/'
+
         server_name = current_app.config['SERVER_NAME']
+        if not server_name:
+            server_name = request.host
+
         adapter = current_app.url_map.bind(server_name)
         if adapter is None:
             raise RuntimeError('Could not find a URL adapter in the current request context.')
 
         # TODO: Find something more robust! maybe regex?
-        local_url = value.replace('http://{}'.format(server_name), '/', 1)
-        local_url = local_url.replace('https://{}'.format(server_name), '/', 1)
+        local_url = value.replace('http://{}/'.format(server_name), '/', 1)
+        local_url = local_url.replace('https://{}/'.format(server_name), '/', 1)
 
         if local_url == value:
             raise ValidationError('Reference URL for field {} incorrectly specified: Network location of the URL does not match the servers network location.'.format(attr))
