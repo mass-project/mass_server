@@ -17,4 +17,4 @@ def get_db_statistics():
 class DatabaseCollector:
     def collect(self):
         for name, value in get_db_statistics():
-            yield GaugeMetricFamily('db_{}'.format(name), 'Number of "{}" instances.'.format(name), value=value)
+            yield GaugeMetricFamily('mass_db_{}'.format(name), 'Number of "{}" instances.'.format(name), value=value)
