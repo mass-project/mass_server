@@ -62,7 +62,7 @@ class Report(db.Document):
 
     meta = {
         'ordering': ['-upload_date'],
-        'indexes': ['upload_date', 'sample']
+        'indexes': ['upload_date', 'sample', 'status', 'analysis_system']
     }
 
     def __repr__(self):
