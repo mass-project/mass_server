@@ -1,28 +1,16 @@
-import inspect
-
 from flask import render_template, request, flash
 from flask_modular_auth import privilege_required, RolePrivilege
 from mongoengine import DoesNotExist
 
-from mass_server.core import models
 from mass_server.core.models import AnalysisSystem, User
-from mass_server import db
+from mass_server.core.utils.metrics import get_db_statistics
 from mass_server.webui.config import webui_blueprint
-
-
-def _get_db_statistics():
-    result = []
-    for name, obj in inspect.getmembers(models):
-        if inspect.isclass(obj) and issubclass(obj, db.Document):
-            result.append((name, obj.objects.count()))
-    return result
 
 
 @webui_blueprint.route('/admin/', methods=['GET'])
 @privilege_required(RolePrivilege('admin'))
 def admin():
-    _get_db_statistics()
-    return render_template('admin/admin.html', database_statistics=_get_db_statistics())
+    return render_template('admin/admin.html', database_statistics=get_db_statistics())
 
 
 @webui_blueprint.route('/admin/analysis_systems/', methods=['GET', 'POST'])

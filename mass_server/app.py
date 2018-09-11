@@ -18,6 +18,11 @@ import mass_server.queue.queue_context as queue_context
 from raven.contrib.flask import Sentry
 from raven.transport.requests import RequestsHTTPTransport
 
+from werkzeug.wsgi import DispatcherMiddleware
+from prometheus_client import make_wsgi_app
+from prometheus_client.core import REGISTRY as prometheus_registry
+from mass_server.core.utils.metrics import DatabaseCollector
+
 sentry = None
 
 
@@ -149,5 +154,10 @@ def get_app(instance_path=None, testing=False, debug=False, set_server_name=Fals
     if set_server_name:
         app.config['SERVER_NAME'] = os.getenv('SERVER_NAME', '127.0.0.1:8000')
         print('Set server name to {}'.format(app.config['SERVER_NAME']))
+
+    app.wsgi_app = DispatcherMiddleware(app.wsgi_app, {
+        '/metrics': make_wsgi_app()
+    })
+    prometheus_registry.register(DatabaseCollector())
 
     return app
