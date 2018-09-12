@@ -1,16 +1,14 @@
-from mass_server import get_app
-from mass_server.app import sentry
-from mass_server.queue import queue_context
-from mass_server.core.models import AnalysisRequest, Sample, AnalysisSystem
-from mass_server.api.schemas import ReportSchema, SampleRelationSchema
-
-from mongoengine.errors import ValidationError
-from base64 import b64decode
-
 import json
 import logging
 import signal
 import sys
+from base64 import b64decode
+
+from mass_server import get_app
+from mass_server.api.schemas import ReportSchema, SampleRelationSchema
+from mass_server.app import sentry
+from mass_server.core.models import Sample
+from mass_server.queue import queue_context
 
 root = logging.getLogger()
 root.setLevel(logging.DEBUG)
@@ -45,7 +43,7 @@ def load_object_wrapper(schema, partial=False):
     return real_decorator
 
 
-def catch_exception(exception, ack=False, failure_queue=None, message=None):
+def catch_exception(exception, ack=False, capture_with_sentry=False, failure_queue=None, message=None):
     if not message:
         message = ''
 
@@ -55,7 +53,7 @@ def catch_exception(exception, ack=False, failure_queue=None, message=None):
                 func(ch, method, properties, body)
             except exception:
                 logging.warning(message)
-                if sentry:
+                if capture_with_sentry:
                     sentry.captureException()
                 if failure_queue:
                     ch.basic_publish(exchange='', routing_key=failure_queue, body=body)
@@ -65,7 +63,7 @@ def catch_exception(exception, ack=False, failure_queue=None, message=None):
     return real_decorator
 
 
-@catch_exception(Exception, ack=True, failure_queue='corrupted_reports')
+@catch_exception(Exception, ack=True, capture_with_sentry=True, failure_queue='corrupted_reports')
 @load_object_wrapper(ReportSchema(), partial=True)
 def report_callback(ch, method, properties, data, report):
 
@@ -91,7 +89,7 @@ def report_callback(ch, method, properties, data, report):
     ch.basic_ack(delivery_tag=method.delivery_tag)
 
 
-@catch_exception(Exception, ack=True, failure_queue='corrupted_samples')
+@catch_exception(Exception, ack=True, capture_with_sentry=True, failure_queue='corrupted_samples')
 def sample_callback(ch, method, properties, body):
     logging.debug('Creating sample')
 
@@ -107,7 +105,7 @@ def sample_callback(ch, method, properties, body):
     ch.basic_ack(delivery_tag=method.delivery_tag)
 
 
-@catch_exception(Exception, ack=True, failure_queue='corrupted_sample_relations')
+@catch_exception(Exception, ack=True, capture_with_sentry=True, failure_queue='corrupted_sample_relations')
 @load_object_wrapper(SampleRelationSchema())
 def sample_relation_callback(ch, method, properties, data, relation):
     logging.debug('Processing sample relation')
