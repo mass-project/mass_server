@@ -45,7 +45,7 @@ def load_object_wrapper(schema, partial=False):
     return real_decorator
 
 
-def catch_exception(exception, ack=False, message=None):
+def catch_exception(exception, ack=False, failure_queue=None, message=None):
     if not message:
         message = ''
 
@@ -57,15 +57,15 @@ def catch_exception(exception, ack=False, message=None):
                 logging.warning(message)
                 if sentry:
                     sentry.captureException()
+                if failure_queue:
+                    ch.basic_publish(exchange='', routing_key=failure_queue, body=body)
                 if ack:
                     ch.basic_ack(delivery_tag=method.delivery_tag)
         return wrapper
     return real_decorator
 
 
-@catch_exception(AnalysisRequest.DoesNotExist, ack=True, message='Analysis Request does not exist.')
-@catch_exception(Sample.DoesNotExist, ack=True, message='Sample does not exist.')
-@catch_exception(AnalysisSystem.DoesNotExist, ack=True, message='AnalysisSystem does not exist.')
+@catch_exception(Exception, ack=True, failure_queue='corrupted_reports')
 @load_object_wrapper(ReportSchema(), partial=True)
 def report_callback(ch, method, properties, data, report):
 
@@ -91,7 +91,7 @@ def report_callback(ch, method, properties, data, report):
     ch.basic_ack(delivery_tag=method.delivery_tag)
 
 
-@catch_exception(ValidationError, ack=True, message='Could not validate sample.')
+@catch_exception(Exception, ack=True, failure_queue='corrupted_samples')
 def sample_callback(ch, method, properties, body):
     logging.debug('Creating sample')
 
@@ -107,6 +107,7 @@ def sample_callback(ch, method, properties, body):
     ch.basic_ack(delivery_tag=method.delivery_tag)
 
 
+@catch_exception(Exception, ack=True, failure_queue='corrupted_sample_relations')
 @load_object_wrapper(SampleRelationSchema())
 def sample_relation_callback(ch, method, properties, data, relation):
     logging.debug('Processing sample relation')
@@ -120,6 +121,9 @@ def main():
     queue_channel.queue_declare(queue='reports', durable=True)
     queue_channel.queue_declare(queue='samples', durable=True)
     queue_channel.queue_declare(queue='sample_relations', durable=True)
+    queue_channel.queue_declare(queue='corrupted_reports', durable=True)
+    queue_channel.queue_declare(queue='corrupted_samples', durable=True)
+    queue_channel.queue_declare(queue='corrupted_sample_relations', durable=True)
     queue_channel.basic_consume(report_callback, queue='reports', no_ack=False)
     queue_channel.basic_consume(sample_callback, queue='samples', no_ack=False)
     queue_channel.basic_consume(sample_relation_callback, queue='sample_relations', no_ack=False)
