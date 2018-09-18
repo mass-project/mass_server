@@ -29,7 +29,7 @@ nose-exclude==0.5.0
 pefile==2018.8.8
 pycparser==2.18
 pymongo==3.7.1
-pyparsing==2.2.0
+pyparsing==2.2.1
 python-dateutil==2.7.3
 python-magic==0.4.15
 pytz==2018.5
