@@ -3,7 +3,7 @@ python:
   - "3.4"
   - "3.5"
   - "3.6"
-sudo: false
+sudo: required
 addons:
   apt:
     sources:
@@ -14,6 +14,7 @@ addons:
       - mongodb-org-shell
 services:
   - mongodb
+  - rabbitmq
 install:
   - "BUILD_LIB=1 pip install -r requirements.txt" # Install requirements, add BUILD_LIB=1 for ssdeep
   - "mongod --version" # Check if current MongoDB version is correctly installed
