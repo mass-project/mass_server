@@ -158,6 +158,6 @@ def get_app(instance_path=None, testing=False, debug=False, set_server_name=Fals
     app.wsgi_app = DispatcherMiddleware(app.wsgi_app, {
         '/metrics': make_wsgi_app()
     })
-    prometheus_registry.register(DatabaseCollector())
+    #prometheus_registry.register(DatabaseCollector())
 
     return app
