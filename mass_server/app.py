@@ -155,9 +155,10 @@ def get_app(instance_path=None, testing=False, debug=False, set_server_name=Fals
         app.config['SERVER_NAME'] = os.getenv('SERVER_NAME', '127.0.0.1:8000')
         print('Set server name to {}'.format(app.config['SERVER_NAME']))
 
-    app.wsgi_app = DispatcherMiddleware(app.wsgi_app, {
-        '/metrics': make_wsgi_app()
-    })
-    #prometheus_registry.register(DatabaseCollector())
+    if bool(os.getenv('PROMETHEUS_METRICS', None)):
+        app.wsgi_app = DispatcherMiddleware(app.wsgi_app, {
+            '/metrics': make_wsgi_app()
+        })
+        prometheus_registry.register(DatabaseCollector())
 
     return app
