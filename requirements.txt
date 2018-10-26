@@ -16,7 +16,7 @@ flask-marshmallow==0.9.0
 git+https://github.com/fabian-rump/flask_modular_auth.git
 flask-mongoengine==0.9.5
 Flask-WTF==0.14.2
-future==0.16.0
+future==0.17.0
 itsdangerous==1.0.0
 Jinja2==2.10
 MarkupSafe==1.0
