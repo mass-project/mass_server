@@ -42,6 +42,7 @@ def load_object_wrapper(schema, partial=False):
                 return func(ch, method, properties, data, parsed.data)
 
         return wrapper
+
     return real_decorator
 
 
@@ -61,14 +62,15 @@ def catch_exception(exception, ack=False, failure_queue=None, message=None):
                     ch.basic_publish(exchange='', routing_key=failure_queue, body=body)
                 if ack:
                     ch.basic_ack(delivery_tag=method.delivery_tag)
+
         return wrapper
+
     return real_decorator
 
 
 @catch_exception(Exception, ack=True, failure_queue='corrupted_reports')
 @load_object_wrapper(ReportSchema(), partial=True)
 def report_callback(ch, method, properties, data, report):
-
     if 'analysis_request' in properties.headers:
         request_id = properties.headers['analysis_request']
         logging.debug('Processing report for analysis request {}'.format(request_id))
@@ -105,6 +107,7 @@ def sample_callback(ch, method, properties, body):
     with app.app_context():
         Sample.create_or_update(**data)
     ch.basic_ack(delivery_tag=method.delivery_tag)
+    ch.basic_publish(exchange='', routing_key='es_samples', body=body)
 
 
 @catch_exception(Exception, ack=True, failure_queue='corrupted_sample_relations')
@@ -117,6 +120,8 @@ def sample_relation_callback(ch, method, properties, data, relation):
 
 def main():
     logging.info('Starting worker. Connecting to queue server...')
+
+    queue_channel.queue_declare(queue='es_samples', durable=True)
 
     queue_channel.queue_declare(queue='reports', durable=True)
     queue_channel.queue_declare(queue='samples', durable=True)
