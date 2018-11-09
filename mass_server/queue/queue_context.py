@@ -23,6 +23,8 @@ def ensure_connection():
         connection = BlockingConnection(_connection_parameters)
         channel = connection.channel()
 
+    return connection, channel
+
 
 def ensure_queue(queue, durable):
     if queue not in created_queues:
