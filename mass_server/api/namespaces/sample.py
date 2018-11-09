@@ -11,7 +11,7 @@ from mass_server.api.schemas import ReportSchema, SampleSchema, SampleRelationSc
 from mass_server.api.utils import pagination_helper, MappedQuerysetFilter
 from mass_server.core.models import Report, Sample, SampleRelation
 from mass_server.core.utils import GraphFunctions
-from mass_server.queue.queue_context import channel
+from mass_server.queue.queue_context import channel, ensure_connection
 
 
 @api.add_namespace('/sample')
@@ -31,6 +31,7 @@ class SampleNamespace:
     @catch(ValidationError, 'The request body is malformed or incomplete.', error_code=400)
     def collection_post(self):
         json_data = request.get_json()
+        ensure_connection()
         if json_data:
             channel.basic_publish(exchange='', routing_key='es_samples', body={"data": json_data})
             return Sample.create_or_update(**json_data)
