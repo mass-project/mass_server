@@ -6,7 +6,7 @@ click==7.0
 codecov==2.0.15
 coverage==4.5.2
 docopt==0.6.2
-dominate==2.3.4
+dominate==2.3.5
 Faker==1.0.0
 Flask==1.0.2
 Flask-APScheduler==1.10.1
