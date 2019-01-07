@@ -32,7 +32,7 @@ pymongo==3.7.2
 pyparsing==2.3.0
 python-dateutil==2.7.5
 python-magic==0.4.15
-pytz==2018.7
+pytz==2018.9
 PyYAML==3.13
 requests==2.21.0
 six==1.12.0
