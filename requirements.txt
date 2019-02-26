@@ -1,7 +1,7 @@
 apispec==1.0.0
 APScheduler==3.5.3
 blinker==1.4
-cffi==1.12.1
+cffi==1.12.2
 click==7.0
 codecov==2.0.15
 coverage==4.5.2
