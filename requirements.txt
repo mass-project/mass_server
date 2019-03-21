@@ -40,5 +40,5 @@ ssdeep==3.3
 tzlocal==1.5.1
 uWSGI==2.0.18
 visitor==0.1.3
-Werkzeug==0.15.0
+Werkzeug==0.15.1
 WTForms==2.2.1
